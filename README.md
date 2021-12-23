@@ -15,6 +15,18 @@ pip install -r requirements.txt
 pip install databases[postgresql]
 ```
 
+Freeze Environment
+===
+```sh
+pip freeze > requirements.txt
+```
+
+Load environtment
+===
+```sh
+source ./env/bin/activate
+```
+
 Run app
 ===
 ```sh
@@ -29,4 +41,10 @@ Deployment command
 ===
 ```sh
 gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+```
+
+Close environtment
+===
+```sh
+deactivate
 ```
