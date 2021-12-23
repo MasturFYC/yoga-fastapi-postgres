@@ -30,11 +30,11 @@ source ./env/bin/activate
 Run app
 ===
 ```sh
-uvicorn main:app --reload
+uvicorn app:app --reload
 ```
 or
 ```sh
-uvicorn --port 8000 --host 127.0.0.1 main:app --reload
+uvicorn --port 8000 --host 127.0.0.1 app:app --reload
 ```
 
 Deployment command
