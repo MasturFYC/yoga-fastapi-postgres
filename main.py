@@ -1,3 +1,4 @@
+import uvicorn
 from typing import List
 import databases
 import sqlalchemy
@@ -6,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 import urllib
+from fastapi.responses import JSONResponse
 
 # SQLAlchemy specific code, as with any other app
 # DATABASE_URL = "sqlite:///./test.db"
@@ -62,6 +64,10 @@ async def startup():
 async def shutdown():
     await database.disconnect()
 
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Yoga Fastapi Postgresql"}
+
 @app.get("/notes/", response_model=List[Note], status_code = status.HTTP_200_OK)
 async def read_notes(skip: int = 0, take: int = 20):
     query = notes.select().offset(skip).limit(take)
@@ -89,3 +95,6 @@ async def delete_note(note_id: int):
     query = notes.delete().where(notes.c.id == note_id)
     await database.execute(query)
     return {"message": "Note with id: {} deleted successfully!".format(note_id)}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8081, reload='true')

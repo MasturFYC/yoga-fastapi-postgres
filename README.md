@@ -40,7 +40,8 @@ uvicorn --port 8000 --host 127.0.0.1 app:app --reload
 Deployment command
 ===
 ```sh
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+# copy file to sudo vim /lib/systemd/system/yoga.service
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app
 ```
 
 Close environtment
