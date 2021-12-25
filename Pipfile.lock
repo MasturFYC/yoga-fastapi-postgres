@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "32a05096a99b403114a299d1ec0fa1d7b6fa83b4abaa092557a4ef0bbbc48310"
+            "sha256": "7aca436ad982db6b2d13f4a6729efbab6e5ac15d3f8c13683e569a895e37cc2c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,13 +16,13 @@
         ]
     },
     "default": {
-        "pyhumps": {
+        "humps": {
             "hashes": [
-                "sha256:042b4b6eec6c1f862f8310c0eebbae19293e9edab8cafb030ff78c890ef1aa34",
-                "sha256:367b1aadcaa64f8196a3cd14f56559a5602950aeb8486f49318e7394f5e18052"
+                "sha256:401de60fd73673b697086ba7c865966751c57b11cce57a37c9eabb3e75938417",
+                "sha256:777f7a17f6b20aa9cc078d63b56ebd66532c6b2c88b370f1d596d5205410f67c"
             ],
             "index": "pypi",
-            "version": "==3.0.2"
+            "version": "==0.2.2"
         }
     },
     "develop": {}

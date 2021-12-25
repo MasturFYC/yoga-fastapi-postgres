@@ -24,28 +24,37 @@ class CategoryOut(CamelModel):
 
 class ProductIn(CamelModel):
     name: str
+    spec: Optional[str] = None  # pylint: disable=unsubscriptable-object
+    base_unit: str
+    base_price: float
+    base_weight: float
+    first_stock: float
+    stock: float
+    category_id: int
+    is_active: bool
 
 
 class ProductOut(CamelModel):
     id: int
-    # code: str
     name: str
     spec: Optional[str] = None  # pylint: disable=unsubscriptable-object
-    unit: str
-    # base_unit: str
-    # base_weight: float
-    # base_price: float
-    price: float
-    # is_active: bool
-    update_notif: bool
+    base_unit: str
+    base_price: float
+    base_weight: float
     first_stock: float
-    # unit_in_stock: float
     stock: float
     category_id: int
+    is_active: bool
 
 
 class UnitIn(CamelModel):
+    product_id: int
     name: str
+    content: float
+    buy_price: float
+    margin: float
+    price: str
+    is_default: bool
 
 
 class UnitOut(CamelModel):
@@ -53,8 +62,7 @@ class UnitOut(CamelModel):
     id: int
     name: str
     content: float
-    price: str
     buy_price: float
     margin: float
+    price: str
     is_default: bool
-    
