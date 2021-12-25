@@ -18,9 +18,12 @@ database_name = os.environ.get('database_name', 'yoga_facturing_db')
 db_username = urllib.parse.quote_plus(str(os.environ.get('db_username', 'postgres')))
 db_password = urllib.parse.quote_plus(str(os.environ.get('db_password', '********')))
 ssl_mode = urllib.parse.quote_plus(str(os.environ.get('ssl_mode','prefer')))
+
 DATABASE_URL = 'postgresql://{}:{}@{}:{}/{}?sslmode={}'.format(db_username,db_password, host_server, db_server_port, database_name, ssl_mode)
 
-database = databases.Database(DATABASE_URL)
+engine = sqlalchemy.create_engine(
+    DATABASE_URL, pool_size=3, max_overflow=0
+)
 
 metadata = sqlalchemy.MetaData()
 
@@ -32,11 +35,7 @@ notes = sqlalchemy.Table(
     sqlalchemy.Column("completed", sqlalchemy.Boolean),
 )
 
-engine = sqlalchemy.create_engine(
-    DATABASE_URL, pool_size=3, max_overflow=0
-)
-
-metadata.create_all(engine)
+database = databases.Database(DATABASE_URL)
 
 class NoteIn(BaseModel):
     text: str
@@ -46,6 +45,9 @@ class Note(BaseModel):
     id: int
     text: str
     completed: bool
+
+
+metadata.create_all(engine)
 
 app=FastAPI(title="REST API using FastAPI PostgreSQL Async EndPoints")
 app.add_middleware(

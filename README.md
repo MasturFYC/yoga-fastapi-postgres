@@ -14,7 +14,10 @@ python -m pip install -U pip
 pip install -r requirements.txt
 pip install databases[postgresql]
 ```
-
+Install individual source
+```sh
+pipenv install ...
+```
 Freeze Environment
 ===
 ```sh
