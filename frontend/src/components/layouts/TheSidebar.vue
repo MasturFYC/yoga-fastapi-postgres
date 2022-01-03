@@ -93,12 +93,24 @@
         icon="heroicons-outline:home" 
         text="Home" 
         :route="{path: '/'}" />
-      <menu-item 
+      <!-- <menu-item 
         icon="heroicons-outline:view-grid" 
         text="Accounts">
         <template #sub-menu>
           <sub-menu-item text="PayPal" />
           <sub-menu-item text="ShopeePay" />
+        </template>
+      </menu-item> -->
+      <menu-item 
+        icon="heroicons-outline:view-grid" 
+        text="E-Commerce">
+        <template #sub-menu>
+          <sub-menu-item text="Supplier"
+          :route="{path: '/supplier/'}" />
+          <sub-menu-item text="Product Category"
+          :route="{path: '/category/'}" />
+          <sub-menu-item text="Product"
+          :route="{path: '/product/'}" />
         </template>
       </menu-item>
       <menu-item 

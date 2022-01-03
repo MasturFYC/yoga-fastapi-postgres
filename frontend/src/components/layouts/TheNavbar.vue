@@ -1,6 +1,6 @@
 <template>
   <div class="fixed z-20 top-0 left-0 lg:left-64 right-0 h-14 bg-white border-b border-gray-200 flex flex-row items-center justify-between px-5">
-    <h3 class="text-sm font-medium text-gray-600">Welcome, Nur</h3>
+    <h3 class="text-sm font-medium text-gray-600">Welcome, Yoga</h3>
     <div class="flex items-center">
       <div 
         class="group flex items-center mr-3 cursor-pointer" 
@@ -41,14 +41,15 @@
 <script>
 export default {
   name: 'TheNavbar',
-  setup() {
-    const viewSource = () => {
-      window.open('https://github.com/ngekoding/admin-panel', '_blank')
-    }
 
-    return {
-      viewSource
-    }
-  }
+  // setup() {
+  //   const viewSource = () => {
+  //     window.open('https://github.com/ngekoding/admin-panel', '_blank')
+  //   }
+
+  //   return {
+  //     viewSource
+  //   }
+  // }
 }
 </script>
