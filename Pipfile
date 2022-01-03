@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 humps = "*"
+python-env-loader = "==0.0.2"
 
 [dev-packages]
 
