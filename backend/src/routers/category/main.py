@@ -48,6 +48,7 @@ async def read_category(pid: int, dal: cur_dal = Depends(get_current_dal)):
 async def create_category(payload: CategoryIn,
                           dal: cur_dal = Depends(get_current_dal)):
     """ create new category """
+    
     res = await dal.create(payload)
 
     if res is None:
@@ -60,6 +61,7 @@ async def create_category(payload: CategoryIn,
 async def update_category(pid: int, payload: CategoryIn,
                           dal: cur_dal = Depends(get_current_dal)):
     """ Update category by id """
+    # print('--------------',payload)
 
     res = await dal.modify(pid, payload)
 
