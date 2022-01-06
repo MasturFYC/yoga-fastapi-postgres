@@ -1,128 +1,213 @@
 <template>
-  <div>Nama:</div>
   <div>
-    <input type="text" v-model="name" placeholder="e.g. PT. Mandiri Perkasa" />
-  </div>
-  <div>Sales:</div>
-  <div>
-    <input type="text" v-model="sales_name" placeholder="e.g. Mr. Junaedi" />
-  </div>
-  <label for="city" class="flex">
-    <span class="flex-none w-20">Alamat:</span>
-    <textarea
-      class="flex-initial w-64"
-      id="city"
-      v-model="city"
-      placeholder="e.g. Indramayu"
-    />
-  </label>
+    <form @submit="formSubmit">
+    <div class="flex flex-col md:flex-row gap-x-4">
+      <label for="sup-name" class="flex-label">
+        <span class="flex-span">Nama:</span>
+        <input
+          v-focus
+          maxlength="50"
+          id="sup-name"
+          type="text"
+          class="flex-input"
+          v-model="supplier.name"
+          placeholder="e.g. PT. Mandiri Perkasa"
+        />
+      </label>
+      <label for="sales-name" class="flex-label">
+        <span class="flex-span">Sales:</span>
+        <input
+          id="sales-name"
+          type="text"
+          maxlength="50"
+          class="flex-input"
+          v-model="supplier.sales_name"
+          placeholder="e.g. Mr. Junaedi"
+        />
+      </label>
+    </div>
+    <div class="flex flex-col md:flex-row gap-x-4">
+      <label for="street" class="flex-label">
+        <span class="flex-span">Alamat:</span>
+        <textarea
+          id="street"
+          maxlength="128"
+          class="flex-input"
+          v-model="supplier.street"
+          placeholder="e.g. Jl. Jenderal Sudirman No. 155 Kel. Lemahmekar"
+        />
+      </label>
+      <label for="city" class="flex-label">
+        <span class="flex-span">Kota:</span>
+        <input
+          id="city"
+          maxlength="50"
+          class="flex-input self-start"
+          type="text"
+          v-model="supplier.city"
+          placeholder="e.g. Indramayu"
+        />
+      </label>
+    </div>
+    <div class="flex flex-col md:flex-row gap-x-4">
+      <label for="phone" class="flex-label">
+        <span class="flex-span">Telp.:</span>
+        <input
+          id="phone"
+          maxlength="25"
+          class="flex-input"
+          type="text"
+          v-model="supplier.phone"
+          placeholder="e.g. 02342775"
+        />
+      </label>
+      <label for="cellular" class="flex-label">
+        <span class="flex-span">Cellular:</span>
+        <input
+          id="cellular"
+          maxlength="25"
+          class="flex-input"
+          type="text"
+          v-model="supplier.cell"
+          placeholder="e.g. 0856 6598 2366"
+        />
+      </label>
+    </div>
+    <div class="flex flex-col md:flex-row gap-x-4">
+      <label for="zip" class="flex-label">
+        <span class="flex-span">Kode pos:</span>
+        <input
+          id="zip"
+          maxlength="8"
+          class="flex-input"
+          type="text"
+          v-model="supplier.zip"
+          placeholder="e.g. 45212"
+        />
+      </label>
+      <label for="email" class="flex-label">
+        <span class="flex-span">e-mail:</span>
+        <input
+          id="email"
+          maxlength="128"
+          class="flex-input"
+          type="text"
+          v-model="supplier.email"
+          placeholder="e.g. somepne@gmail.com"
+        />
+      </label>
+    </div>
 
-  <label for="city" class="flex">
-    <span class="flex-none w-20">Kota:</span>
-    <input
-      class="flex-initial w-64"
-      type="text"
-      v-model="street"
-      placeholder="e.g. Jl. Jenderal Sudirman No. 155 Kel. Lemahmekar"
-    />
-  </label>
-  <label for="phone" class="flex">
-    <span class="flex-none w-20">Telp.:</span>
-    <input
-      class="flex-initial w-64"
-      type="text"
-      id="phone"
-      v-model="phone"
-      placeholder="e.g. 02342775"
-    />
-  </label>
-  <label for="cellular" class="flex">
-    <span class="flex-none w-20">Cellular:</span>
-    <input
-      class="flex-initial w-64"
-      type="text"
-      id="cellular"
-      v-model="cell"
-      placeholder="e.g. 0856 6598 236ee96s"
-    />
-  </label>
-  <label for="zip" class="flex">
-    <span class="flex-none w-20">Kode pos:</span>
-    <input
-      class="flex-initial w-64"
-      type="text"
-      id="zip"
-      v-model="zip"
-      placeholder="e.g. 45212"
-    />
-  </label>
-  <div>
-    <label for="email" class="flex">
-      <span class="flex-none w-20">e-mail:</span>
-      <input
-        class="flex-initial w-64"
-        type="text"
-        id="email"
-        v-model="email"
-        placeholder="e.g. somepne@gmail.com"
-      />
-    </label>
+    <div class="flex flex-row gap-2 mt-5">
+      <button type="submit" class="btn-primary">Save</button>
+      <slot />
+    </div>
+    </form>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "SupplierForm",
 
   props: {
-    name: {
-      type: String,
-      default: "",
+    update: {
+      type: Function
     },
-    sales_name: {
-      type: String,
-      default: "------",
-    },
-    street: {
-      type: String,
-      default: "",
-    },
-    city: {
-      type: String,
-      default: "",
-    },
-    phone: {
-      type: String,
-      default: "",
-    },
-    cell: {
-      type: String,
-      default: "",
-    },
-    zip: {
-      type: String,
-      default: "",
-    },
-    email: {
-      type: String,
-      default: "",
+    supplierProp: {
+      type: Object,
+      default: {
+        id: 0,
+        name: "",
+        sales_name: "",
+        street: "",
+        city: "",
+        phone: "",
+        cell: "",
+        zip: "",
+      },
     },
   },
-  setup(props) {
-    return {};
+  data() {
+    return {
+      supplier: { ...this.$props.supplierProp },
+    };
+  },
+  methods: {
+    async formSubmit(e) {
+      const self = this;
+      e.preventDefault();
+      if (self.supplier.id > 0) {
+        await self.updateSupplier(self.supplier, self.supplier.id);
+      } else {
+        await self.insertSupplier(self.supplier);
+      }
+    },
+    async insertSupplier(supplier) {
+      const self = this;
+      const data = { ...supplier };
+      delete data.id;
+
+      await axios
+        .post(`http://localhost:8080/suppliers/`, JSON.stringify(data), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          self.$emit('update', res.data, 0)
+        });
+    },
+    async updateSupplier(supplier, id) {
+      const self = this;
+      const data = { ...supplier };
+      delete data.id;
+      await axios
+        .put(`http://localhost:8080/suppliers/${id}/`, JSON.stringify(data), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          self.$emit('update', res.data, id)
+        });
+    },    
+  },
+  directives: {
+    focus: {
+      mounted(el) {
+        // When the bound element is inserted into the DOM...
+        setTimeout(() => {
+          el.focus(); // Focus the element
+          // el.select();
+        }, 100);
+      },
+    },
   },
 };
 </script>
 <style scoped>
-input[type="text"] {
-  border: 1px solid #cecece;
-  padding: 0 6px;
+.flex-span {
+  @apply flex-none w-20 text-[13px] font-medium text-gray-600 py-1 md:text-right md:mr-3;
 }
-textarea {
-  border: 1px solid #cecece;
-  padding: 0 6px;
+.flex-label {
+  @apply flex flex-initial w-full mt-2 md:flex-1 md:w-1/2;
 }
-label {
-  margin-top: 6px;
+.flex-input {
+  @apply rounded-[4px] py-1 px-2 flex-initial w-full self-start border 
+  border-indigo-400 text-[14px] placeholder:italic
+  focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
+}
+.btn-primary {
+  @apply py-1 px-5 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-700
+  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75;
+}
+
+::placeholder {
+  font-size: small;
 }
 </style>

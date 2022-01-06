@@ -59,7 +59,7 @@ async def update_supplier(pid: int, payload: SupplierIn, dal: cur_dal = Depends(
     if res is None:
         raise HTTPException(status_code=500, detail="Supplier name exist")
 
-    return res.__dict__
+    return res #.__dict__
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)
 async def delete_supplier(pid: int, dal: cur_dal = Depends(get_current_dal)):

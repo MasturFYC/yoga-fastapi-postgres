@@ -10,21 +10,52 @@
       menyetorkan beberapa ton kelapa setiap bulan untuk mencukupi kebutuhan
       pembuatan minyak goreng kelapa yang dihasilkan si pabrik.
     </div>
-    <div>
-      <ol start="1">
-        <li v-for="(sup, index) in suppliers" v-bind:key="sup.id">
-          <div v-if="selectedIndex === index && selectedId === sup.id">
-              <SupplierForm />
+    <div class="mt-4">
+    <hr />
+      <div v-for="(sup, index) in suppliers" v-bind:key="sup.id">
+        <transition name="slide-fade">
+          <div
+            v-if="selectedIndex === index && selectedId === sup.id"
+            class="supplier-list"
+          >
+            <supplier-form :supplierProp="sup" @update="updateData">
+              <button
+                type="button"
+                class="btn-cancel rounded-md"
+                @click="cancelForm()"
+              >
+                Cancel
+              </button>
+              <span class="flex-1"></span>
+              <button @click="deleteForm()" type="button" class="btn-remove" :disabled="sup.id === 0">
+                Delete
+              </button>
+            </supplier-form>
           </div>
-          <div v-else class="span-link" @click="supClick(index, sup.id)">
-            <div v-if="sup.id === 0">+</div>
-            <div v-else>
-              Nama: {{ sup.id === 0 ? "+" : sup.name }} Sales:
-              {{ sup.sales_name }}
+          <div v-else class="supplier-list">
+            <div
+              v-if="sup.id === 0"
+              @click="supClick(index, sup.id)"
+              class="span-link"
+            >
+              +
+            </div>
+            <div v-else class="supplier-item">
+              <div class="flex-none w-full md:w-2/5">
+                <div @click="supClick(index, sup.id)" class="span-link">
+                  {{ sup.name }}
+                </div>
+                <div>Sales: {{ sup.sales_name }}</div>
+              </div>
+              <div class="flex-1 w-full text-sm mt-2 md:mt-0">
+                <div>{{ sup.street }} - {{ sup.city }}, {{ sup.zip }}</div>
+                <div>Telp. {{ sup.phone }} / {{ sup.cell }}</div>
+                <div>{{ sup.email }}</div>
+              </div>
             </div>
           </div>
-        </li>
-      </ol>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -33,7 +64,14 @@
 import { shallowRef } from "vue";
 import axios from "axios";
 import TwButton from "@/components/TwButton.vue";
-import SupplierForm from "@/components/SupplierForm.vue"
+import SupplierForm from "@/components/SupplierForm.vue";
+
+Array.prototype.indexOfObject = function (property, value) {
+  for (let i = 0, len = this.length; i < len; i++) {
+    if (this[i][property] === value) return i;
+  }
+  return -1;
+}
 
 const new_supplier = {
   id: 0,
@@ -51,75 +89,53 @@ export default {
   name: "Supplier",
   data() {
     return {
-      suppliers: [],
+      suppliers: [{...new_supplier}],
       selectedIndex: -1,
       selectedId: -1,
-    }
+    };
   },
   components: {
-    'tw-button': shallowRef(TwButton),
-    SupplierForm,
+    "tw-button": shallowRef(TwButton),
+    "supplier-form": SupplierForm,
   },
   methods: {
+    cancelForm() {
+      const self = this;
+      self.selectedId = -1;
+      self.selectedIndex = -1;
+    },
+    async deleteForm() {
+      const self = this;
+      const options = {
+        "Content-Type": "application/json",
+      };
+      await axios
+        .delete(`http://localhost:8080/suppliers/${self.selectedId}`, {
+          headers: options,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            const index = self.suppliers.indexOfObject("id", self.selectedId);
+            self.suppliers.splice(index, 1);
+            self.cancelForm();
+          }
+        });
+    },
     supClick(index, catId) {
       const self = this;
       self.selectedId = catId;
       self.selectedIndex = index;
     },
-    async formSubmit(e) {
+    updateData(supplier, id) {
       const self = this;
-      e.preventDefault();
-      const sup = self.suppliers.filter((c) => c.id === self.selectedId)[0];
-      if (sup && sup.id > 0) {
-        await this.updatCatgory(sup.name, sup.id);
-      } else {
-        await this.insertCategory(sup.name, 0);
+      let temp = self.suppliers;
+      const index = self.suppliers.indexOfObject("id", id);
+      temp[index] = supplier;
+      self.suppliers = temp;
+      if (id === 0) {
+        self.suppliers.push(new_supplier);
       }
-    },
-    async insertCategory(name, id) {
-      const self = this;
-      await axios
-        .post(
-          `http://localhost:8080/suppliers/`,
-          JSON.stringify({ name: name }),
-          {
-            headers: {
-              accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          const json = res.data;
-          let temp = self.suppliers;
-          const index = self.suppliers.findIndex((item) => item.id === id);
-          temp[index] = json;
-          self.suppliers = temp;
-          self.suppliers.push(new_supplier);
-          this.selectedIndex = -1;
-        });
-    },
-    async updatCatgory(name, id) {
-      const self = this;
-      await axios
-        .put(
-          `http://localhost:8080/suppliers/${id}/`,
-          JSON.stringify({ name: name }),
-          {
-            headers: {
-              accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          const json = res.data;
-          let temp = self.suppliers;
-          const index = self.suppliers.findIndex((item) => item.id === id);
-          temp[index] = json;
-          self.suppliers = temp;
-          this.selectedIndex = -1;
-        });
+      self.cancelForm();
     },
   },
   async mounted() {
@@ -131,18 +147,10 @@ export default {
     await axios
       .get("http://localhost:8080/suppliers/", { headers: options })
       .then((res) => {
-        console.log("-----------", res);
         const json = res.data;
-
         self.suppliers = [...json, new_supplier];
       });
   },
-  //   async created() {
-  //       const self = this;
-  //       const res = await fetch("http://localhost:8080/suppliers/");
-  //       const json = await res.json();
-  //       self.suppliers = [...json, {id: 0, name: ''}];
-  //   },
   directives: {
     focus: {
       mounted(el) {
@@ -164,30 +172,44 @@ export default {
   fill: #ff0000;
   /* margin-left: 12px; */
 }
-input[type="text"] {
-  border: 1px solid #cecece;
-  border-radius: 4px;
-  padding-left: 6px;
-  padding-right: 6px;
-  width: 50%;
-}
 .span-link {
-  cursor: pointer;
+  @apply inline-block cursor-pointer font-bold text-indigo-400 hover:underline hover:text-indigo-700 hover:underline-offset-4;
 }
 h1 {
   font-weight: 700;
   font-size: 24px;
 }
-ol {
-  margin-top: 24px;
-  margin-left: 24px;
+
+.supplier-list {
+  @apply py-4 border-b border-indigo-200;
 }
-li {
-  margin-top: 6px;
+.supplier-item {
+  @apply flex flex-col mt-1
+  md:flex-row;
 }
 
 .message {
   margin-top: 12px;
   font-size: small;
+}
+.btn-cancel {
+  @apply py-1 px-5 bg-orange-500 text-white font-semibold rounded-full shadow-md hover:bg-orange-700
+  focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75;
+}
+.btn-remove {
+  @apply py-1 px-5 bg-red-700 text-white font-semibold rounded-full shadow-md hover:bg-red-800
+  disabled:invisible
+  focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-75;
+}
+.slide-fade-enter-active {
+  transition: all 0.1s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(50px);
+  opacity: 0;
 }
 </style>
