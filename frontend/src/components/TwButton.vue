@@ -1,5 +1,5 @@
 <template>
-  <button 
+  <button type="button"
     class="btn rounded-md disabled:opacity-50 disabled:cursor-not-allowed" 
     :class="[typeClass, sizeClass, {'rounded-3xl': round}]">
     <slot />
@@ -41,7 +41,7 @@ export default {
     const sizeStyles = {
       lg: 'text-base px-5 py-2',
       md: 'text-sm px-5 py-2',
-      sm: 'text-xs px-4 py-1.5'
+      sm: 'text-xs px-4 py-1'
     }
 
     const typeClass = computed(() => typeStyles[props.type])
@@ -56,6 +56,9 @@ export default {
 </script>
 
 <style>
+.btn {  margin-left: 6px;
+  margin-right: 6px;
+}
 .btn + .btn {
   @apply ml-1.5;
 }

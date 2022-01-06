@@ -51,6 +51,8 @@ async def create_category(payload: CategoryIn,
     
     res = await dal.create(payload)
 
+    # print('----------', res.id, '----------', res.name)
+
     if res is None:
         raise HTTPException(status_code=500, detail="Category name exist")
 
@@ -68,7 +70,7 @@ async def update_category(pid: int, payload: CategoryIn,
     if res is None:
         raise HTTPException(status_code=500, detail="Category name exist")
 
-    return res  # //.__dict__
+    return res #.__dict__
 
 
 @ ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)
