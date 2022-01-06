@@ -20,6 +20,11 @@ const routes = [
         component: () => import('@/pages/ecommerce/Category.vue')
       },
       {
+        path: 'supplier',
+        name:'Supplier',
+        component: () => import('@/pages/ecommerce/Supplier.vue')
+      },
+      {
         path: 'dev/getting-started',
         name: 'dev-getting-started',
         component: () => import('@/pages/developments/GettingStarted.vue')

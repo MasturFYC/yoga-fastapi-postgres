@@ -68,7 +68,7 @@ export default {
       selectedIndex: -1,
       selectedId: 0,
       components: {
-        "tw-button": shallowRef(TwButton),
+        "tw-button": TwButton,
       },
     };
   },
@@ -143,7 +143,6 @@ export default {
     await axios
       .get("http://localhost:8080/categories/", { headers: options })
       .then((res) => {
-        console.log("-----------", res);
         const json = res.data;
 
         self.categories = [...json, { id: 0, name: "" }];
