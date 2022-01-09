@@ -29,7 +29,7 @@
         class="w-10">
       <div class="ml-2 flex flex-col">
         <h1 class="text-sm text-gray-700 font-medium">Admin Panel</h1>
-        <p class="text-gray-400 text-xs">VueJS + Vite + Tailwind</p>
+        <p class="text-gray-400 text-xs">{{appTitle}}</p>
       </div>
     </header>
     <!-- Menu -->
@@ -111,6 +111,10 @@
           :route="{path: '/category/'}" />
           <sub-menu-item text="Product"
           :route="{path: '/product/'}" />
+          <sub-menu-item text="Sales"
+          :route="{path: '/sales/'}" />
+          <sub-menu-item text="Customer"
+          :route="{path: '/customer/'}" />
         </template>
       </menu-item>
       <menu-item 
@@ -168,6 +172,11 @@ export default {
     MenuItem,
     SubMenuHeader,
     SubMenuItem,
+  },
+  data() {
+    return {
+      appTitle: 'Yoga Facturing'
+    }
   },
   emits: ['visibility-change'],
   setup(_, {emit}) {

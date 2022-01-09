@@ -92,7 +92,7 @@ export default {
       const self = this;
       await axios
         .post(
-          `http://localhost:8080/categories/`,
+          `/api/categories/`,
           JSON.stringify({ name: name }),
           {
             headers: {
@@ -115,7 +115,7 @@ export default {
       const self = this;
       await axios
         .put(
-          `http://localhost:8080/categories/${id}/`,
+          `/api/categories/${id}/`,
           JSON.stringify({ name: name }),
           {
             headers: {
@@ -141,7 +141,7 @@ export default {
       "Content-Type": "application/json",
     };
     await axios
-      .get("http://localhost:8080/categories/", { headers: options })
+      .get("/api/categories/", { headers: options })
       .then((res) => {
         const json = res.data;
 
@@ -150,7 +150,7 @@ export default {
   },
   //   async created() {
   //       const self = this;
-  //       const res = await fetch("http://localhost:8080/categories/");
+  //       const res = await fetch("/api/categories/");
   //       const json = await res.json();
   //       self.categories = [...json, {id: 0, name: ''}];
   //   },

@@ -1,24 +1,26 @@
 <template>
   <div>
-    <h1>Supplier</h1>
+    <h1>Customer</h1>
     <div class="message">
-      Suplier adalah orang atau perusahaan yang menjual bahan yang akan diolah
-      perusahaan lain menjadi produk siap jual. Umumnya suplier menjual produk
-      dalam bentuk mentah atau bahan baku. Rumah produksi atau pabriklah yang
-      kemudian menggunakan bahan mentah tadi untuk digunakan sebagai bagian dari
-      proses penciptaan produk tertentu. Misalnya, supplier kelapa yang
-      menyetorkan beberapa ton kelapa setiap bulan untuk mencukupi kebutuhan
-      pembuatan minyak goreng kelapa yang dihasilkan si pabrik.
+      Secara umum, arti customer adalah seseorang atau organisasi yang membeli suatu barang 
+      atau jasa dari sebuah toko atau bisnis tertentu. Pendapat lain mengatakan pengertian 
+      customer adalah pelanggan, yaitu individu, rumah tangga, atau perusahaan, yang membeli 
+      suatu produk, baik itu ide, barang, atau jasa, dari penjual atau pemasok tertentu.
+    </div>
+    <div class="message">
+        Dalam hal ini, customer tidak selalu berarti konsumen karena bisa saja pelanggan 
+        tersebut membeli suatu produk bukan untuk digunakan sendiri tapi untuk dijual atau 
+        diberikan kepada orang lain.    
     </div>
     <div class="mt-4">
     <hr />
-      <div v-for="(sup, index) in suppliers" v-bind:key="sup.id">
+      <div v-for="(customer, index) in customers" v-bind:key="customer.id">
         <transition name="slide-fade">
           <div
-            v-if="selectedIndex === index && selectedId === sup.id"
-            class="supplier-list"
+            v-if="selectedIndex === index && selectedId === customer.id"
+            class="customer-list"
           >
-            <supplier-form :supplierProp="sup" @update="updateData">
+            <customer-form :customerProp="customer" @update="updateCustomer">
               <button
                 type="button"
                 class="btn-cancel rounded-md"
@@ -27,30 +29,29 @@
                 Cancel
               </button>
               <span class="flex-1"></span>
-              <button @click="deleteForm()" type="button" class="btn-remove" :disabled="sup.id === 0">
+              <button @click="removeCustomer()" type="button" class="btn-remove" :disabled="customer.id === 0">
                 Delete
               </button>
-            </supplier-form>
+            </customer-form>
           </div>
-          <div v-else class="supplier-list">
-            <div
-              v-if="sup.id === 0"
-              @click="supClick(index, sup.id)"
+          <div v-else class="customer-list">
+            <a href="#"
+              v-if="customer.id === 0"
+              @click.prevent="supClick(index, customer.id)"
               class="span-link"
             >
               +
-            </div>
-            <div v-else class="supplier-item">
+            </a>
+            <div v-else class="customer-item" href="#">
               <div class="flex-none w-full md:w-2/5">
-                <div @click="supClick(index, sup.id)" class="span-link">
-                  {{ sup.name }}
-                </div>
-                <div>Sales: {{ sup.sales_name }}</div>
+                <a href="#" @click.prevent="supClick(index, customer.id)" class="span-link">
+                  {{ customer.name }}
+                </a>
               </div>
               <div class="flex-1 w-full text-sm mt-2 md:mt-0">
-                <div>{{ sup.street }} - {{ sup.city }}, {{ sup.zip }}</div>
-                <div>Telp. {{ sup.phone }} / {{ sup.cell }}</div>
-                <div>{{ sup.email }}</div>
+                <div>{{ customer.street }} - {{ customer.city }}, {{ customer.zip }}</div>
+                <div>Telp. {{ customer.phone }} / {{ customer.cell }}</div>
+                <div>{{ customer.email }}</div>
               </div>
             </div>
           </div>
@@ -64,7 +65,7 @@
 import { shallowRef } from "vue";
 import axios from "axios";
 import TwButton from "@/components/TwButton.vue";
-import SupplierForm from "@/components/forms/SupplierForm.vue";
+import CustomerForm from "@/components/forms/CustomerForm.vue";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -73,10 +74,9 @@ Array.prototype.indexOfObject = function (property, value) {
   return -1;
 }
 
-const new_supplier = {
+const new_customer = {
   id: 0,
   name: "",
-  sales_name: "",
   street: "",
   city: "",
   phone: "",
@@ -86,17 +86,17 @@ const new_supplier = {
 };
 
 export default {
-  name: "Supplier",
+  name: "Customer",
   data() {
     return {
-      suppliers: [{...new_supplier}],
+      customers: [{...new_customer}],
       selectedIndex: -1,
       selectedId: -1,
     };
   },
   components: {
     "tw-button": shallowRef(TwButton),
-    "supplier-form": SupplierForm,
+    "customer-form": CustomerForm,
   },
   methods: {
     cancelForm() {
@@ -104,19 +104,19 @@ export default {
       self.selectedId = -1;
       self.selectedIndex = -1;
     },
-    async deleteForm() {
+    async removeCustomer() {
       const self = this;
       const options = {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/suppliers/${self.selectedId}`, {
+        .delete(`/api/customers/${self.selectedId}`, {
           headers: options,
         })
         .then((res) => {
           if (res.status === 200) {
-            const index = self.suppliers.indexOfObject("id", self.selectedId);
-            self.suppliers.splice(index, 1);
+            const index = self.customers.indexOfObject("id", self.selectedId);
+            self.customers.splice(index, 1);
             self.cancelForm();
           }
         });
@@ -126,14 +126,14 @@ export default {
       self.selectedId = catId;
       self.selectedIndex = index;
     },
-    updateData(supplier, id) {
+    updateCustomer(customer, id) {
       const self = this;
-      let temp = self.suppliers;
-      const index = self.suppliers.indexOfObject("id", id);
-      temp[index] = supplier;
-      self.suppliers = temp;
+      let temp = self.customers;
+      const index = self.customers.indexOfObject("id", id);
+      temp[index] = customer;
+      self.customers = temp;
       if (id === 0) {
-        self.suppliers.push(new_supplier);
+        self.customers.push(new_customer);
       }
       self.cancelForm();
     },
@@ -145,10 +145,10 @@ export default {
       "Content-Type": "application/json",
     };
     await axios
-      .get("/api/suppliers/", { headers: options })
+      .get("/api/customers/", { headers: options })
       .then((res) => {
         const json = res.data;
-        self.suppliers = [...json, new_supplier];
+        self.customers = [...json, new_customer];
       });
   },
   directives: {
@@ -180,10 +180,10 @@ h1 {
   font-size: 24px;
 }
 
-.supplier-list {
+.customer-list {
   @apply py-4 border-b border-indigo-200;
 }
-.supplier-item {
+.customer-item {
   @apply flex flex-col mt-1
   md:flex-row;
 }

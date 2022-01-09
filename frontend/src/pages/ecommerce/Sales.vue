@@ -1,24 +1,26 @@
 <template>
   <div>
-    <h1>Supplier</h1>
+    <h1>Sales</h1>
     <div class="message">
-      Suplier adalah orang atau perusahaan yang menjual bahan yang akan diolah
-      perusahaan lain menjadi produk siap jual. Umumnya suplier menjual produk
-      dalam bentuk mentah atau bahan baku. Rumah produksi atau pabriklah yang
-      kemudian menggunakan bahan mentah tadi untuk digunakan sebagai bagian dari
-      proses penciptaan produk tertentu. Misalnya, supplier kelapa yang
-      menyetorkan beberapa ton kelapa setiap bulan untuk mencukupi kebutuhan
-      pembuatan minyak goreng kelapa yang dihasilkan si pabrik.
+      Sales atau salesman atau salesmanship adalah orang dengan sebuah profesi dimana seseorang
+      yang kerjanya berkeliling ke rumah-rumah, sok ramah tamah dan berniat menjual produknya ke
+      konsumen dengan cara menghasut konsumen agar tertarik dan membeli produknya.
+    </div>
+    <div class="message">
+        Konotasinya seperti buruk banget.. tapi Satu-satunya divisi yang menghasilkan Uang,
+        dalam arti kata sebenarnya, adalah divisi sales. Divisi yang lain bisa menghemat biaya,
+        tetapi tetap tidak bisa menciptakan aliran dana masuk. Fokus pada divisi <b>SALES</b>, dapat 
+        memberikan pemasukan yang berkesinambungan bagi perusahaan Anda.
     </div>
     <div class="mt-4">
     <hr />
-      <div v-for="(sup, index) in suppliers" v-bind:key="sup.id">
+      <div v-for="(sales, index) in salesmans" v-bind:key="sales.id">
         <transition name="slide-fade">
           <div
-            v-if="selectedIndex === index && selectedId === sup.id"
-            class="supplier-list"
+            v-if="selectedIndex === index && selectedId === sales.id"
+            class="sales-list"
           >
-            <supplier-form :supplierProp="sup" @update="updateData">
+            <sales-form :salesProp="sales" @update="updateSales">
               <button
                 type="button"
                 class="btn-cancel rounded-md"
@@ -27,30 +29,29 @@
                 Cancel
               </button>
               <span class="flex-1"></span>
-              <button @click="deleteForm()" type="button" class="btn-remove" :disabled="sup.id === 0">
+              <button @click="removeSales()" type="button" class="btn-remove" :disabled="sales.id === 0">
                 Delete
               </button>
-            </supplier-form>
+            </sales-form>
           </div>
-          <div v-else class="supplier-list">
+          <div v-else class="sales-list">
             <div
-              v-if="sup.id === 0"
-              @click="supClick(index, sup.id)"
+              v-if="sales.id === 0"
+              @click="supClick(index, sales.id)"
               class="span-link"
             >
               +
             </div>
-            <div v-else class="supplier-item">
+            <div v-else class="sales-item">
               <div class="flex-none w-full md:w-2/5">
-                <div @click="supClick(index, sup.id)" class="span-link">
-                  {{ sup.name }}
+                <div @click="supClick(index, sales.id)" class="span-link">
+                  {{ sales.name }}
                 </div>
-                <div>Sales: {{ sup.sales_name }}</div>
               </div>
               <div class="flex-1 w-full text-sm mt-2 md:mt-0">
-                <div>{{ sup.street }} - {{ sup.city }}, {{ sup.zip }}</div>
-                <div>Telp. {{ sup.phone }} / {{ sup.cell }}</div>
-                <div>{{ sup.email }}</div>
+                <div>{{ sales.street }} - {{ sales.city }}, {{ sales.zip }}</div>
+                <div>Telp. {{ sales.phone }} / {{ sales.cell }}</div>
+                <div>{{ sales.email }}</div>
               </div>
             </div>
           </div>
@@ -64,7 +65,7 @@
 import { shallowRef } from "vue";
 import axios from "axios";
 import TwButton from "@/components/TwButton.vue";
-import SupplierForm from "@/components/forms/SupplierForm.vue";
+import SalesForm from "@/components/forms/SalesForm.vue";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -73,10 +74,9 @@ Array.prototype.indexOfObject = function (property, value) {
   return -1;
 }
 
-const new_supplier = {
+const new_sales = {
   id: 0,
   name: "",
-  sales_name: "",
   street: "",
   city: "",
   phone: "",
@@ -86,17 +86,17 @@ const new_supplier = {
 };
 
 export default {
-  name: "Supplier",
+  name: "Sales",
   data() {
     return {
-      suppliers: [{...new_supplier}],
+      salesmans: [{...new_sales}],
       selectedIndex: -1,
       selectedId: -1,
     };
   },
   components: {
     "tw-button": shallowRef(TwButton),
-    "supplier-form": SupplierForm,
+    "sales-form": SalesForm,
   },
   methods: {
     cancelForm() {
@@ -104,19 +104,19 @@ export default {
       self.selectedId = -1;
       self.selectedIndex = -1;
     },
-    async deleteForm() {
+    async removeSales() {
       const self = this;
       const options = {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/suppliers/${self.selectedId}`, {
+        .delete(`/api/salesmans/${self.selectedId}`, {
           headers: options,
         })
         .then((res) => {
           if (res.status === 200) {
-            const index = self.suppliers.indexOfObject("id", self.selectedId);
-            self.suppliers.splice(index, 1);
+            const index = self.salesmans.indexOfObject("id", self.selectedId);
+            self.salesmans.splice(index, 1);
             self.cancelForm();
           }
         });
@@ -126,14 +126,14 @@ export default {
       self.selectedId = catId;
       self.selectedIndex = index;
     },
-    updateData(supplier, id) {
+    updateSales(sales, id) {
       const self = this;
-      let temp = self.suppliers;
-      const index = self.suppliers.indexOfObject("id", id);
-      temp[index] = supplier;
-      self.suppliers = temp;
+      let temp = self.salesmans;
+      const index = self.salesmans.indexOfObject("id", id);
+      temp[index] = sales;
+      self.salesmans = temp;
       if (id === 0) {
-        self.suppliers.push(new_supplier);
+        self.salesmans.push(new_sales);
       }
       self.cancelForm();
     },
@@ -145,10 +145,10 @@ export default {
       "Content-Type": "application/json",
     };
     await axios
-      .get("/api/suppliers/", { headers: options })
+      .get("/api/salesmans/", { headers: options })
       .then((res) => {
         const json = res.data;
-        self.suppliers = [...json, new_supplier];
+        self.salesmans = [...json, new_sales];
       });
   },
   directives: {
@@ -180,10 +180,10 @@ h1 {
   font-size: 24px;
 }
 
-.supplier-list {
+.sales-list {
   @apply py-4 border-b border-indigo-200;
 }
-.supplier-item {
+.sales-item {
   @apply flex flex-col mt-1
   md:flex-row;
 }

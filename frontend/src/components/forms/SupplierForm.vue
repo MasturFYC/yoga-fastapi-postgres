@@ -10,6 +10,7 @@
           id="sup-name"
           type="text"
           class="flex-input"
+          :class="{'input-disable': nameValid}"
           v-model="supplier.name"
           placeholder="e.g. PT. Mandiri Perkasa"
         />
@@ -21,6 +22,7 @@
           type="text"
           maxlength="50"
           class="flex-input"
+          :class="{'input-disable': salesValid}"
           v-model="supplier.sales_name"
           placeholder="e.g. Mr. Junaedi"
         />
@@ -33,6 +35,7 @@
           id="street"
           maxlength="128"
           class="flex-input"
+          :class="{'input-disable': streetValid}"
           v-model="supplier.street"
           placeholder="e.g. Jl. Jenderal Sudirman No. 155 Kel. Lemahmekar"
         />
@@ -43,6 +46,7 @@
           id="city"
           maxlength="50"
           class="flex-input self-start"
+          :class="{'input-disable': cityValid}"
           type="text"
           v-model="supplier.city"
           placeholder="e.g. Indramayu"
@@ -56,6 +60,7 @@
           id="phone"
           maxlength="25"
           class="flex-input"
+          :class="{'input-disable': phoneValid}"
           type="text"
           v-model="supplier.phone"
           placeholder="e.g. 02342775"
@@ -99,7 +104,7 @@
     </div>
 
     <div class="flex flex-row gap-2 mt-5">
-      <button type="submit" class="btn-primary">Save</button>
+      <button type="submit" class="btn-primary" :disabled="enableSubmit">Save</button>
       <slot />
     </div>
     </form>
@@ -132,7 +137,7 @@ export default {
   },
   data() {
     return {
-      supplier: { ...this.$props.supplierProp },
+      supplier: { ...this.$props.supplierProp }
     };
   },
   methods: {
@@ -151,7 +156,7 @@ export default {
       delete data.id;
 
       await axios
-        .post(`http://localhost:8080/suppliers/`, JSON.stringify(data), {
+        .post(`/api/suppliers/`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -166,7 +171,7 @@ export default {
       const data = { ...supplier };
       delete data.id;
       await axios
-        .put(`http://localhost:8080/suppliers/${id}/`, JSON.stringify(data), {
+        .put(`/api/suppliers/${id}/`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -176,6 +181,14 @@ export default {
           self.$emit('update', res.data, id)
         });
     },    
+  },
+  computed: {
+    enableSubmit () { return this.nameValid || this.salesValid || this.streetValid || this.cityValid || this.phoneValid },
+    nameValid() { return this.supplier.name.trim().length === 0},
+    salesValid() {return this.supplier.sales_name.trim().length === 0},
+    streetValid () {return this.supplier.street.trim().length === 0},
+    cityValid () {return this.supplier.city.trim().length === 0},
+    phoneValid () {return this.supplier.phone.trim().length === 0}
   },
   directives: {
     focus: {
@@ -202,9 +215,14 @@ export default {
   border-indigo-400 text-[14px] placeholder:italic
   focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
 }
-.btn-primary {
+
+.input-disable {  
+  @apply border-red-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500;
+}
+.btn-primary {  
   @apply py-1 px-5 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-700
-  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75;
+  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75
+  disabled:text-gray-600 disabled:bg-gray-200;
 }
 
 ::placeholder {
