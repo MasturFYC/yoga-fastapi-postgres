@@ -2,41 +2,66 @@
   <div>
     <h1>Product</h1>
     <div class="message">
-      Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan.
-      Dalam marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar
-      dan bisa memuaskan sebuah keinginan atau kebutuhan. Dalam tingkat pengecer,
-      produk sering disebut sebagai merchandise. Dalam manufaktur, produk dibeli
-      dalam bentuk barang mentah dan dijual sebagai barang jadi. Produk yang berupa
-      barang mentah seperti metal atau hasil pertanian sering pula disebut sebagai
-      komoditas.
+      Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan. Dalam
+      marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar dan bisa
+      memuaskan sebuah keinginan atau kebutuhan. Dalam tingkat pengecer, produk sering
+      disebut sebagai merchandise. Dalam manufaktur, produk dibeli dalam bentuk barang
+      mentah dan dijual sebagai barang jadi. Produk yang berupa barang mentah seperti
+      metal atau hasil pertanian sering pula disebut sebagai komoditas.
     </div>
     <div class="mt-4">
       <hr />
       <div v-for="(prod, index) in products" v-bind:key="prod.id">
         <transition name="slide-fade">
-          <div v-if="selectedIndex === index && selectedId === prod.id" class="product-list">
-            <product-form :productProp="prod" :categoriesProp="categories" @update="updateData">
-              <button type="button" class="btn-cancel rounded-md" @click="cancelForm()">Cancel</button>
+          <div
+            v-if="selectedIndex === index && selectedId === prod.id"
+            class="product-list"
+          >
+            <product-form
+              :productProp="prod"
+              :categoriesProp="categories"
+              @update="updateData"
+            >
+              <button type="button" class="btn-cancel rounded-md" @click="cancelForm()">
+                Cancel
+              </button>
               <span class="flex-1"></span>
               <button
                 @click="deleteForm()"
                 type="button"
                 class="btn-remove"
                 :disabled="prod.id === 0"
-              >Delete</button>
+              >
+                Delete
+              </button>
             </product-form>
           </div>
           <div v-else class="product-list">
-            <div v-if="prod.id === 0" @click="itemClick(index, prod.id)" class="span-link">+</div>
+            <div
+              v-if="prod.id === 0"
+              @click="itemClick(index, prod.id)"
+              class="span-link"
+            >
+              +
+            </div>
             <div v-else class="product-item">
               <div class="flex-none w-full md:w-2/5">
-                <div @click="itemClick(index, prod.id)" class="span-link">{{ prod.name }}</div>
-                <div>Spek: {{ prod.spec }}</div>
+                <div @click="itemClick(index, prod.id)" class="span-link">
+                  {{ prod.name }}
+                </div>
+                <div class="text-sm">
+                  <div>Spek: {{ prod.spec }}</div>
+                  <div>{{ prod.is_active ? "Masih Aktif" : "Tidak Aktif" }}</div>
+                  <div>
+                    {{ prod.is_sale ? "Produk untuk dijual" : "Tidak untuk dijual" }}
+                  </div>
+                </div>
               </div>
               <div class="flex-1 w-full text-sm mt-2 md:mt-0">
+                <div>Kategori: {{ categoryName(prod.category_id) }}</div>
                 <div>Berat: {{ formatNumber(prod.base_weight) }} kg</div>
                 <div>Harga: {{ formatNumber(prod.base_price) }}</div>
-                <div>{{ prod.is_active }}</div>
+                <div>Unit: {{ prod.base_unit }}</div>
               </div>
             </div>
           </div>
@@ -57,7 +82,7 @@ Array.prototype.indexOfObject = function (property, value) {
     if (this[i][property] === value) return i;
   }
   return -1;
-}
+};
 
 const new_product = {
   id: 0,
@@ -69,7 +94,7 @@ const new_product = {
   first_stock: 0,
   stock: 0,
   is_active: true,
-  category_id: 0
+  category_id: 0,
 };
 
 export default {
@@ -127,11 +152,11 @@ export default {
         .get("/api/categories/", { headers: options })
         .then((res) => {
           const json = res.data;
-          self.loadedCategories = [{id: 0, name: 'Pilih kategori'}, ...json];
-        }).catch(error => {
+          self.loadedCategories = json; //[{id: 0, name: 'Pilih kategori'}, ...json];
+        })
+        .catch((error) => {
           self.loadedCategories = [];
         });
-
     },
     async loadProducts() {
       const self = this;
@@ -139,13 +164,11 @@ export default {
         //      accept: "application/json",
         "Content-Type": "application/json",
       };
-      await axios
-        .get("/api/products/", { headers: options })
-        .then((res) => {
-          const json = res.data;
-          self.products = [...json, new_product];
-        });
-    }
+      await axios.get("/api/products/", { headers: options }).then((res) => {
+        const json = res.data;
+        self.products = [...json, new_product];
+      });
+    },
   },
   async mounted() {
     await this.loadCategories();
@@ -163,10 +186,21 @@ export default {
     },
   },
   computed: {
-    categories() { return this.loadedCategories },
+    categories() {
+      return this.loadedCategories;
+    },
     formatNumber() {
-        return value => Intl.NumberFormat('id-ID').format(value);
-    }
+      return (value) => Intl.NumberFormat("id-ID").format(value);
+    },
+    categoryName() {
+      return (catId) => {
+        const cat = this.loadedCategories.filter((c) => c.id === catId)[0];
+        if (cat) {
+          return cat.name;
+        }
+        return "";
+      };
+    },
   },
   data() {
     return {
@@ -176,7 +210,6 @@ export default {
       selectedId: -1,
     };
   },
-
 };
 </script>
 

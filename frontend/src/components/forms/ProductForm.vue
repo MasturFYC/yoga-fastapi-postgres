@@ -89,39 +89,31 @@
         <label for="category-id" class="flex-label">
           <span class="flex-span">Kategori:</span>
           <v-select
-            id="category-id"
-            label="category-id"
-            v-model="categoryId"
-            :options="categories"
-            label-by="name"
-            value-by="id"
             class="flex-select"
+            id="category-id"
+            :options="categories"
+            label="name"
+            v-model="product.category_id"
             :class="{ 'input-disable': categoryValid }"
-            searchable
-            close-on-select
-            clear-on-close
-            placeholder="Pilih kategori"
-            @selected="setSelected"
-          ></v-select>
+            placeholder="Select kategori"
+            :reduce="(cat) => cat.id"
+          />
+          <!--template #option="{ id, name }">
+              <h3 style="margin: 0">{{ name }}</h3>
+              <em>{{ id }} - {{ name }}</em>
+            </!--template>
+          </v-select -->
         </label>
       </div>
       <div class="my-4">
-      <label for="is-active" class="py-2 flex-1 w-full">
-        <input
-          id="is-active"
-          type="checkbox"
-          v-model="product.is_active"
-        />
-        <span class="flex-span ml-2">Aktif ?</span>
-      </label>
-      <label for="is-sale" class="py-2 flex-1 w-full">
-        <input
-          id="is-sale"
-          type="checkbox"
-          v-model="product.is_sale"
-        />
-        <span class="flex-span ml-2">Produk untuk dijual</span>
-      </label>
+        <label for="is-active" class="py-2 flex-1 w-full">
+          <input id="is-active" type="checkbox" v-model="product.is_active" />
+          <span class="flex-span ml-2">Aktif ?</span>
+        </label>
+        <label for="is-sale" class="py-2 flex-1 w-full">
+          <input id="is-sale" type="checkbox" v-model="product.is_sale" />
+          <span class="flex-span ml-2">Produk untuk dijual</span>
+        </label>
       </div>
       <div class="flex flex-row gap-2 mt-5">
         <button type="submit" class="btn-primary" :disabled="enableSubmit">Save</button>
@@ -139,24 +131,35 @@ export default {
 
   props: {
     update: {
-      type: Function
+      type: Function,
     },
     categoriesProp: {
       type: Array,
-      default: [{ id: 0, name: 'Pilih kategori' }]
+      default: [{ id: 0, name: "Pilih kategori" }],
     },
     productProp: {
       type: Object,
       default: {
-        id: 0, name: "", spec: "", base_unit: "", base_weight: 0,
-        base_price: 0, first_stock: 0, stock: 0, is_active: true, category_id: 0
+        id: 0,
+        name: "",
+        spec: "",
+        base_unit: "",
+        base_weight: 0,
+        base_price: 0,
+        first_stock: 0,
+        stock: 0,
+        is_active: true,
+        category_id: 0,
       },
     },
   },
   methods: {
-    setSelected(o) {
-      this.categoryId = o.id;
-      this.product.category_id = o.id;
+    dropdownShouldOpen(VueSelect) {
+      if (this.product.category_id !== 0) {
+        return VueSelect.open;
+      }
+
+      return VueSelect.search.length !== 0 && VueSelect.open;
     },
     async formSubmit(e) {
       const self = this;
@@ -180,7 +183,7 @@ export default {
           },
         })
         .then((res) => {
-          self.$emit('update', res.data, 0)
+          self.$emit("update", res.data, 0);
         });
     },
     async updateProduct(product, id) {
@@ -195,21 +198,39 @@ export default {
           },
         })
         .then((res) => {
-          self.$emit('update', res.data, id)
+          self.$emit("update", res.data, id);
         });
     },
   },
   computed: {
-    enableSubmit() { return this.nameValid || this.base_unitValid || this.base_weightValid || this.base_priceValid || this.categoryValid },
-    nameValid() { return this.product.name.trim().length === 0 },
-    base_unitValid() { return this.product.base_unit.trim().length === 0 },
-    base_weightValid() { return this.product.base_weight < 0 },
-    base_priceValid() { return this.product.base_price <= 0 },
-    categoryValid() { return this.product.category_id === 0 },
+    enableSubmit() {
+      return (
+        this.nameValid ||
+        this.base_unitValid ||
+        this.base_weightValid ||
+        this.base_priceValid ||
+        this.categoryValid
+      );
+    },
+    nameValid() {
+      return this.product.name.trim().length === 0;
+    },
+    base_unitValid() {
+      return this.product.base_unit.trim().length === 0;
+    },
+    base_weightValid() {
+      return this.product.base_weight < 0;
+    },
+    base_priceValid() {
+      return this.product.base_price <= 0;
+    },
+    categoryValid() {
+      return this.product.category_id === 0 || this.product.category_id === null;
+    },
     categories: {
       get() {
         return this.$props.categoriesProp;
-      }
+      },
     },
     inputNumeral: {
       get() {
@@ -220,9 +241,9 @@ export default {
           numeralIntegerScale: 9,
           numeralDecimalScale: 2,
           numeral: true,
-        }
-      }
-    }
+        };
+      },
+    },
   },
   directives: {
     focus: {
@@ -243,10 +264,9 @@ export default {
     return {
       product: { ...this.$props.productProp },
       categoryId: 0, //this.$props.productProp.category_id, //{id: 0, name: 'Pilih kategori', products: []},
-      searchInput: '',
+      searchInput: "",
     };
   },
-
 };
 </script>
 <style scoped>
@@ -263,9 +283,10 @@ export default {
   focus:outline-none focus:border-gray-500 focus:ring-0 focus:ring-gray-500;
 }
 .flex-select {
-  @apply rounded-[4px] py-0 px-1 flex-initial w-full self-start text-black
-  border border-indigo-400 text-[14px] placeholder:italic 
-  hover:outline-none hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500;
+  @apply rounded-[4px] py-0 px-0 flex-initial w-full self-start text-[14px]
+  border-indigo-400 placeholder:italic
+  focus:border-solid focus:outline-indigo-500 focus:ring-2 focus:ring-indigo-500;
+  /*  hover:outline-none hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500;*/
 }
 .flex-input {
   @apply rounded-[4px] py-0.5 px-2 flex-initial w-full self-start text-gray-700

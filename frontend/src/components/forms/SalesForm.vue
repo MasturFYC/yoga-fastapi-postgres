@@ -126,13 +126,6 @@ export default {
   data() {
     return {
       sales: { ...this.$props.salesProp },
-      options: [
-        { value: "Indramayu", label: "Indramayu" },
-        { value: "Rails", label: "Ruby" },
-        { value: "Sinatra", label: "Ruby" },
-        { value: "Laravel", label: "PHP" },
-        { value: "Phoenix", label: "Elixir" },
-      ],
     };
   },
   methods: {
@@ -210,7 +203,6 @@ export default {
   },
 };
 </script>
-<style src="@vueform/multiselect/themes/default.css"></style>
 <style scoped>
 .flex-span {
   @apply flex-none w-20 text-[13px] font-medium text-gray-600 py-1 md:text-right md:mr-3;

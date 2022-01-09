@@ -36,7 +36,9 @@ class ProductDal():
                               base_weight=payload.base_weight,
                               first_stock=payload.first_stock,
                               stock=payload.stock,
-                              is_active=payload.is_active)
+                              is_active=payload.is_active,
+                              is_sale=payload.is_sale,
+                              )
         self.session.add(new_product)
         await self.session.flush()
         return new_product
@@ -52,7 +54,8 @@ class ProductDal():
                     base_weight=payload.base_weight,
                     first_stock=payload.first_stock,
                     stock=payload.stock,
-                    is_active=payload.is_active).returning(Product)
+                    is_active=payload.is_active,
+                    is_sale=payload.is_sale,).returning(Product)
         query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
         tup = res.fetchone()

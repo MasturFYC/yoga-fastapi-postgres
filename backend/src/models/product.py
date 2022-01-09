@@ -27,9 +27,10 @@ class Product(declare_base):  # pylint: disable=too-few-public-methods
     base_price = Column(DECIMAL(12, 2), nullable=False, default=0)
     first_stock = Column(DECIMAL(10, 2), nullable=False, default=0)
     stock = Column(DECIMAL(10, 2), nullable=False, default=0)
-    is_active = Column(Boolean, nullable=False, default=False)
+    is_active = Column(Boolean, nullable=False, default=True)
+    is_sale = Column(Boolean, nullable=False, default=False)
 
-    category_id = Column(SmallInteger, ForeignKey("categories.id"))
+    category_id = Column(SmallInteger, ForeignKey("categories.id"), nullable=False, default=0)
 
     category = relationship(
         "src.models.category.Category", back_populates="products")
@@ -50,7 +51,8 @@ class Product(declare_base):  # pylint: disable=too-few-public-methods
                                  back_populates="product")
 
     def __init__(self, **kwargs):
-        valid_keys = ["name", "spec", "base_unit", "base_price",
-                      "base_weight", "is_active", "first_stock", "stock", "category_id"]
+        valid_keys = ["name", "spec", "base_unit", "base_weight",
+                      "base_price", "first_stock", "stock",
+                      "is_active", "is_sale", "category_id"]
         for key in valid_keys:
             setattr(self, key, kwargs.get(key))

@@ -24,7 +24,7 @@ async def __get_current_dal():
             yield user_dal(session)
 
 ROUTER = APIRouter(
-    prefix="/users",
+    prefix="/api/users",
     tags=["users"],
     responses={404: {"User": "Not found"}},
 )

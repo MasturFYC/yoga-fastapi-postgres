@@ -5,10 +5,10 @@ import multiprocessing
 from starlette.datastructures import URL
 import uvicorn
 from fastapi import FastAPI
-#from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-#from starlette.responses import FileResponse
-#from starlette.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
+from starlette.responses import RedirectResponse
 
 from src.models.base_model import declare_base, database, engine
 
@@ -28,7 +28,7 @@ from src.routers.fackturer import ROUTER as fackturer_router
 from src.routers.fackturerdetail import ROUTER as fackturerdetail_router
 
 app = FastAPI(title=os.environ.get('APP_TITLE'))
-#app.mount("/yoga", StaticFiles(directory="yoga"), name="yoga")
+app.mount("/yoga", StaticFiles(directory="yoga"), name="yoga")
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,9 +57,9 @@ async def shutdown():
 @app.get('/')
 async def root():
     ''' Goto root '''
-    return {'message': os.environ.get('DEF_MESSAGE')}
-    # return FileResponse('yoga/index.html')
-    # return RedirectResponse(URL('vite/index.html'))
+    # return {'message': os.environ.get('DEF_MESSAGE')}
+    return FileResponse('yoga/index.html')
+    # return RedirectResponse(URL('yoga/'))
 
 app.include_router(category_router.ROUTER)
 app.include_router(product_router.ROUTER)

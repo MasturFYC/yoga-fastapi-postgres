@@ -17,7 +17,7 @@ async def get_current_dal():
 
 
 ROUTER = APIRouter(
-    prefix="/stocks",
+    prefix="/api/stocks",
     tags=["stocks"],
     responses={404: {"Stock": "Not found"}},
 )

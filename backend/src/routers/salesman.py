@@ -16,7 +16,7 @@ async def get_current_dal():
 
 
 ROUTER = APIRouter(
-    prefix="/salesmans",
+    prefix="/api/salesmans",
     tags=["salesmans"],
     responses={404: {"salesman": "Not found"}},
 )
@@ -60,7 +60,7 @@ async def modify(pid: int, payload: data_in, dal: cur_dal = Depends(get_current_
     if res is None:
         raise HTTPException(status_code=500, detail="Salesman name exist")
 
-    return res.__dict__
+    return res #.__dict__
 
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)

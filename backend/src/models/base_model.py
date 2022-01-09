@@ -11,15 +11,15 @@ from pydantic import BaseModel
 
 env = load_env(dir_path='./', auto_parse=True)
 
-HOST_SERVER = env.get('HOST_SERVER')
-DB_SERVER_PORT = int(str(env.get('DB_PORT')))
+DB_HOST = env.get('DB_HOST')
+DB_HOST_PORT = int(str(env.get('DB_HOST_PORT')))
 DB_NAME = env.get('DB_NAME')
 DB_USER_NAME = env.get('DB_USERNAME')
 DB_PASSWORD = env.get('DB_PASSWORD')
 SSL_MODEL = env.get('SSL_MODE')
 
 DATABASE_URL = 'postgresql+asyncpg://{}:{}@{}:{}/{}?prepared_statement_cache_size=500'.format(
-    DB_USER_NAME, DB_PASSWORD, HOST_SERVER, DB_SERVER_PORT, DB_NAME)
+    DB_USER_NAME, DB_PASSWORD, DB_HOST, DB_HOST_PORT, DB_NAME)
 
 engine = create_async_engine(
     DATABASE_URL, pool_size=3, max_overflow=0, echo=True,)

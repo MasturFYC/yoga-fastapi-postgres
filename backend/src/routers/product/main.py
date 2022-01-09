@@ -16,7 +16,7 @@ async def get_current_dal():
             yield cur_dal(session)
 
 ROUTER = APIRouter(
-    prefix="/products",
+    prefix="/api/products",
     tags=["products"],
     responses={404: {"products": "Not found"}},
 )
@@ -61,7 +61,7 @@ async def update_product(pid: int, payload: py_in, dal: cur_dal = Depends(get_cu
     if res is None:
         raise HTTPException(status_code=500, detail="Product name exist")
 
-    return res.__dict__
+    return res #.__dict__
 
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)

@@ -14,6 +14,7 @@ class ProductIn(CamelModel):
     first_stock: float = 0
     stock: float = 0
     is_active: bool = True
+    is_sale: bool = True
 
 
 class ProductOut(ProductIn):
