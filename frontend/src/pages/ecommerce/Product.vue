@@ -13,59 +13,86 @@
       <hr />
       <div v-for="(prod, index) in products" v-bind:key="prod.id">
         <transition name="slide-fade">
-          <div
-            v-if="selectedIndex === index && selectedId === prod.id"
-            class="product-list"
-          >
-            <product-form
-              :productProp="prod"
-              :categoriesProp="categories"
-              @update="updateData"
-            >
-              <button type="button" class="btn-cancel rounded-md" @click="cancelForm()">
-                Cancel
-              </button>
-              <span class="flex-1"></span>
-              <button
-                @click="deleteForm()"
-                type="button"
-                class="btn-remove"
-                :disabled="prod.id === 0"
+          <template v-if="selectedIndex === index && selectedId === prod.id">
+            <div class="product-list">
+              <product-form
+                :productProp="prod"
+                :categoriesProp="categories"
+                @update="updateData"
               >
-                Delete
-              </button>
-            </product-form>
-          </div>
-          <div v-else class="product-list">
-            <div
-              v-if="prod.id === 0"
-              @click="itemClick(index, prod.id)"
-              class="span-link"
-            >
-              +
+                <template v-slot:default>
+                  <button
+                    type="button"
+                    class="btn-cancel rounded-md"
+                    @click="cancelForm()"
+                  >
+                    Cancel
+                  </button>
+                  <span class="flex-1"></span>
+                  <button
+                    @click="deleteForm()"
+                    type="button"
+                    class="btn-remove"
+                    :disabled="prod.id === 0"
+                  >
+                    Delete
+                  </button>
+                </template>
+              </product-form>
             </div>
-            <div v-else class="product-item">
-              <div class="flex-none w-full md:w-2/5">
-                <div @click="itemClick(index, prod.id)" class="span-link">
-                  {{ prod.name }}
+          </template>
+          <template v-else>
+            <div class="product-list">
+              <a
+                href="#"
+                v-if="prod.id === 0"
+                @click.prevent.stop="itemClick(index, prod.id)"
+                class="span-link"
+              >
+                +
+              </a>
+              <div v-else class="product-item">
+                <div class="flex-none w-full md:w-2/5">
+                  <a
+                    href="#"
+                    @click.prevent.stop="itemClick(index, prod.id)"
+                    class="span-link"
+                  >
+                    {{ prod.name }}
+                  </a>
+                  <div class="text-sm">
+                    <div>Spek: {{ prod.spec }}</div>
+                  </div>
+                  <div>
+                    <label>
+                      <input
+                        type="checkbox"
+                        :checked="units.includes(prod.id)"
+                        @change="unitChecked($event.target.checked, prod.id)"
+                      /><span class="ml-2 text-sm">Tampilkan untis</span></label
+                    >
+                  </div>
                 </div>
-                <div class="text-sm">
-                  <div>Spek: {{ prod.spec }}</div>
+                <div class="flex-1 w-full text-sm mt-0">
+                  <div>Kategori: {{ categoryName(prod.category_id) }}</div>
+                  <div>Berat: {{ formatNumber(prod.base_weight) }} kg</div>
                   <div>{{ prod.is_active ? "Masih Aktif" : "Tidak Aktif" }}</div>
+                </div>
+                <div class="flex-1 w-full text-sm mt-0">
+                  <div>Harga: {{ formatNumber(prod.base_price) }}</div>
+                  <div>Unit: {{ prod.base_unit }}</div>
                   <div>
                     {{ prod.is_sale ? "Produk untuk dijual" : "Tidak untuk dijual" }}
                   </div>
                 </div>
               </div>
-              <div class="flex-1 w-full text-sm mt-2 md:mt-0">
-                <div>Kategori: {{ categoryName(prod.category_id) }}</div>
-                <div>Berat: {{ formatNumber(prod.base_weight) }} kg</div>
-                <div>Harga: {{ formatNumber(prod.base_price) }}</div>
-                <div>Unit: {{ prod.base_unit }}</div>
-              </div>
+              <template v-if="units.includes(prod.id)">
+                <unit-list :productId="prod.id" :key="prod.id"></unit-list>
+              </template>
             </div>
-          </div>
+          </template>
         </transition>
+        <hr />
       </div>
     </div>
   </div>
@@ -76,6 +103,7 @@ import { shallowRef } from "vue";
 import axios from "axios";
 import TwButton from "@/components/TwButton.vue";
 import ProductForm from "@/components/forms/ProductForm.vue";
+import UnitList from "@/components/forms/UnitList.vue";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -102,8 +130,22 @@ export default {
   components: {
     "tw-button": shallowRef(TwButton),
     "product-form": ProductForm,
+    "unit-list": UnitList,
   },
   methods: {
+    unitChecked(checked, id) {
+      let i = this.units.indexOf(id);
+      if (checked) {
+        if (i < 0) {
+          this.units.push(id);
+        }
+      } else {
+        if (i >= 0) {
+          this.units.splice(i, 1);
+        }
+      }
+      console.log(this.units);
+    },
     cancelForm() {
       const self = this;
       self.selectedId = -1;
@@ -206,6 +248,7 @@ export default {
     return {
       loadedCategories: [],
       products: [],
+      units: [],
       selectedIndex: -1,
       selectedId: -1,
     };
@@ -229,7 +272,7 @@ h1 {
 }
 
 .product-list {
-  @apply py-4 border-b border-indigo-200;
+  @apply py-4;
 }
 .product-item {
   @apply flex flex-col mt-1

@@ -2,40 +2,43 @@
   <div>
     <h1>Customer</h1>
     <div class="message">
-      Secara umum, arti customer adalah seseorang atau organisasi yang membeli suatu barang 
-      atau jasa dari sebuah toko atau bisnis tertentu. Pendapat lain mengatakan pengertian 
-      customer adalah pelanggan, yaitu individu, rumah tangga, atau perusahaan, yang membeli 
-      suatu produk, baik itu ide, barang, atau jasa, dari penjual atau pemasok tertentu.
+      Secara umum, arti customer adalah seseorang atau organisasi yang membeli suatu
+      barang atau jasa dari sebuah toko atau bisnis tertentu. Pendapat lain mengatakan
+      pengertian customer adalah pelanggan, yaitu individu, rumah tangga, atau perusahaan,
+      yang membeli suatu produk, baik itu ide, barang, atau jasa, dari penjual atau
+      pemasok tertentu.
     </div>
     <div class="message">
-        Dalam hal ini, customer tidak selalu berarti konsumen karena bisa saja pelanggan 
-        tersebut membeli suatu produk bukan untuk digunakan sendiri tapi untuk dijual atau 
-        diberikan kepada orang lain.    
+      Dalam hal ini, customer tidak selalu berarti konsumen karena bisa saja pelanggan
+      tersebut membeli suatu produk bukan untuk digunakan sendiri tapi untuk dijual atau
+      diberikan kepada orang lain.
     </div>
     <div class="mt-4">
-    <hr />
+      <hr />
       <div v-for="(customer, index) in customers" v-bind:key="customer.id">
         <transition name="slide-fade">
-          <div
+          <template
             v-if="selectedIndex === index && selectedId === customer.id"
             class="customer-list"
           >
             <customer-form :customerProp="customer" @update="updateCustomer">
-              <button
-                type="button"
-                class="btn-cancel rounded-md"
-                @click="cancelForm()"
-              >
+              <button type="button" class="btn-cancel rounded-md" @click="cancelForm()">
                 Cancel
               </button>
               <span class="flex-1"></span>
-              <button @click="removeCustomer()" type="button" class="btn-remove" :disabled="customer.id === 0">
+              <button
+                @click="removeCustomer()"
+                type="button"
+                class="btn-remove"
+                :disabled="customer.id === 0"
+              >
                 Delete
               </button>
             </customer-form>
-          </div>
-          <div v-else class="customer-list">
-            <a href="#"
+          </template>
+          <template v-else class="customer-list">
+            <a
+              href="#"
               v-if="customer.id === 0"
               @click.prevent="supClick(index, customer.id)"
               class="span-link"
@@ -44,7 +47,11 @@
             </a>
             <div v-else class="customer-item" href="#">
               <div class="flex-none w-full md:w-2/5">
-                <a href="#" @click.prevent="supClick(index, customer.id)" class="span-link">
+                <a
+                  href="#"
+                  @click.prevent="supClick(index, customer.id)"
+                  class="span-link"
+                >
                   {{ customer.name }}
                 </a>
               </div>
@@ -54,7 +61,7 @@
                 <div>{{ customer.email }}</div>
               </div>
             </div>
-          </div>
+          </template>
         </transition>
       </div>
     </div>
@@ -72,7 +79,7 @@ Array.prototype.indexOfObject = function (property, value) {
     if (this[i][property] === value) return i;
   }
   return -1;
-}
+};
 
 const new_customer = {
   id: 0,
@@ -89,7 +96,7 @@ export default {
   name: "Customer",
   data() {
     return {
-      customers: [{...new_customer}],
+      customers: [{ ...new_customer }],
       selectedIndex: -1,
       selectedId: -1,
     };
@@ -144,12 +151,10 @@ export default {
       //      accept: "application/json",
       "Content-Type": "application/json",
     };
-    await axios
-      .get("/api/customers/", { headers: options })
-      .then((res) => {
-        const json = res.data;
-        self.customers = [...json, new_customer];
-      });
+    await axios.get("/api/customers/", { headers: options }).then((res) => {
+      const json = res.data;
+      self.customers = [...json, new_customer];
+    });
   },
   directives: {
     focus: {

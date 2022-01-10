@@ -89,24 +89,42 @@
         <label for="category-id" class="flex-label">
           <span class="flex-span">Kategori:</span>
           <v-select
-            class="flex-select"
+            class="style-chooser"
             id="category-id"
             :options="categories"
             label="name"
             v-model="product.category_id"
             :class="{ 'input-disable': categoryValid }"
-            placeholder="Select kategori"
             :reduce="(cat) => cat.id"
-          />
-          <!--template #option="{ id, name }">
-              <h3 style="margin: 0">{{ name }}</h3>
-              <em>{{ id }} - {{ name }}</em>
-            </!--template>
-          </v-select -->
+          >
+            <template v-slot:list-header>
+              <li style="text-align: center">Pilih kategori</li>
+            </template>
+            <template v-slot:selected-option="{ name }">
+              <div style="color: #555; display: flex; align-items: baseline; margin: 0px">
+                <span class="font-medium font-[13px]">{{ name }}</span>
+                <!-- em style="margin-left: 0.5rem">by {{ name }}</!-->
+              </div>
+            </template>
+            <template v-slot:selection="{ item }">
+              <span class="font-bold">{{ item }}</span>
+            </template>
+            <template v-slot:option="{ name }">
+              <span>{{ name }}</span>
+            </template>
+            <template v-slot:no-options="{ search, searching }">
+              <template v-if="searching">
+                Kategori tidak ditemukan
+                <em>{{ search }}</em
+                >.
+              </template>
+              <em v-else style="opacity: 0.5">Ketikkan untuk mulai mencari kategori.</em>
+            </template>
+          </v-select>
         </label>
       </div>
       <div class="my-4">
-        <label for="is-active" class="py-2 flex-1 w-full">
+        <label for="is-active" class="py-2 flex-1 w-full mr-4">
           <input id="is-active" type="checkbox" v-model="product.is_active" />
           <span class="flex-span ml-2">Aktif ?</span>
         </label>
@@ -117,7 +135,7 @@
       </div>
       <div class="flex flex-row gap-2 mt-5">
         <button type="submit" class="btn-primary" :disabled="enableSubmit">Save</button>
-        <slot />
+        <slot></slot>
       </div>
     </form>
   </div>
@@ -269,7 +287,11 @@ export default {
   },
 };
 </script>
+
 <style scoped>
+.v-select.style-chooser {
+  @apply rounded-[4px] py-0 px-0 flex-initial w-full text-[14px];
+}
 .flex-span {
   @apply flex-none w-[130px] text-[13px] font-medium text-gray-600 py-1 md:text-right md:mr-3;
 }
