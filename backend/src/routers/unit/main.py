@@ -59,12 +59,12 @@ async def create_unit(payload: UnitIn,
 async def update_unit(pid: int, payload: UnitIn,
                       dal: UnitDal = Depends(get_current_dal)):
     """ Update unit by id """
-    res = await dal.unit_update(payload)
+    res = await dal.unit_update(pid, payload)
 
     if res is None:
         raise HTTPException(status_code=500, detail="Unit name exist")
 
-    return res.__dict__
+    return res #.__dict__
 
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)

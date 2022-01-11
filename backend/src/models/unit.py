@@ -33,7 +33,7 @@ class Unit(declare_base):
     name = Column(String(6), nullable=False, index=True)
     content = Column(DECIMAL(8, 2), nullable=False, default=0)
     buy_price = Column(DECIMAL(12, 2), nullable=False, default=0)
-    margin = Column(DECIMAL(5, 4), nullable=False, default=0)
+    margin = Column(DECIMAL(6, 4), nullable=False, default=0)
     price = Column(DECIMAL(12, 2), nullable=False, default=0)
     is_default = Column(Boolean, nullable=False, default=False)
 
