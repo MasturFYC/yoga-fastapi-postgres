@@ -69,7 +69,7 @@
                         type="checkbox"
                         :checked="units.includes(prod.id)"
                         @change="unitChecked($event.target.checked, prod.id)"
-                      /><span class="ml-2 text-sm">Tampilkan untis</span></label
+                      /><span class="ml-2 text-sm">Tampilkan units</span></label
                     >
                   </div>
                 </div>
@@ -87,7 +87,7 @@
                 </div>
               </div>
               <template v-if="units.includes(prod.id)">
-                <unit-list :productId="prod.id" :key="prod.id"></unit-list>
+                  <unit-list :productId="prod.id" :productPrice="prod.base_price" :key="prod.id"></unit-list>
               </template>
             </div>
           </template>
@@ -144,7 +144,7 @@ export default {
           this.units.splice(i, 1);
         }
       }
-      console.log(this.units);
+      console.log(this.units)
     },
     cancelForm() {
       const self = this;

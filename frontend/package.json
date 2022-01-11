@@ -11,14 +11,13 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@coders-tm/vue-number-format": "^2.1.0",
     "@highlightjs/vue-plugin": "^2.0.1",
     "@iconify/iconify": "^2.0.4",
-    "@vueform/multiselect": "^2.3.1",
     "@vueuse/core": "^7.5.3",
     "axios": "^0.21.1",
     "highlight.js": "^11.2.0",
     "vue": "^3.2.26",
-    "vue-cleave-component": "^3.0.1",
     "vue-router": "^4.0.12",
     "vue-select": "^4.0.0-beta.1"
   },

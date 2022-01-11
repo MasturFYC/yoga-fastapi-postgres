@@ -4,7 +4,9 @@ import App from './App.vue'
 import router from '@/router'
 //import VueSelect from 'vue-next-select';
 import vSelect from 'vue-select';
-import Cleave from 'vue-cleave-component';
+//import Cleave from 'vue-cleave-component';
+import vNumber from '@coders-tm/vue-number-format'
+
 import '@/styles/app.css'
 import '@/styles/page-example-common-style.css'
 // import 'vue-next-select/dist/index.min.css';
@@ -22,5 +24,5 @@ const app = createApp(App);
 // );
 app.use(router);
 app.component('v-select', vSelect);
-app.component('v-number', Cleave);
+app.use(vNumber, {precision: 4})
 app.mount('#app')

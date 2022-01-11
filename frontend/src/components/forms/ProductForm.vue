@@ -2,98 +2,92 @@
   <div>
     <form @submit="formSubmit">
       <div class="flex flex-col md:flex-row gap-x-4">
-        <label for="prod-name" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Nama Produk:</span>
           <input
             v-focus
             maxlength="50"
-            id="prod-name"
             type="text"
             class="flex-input"
             :class="{ 'input-disable': nameValid }"
-            v-model="product.name"
+            v-model.lazy="product.name"
             placeholder="e.g. Gula Pasir"
           />
         </label>
-        <label for="prod-spec" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Spek:</span>
           <input
-            id="prod-spec"
             type="text"
             maxlength="50"
             class="flex-input"
-            v-model="product.spec"
+            v-model.lazy="product.spec"
             placeholder="e.g. 1 zax @ 25kg"
           />
         </label>
       </div>
       <div class="flex flex-col md:flex-row gap-x-4">
-        <label for="base-unit" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Unit (terkecil):</span>
           <input
-            id="base-unit"
             maxlength="6"
             type="text"
             class="flex-input"
             :class="{ 'input-disable': base_unitValid }"
-            v-model="product.base_unit"
+            v-model.lazy="product.base_unit"
             placeholder="e.g. kg"
           />
         </label>
-        <label for="base-weight" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Berat (terkecil):</span>
-          <v-number
-            id="base-weight"
+          <number
             class="flex-input"
-            :options="inputNumeral"
+            v-bind="inputNumeral"
             :class="{ 'input-disable': base_weightValid }"
-            v-model="product.base_weight"
+            v-model.lazy="product.base_weight"
             placeholder="e.g. 2.5"
           />
         </label>
       </div>
       <div class="flex flex-col md:flex-row gap-x-4">
-        <label for="base-price" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Harga Beli (terkecil):</span>
-          <v-number
-            id="base-price"
+          <number
             class="flex-input"
-            :options="inputNumeral"
+            v-bind="inputNumeral"
             :class="{ 'input-disable': base_priceValid }"
-            v-model="product.base_price"
+            v-model.lazy="product.base_price"
             placeholder="e.g. 12,500"
           />
         </label>
-        <label for="first-stock" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Stock awal:</span>
-          <v-number
-            id="first-stock"
+          <number
             readonly
             class="flex-input-readonly"
-            :options="inputNumeral"
-            v-model="product.first_stock"
+            v-bind="inputNumeral"
+            placeholder="0"
+            v-model.lazy="product.first_stock"
           />
         </label>
       </div>
       <div class="flex flex-col md:flex-row gap-x-4">
-        <label for="stock" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Sisa Stock:</span>
-          <v-number
-            id="stock"
+          <number
+            placeholder="0"
             readonly
             class="flex-input-readonly"
-            :options="inputNumeral"
-            v-model="product.stock"
+            v-bind="inputNumeral"
+            v-model.lazy="product.stock"
           />
         </label>
-        <label for="category-id" class="flex-label">
+        <label class="flex-label">
           <span class="flex-span">Kategori:</span>
-          <v-select
+          <v-select          
             class="style-chooser"
-            id="category-id"
             :options="categories"
             label="name"
-            v-model="product.category_id"
+            v-model.lazy="product.category_id"
             :class="{ 'input-disable': categoryValid }"
             :reduce="(cat) => cat.id"
           >
@@ -124,12 +118,12 @@
         </label>
       </div>
       <div class="my-4">
-        <label for="is-active" class="py-2 flex-1 w-full mr-4">
-          <input id="is-active" type="checkbox" v-model="product.is_active" />
+        <label class="py-2 flex-1 w-full mr-4">
+          <input type="checkbox" v-model.lazy="product.is_active" />
           <span class="flex-span ml-2">Aktif ?</span>
         </label>
-        <label for="is-sale" class="py-2 flex-1 w-full">
-          <input id="is-sale" type="checkbox" v-model="product.is_sale" />
+        <label class="py-2 flex-1 w-full">
+          <input type="checkbox" v-model.lazy="product.is_sale" />
           <span class="flex-span ml-2">Produk untuk dijual</span>
         </label>
       </div>
@@ -253,12 +247,11 @@ export default {
     inputNumeral: {
       get() {
         return {
-          numeralPositiveOnly: true,
-          noImmediatePrefix: true,
-          rawValueTrimPrefix: true,
-          numeralIntegerScale: 9,
-          numeralDecimalScale: 2,
-          numeral: true,
+          decimal: ",",
+          separator: ".",
+          suffix: "",
+          precision: 2,
+          masked: false,
         };
       },
     },
