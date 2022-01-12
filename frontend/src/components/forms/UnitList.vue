@@ -2,31 +2,33 @@
   <div
     class="mt-4 hidden text-[13px] w-full flex flex-row gap-x-0 font-medium md:flex bg-indigo-100"
   >
-    <div class="w-[120px] px-1 py-1 border border-indigo-400">ID#</div>
-    <div class="w-[500px] px-1 py-1 border border-indigo-400 border-l-0">NAMA</div>
-    <div class="w-[120px] px-1 py-1 border border-indigo-400 border-l-0 text-right">
+    <div class="w-[120px] px-1 py-1 border border-indigo-200">ID#</div>
+    <div class="w-[500px] px-1 py-1 border border-indigo-200 border-l-0">NAMA</div>
+    <div class="w-[120px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       ISI
     </div>
-    <div class="w-[250px] px-1 py-1 border border-indigo-400 border-l-0 text-right">
+    <div class="w-[250px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       HARGA BELI
     </div>
-    <div class="w-[155px] px-1 py-1 border border-indigo-400 border-l-0 text-right">
+    <div class="w-[160px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       MARGIN
     </div>
-    <div class="w-[250px] px-1 py-1 border border-indigo-400 border-l-0 text-right">
+    <div class="w-[250px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       HARGA JUAL
     </div>
-    <div class="w-[225px] px-1 py-1 border border-indigo-400 border-l-0">DEFAULT</div>
-    <div class="w-[270px] px-1 py-1 border border-indigo-400 border-l-0">COMMAND</div>
+    <div class="w-[225px] px-1 py-1 border border-indigo-200 border-l-0">DEFAULT</div>
+    <div class="w-[270px] px-1 py-1 border border-indigo-200 border-l-0">COMMAND</div>
   </div>
   <template v-for="unit in units" :key="unit.id">
-    <unit-form :unitProp="unit" :basePrice="$props.productPrice" @update="updateUnit">
+    <unit-form :unitProp="unit" :basePrice="$props.productPrice" @update="updateUnit"
+    @addNew="addUnit">
       <template v-slot:default>
         <button
           class="btn border-transparent rounded-sm hover:bg-gray-200"
           type="button"
+          tabindex="-1"
           :disabled="unit.id === 0"
-          @click="removeUnit(unit.id)"
+          @click.prevent.stop="removeUnit(unit.id)"
         >
           <tw-icon
             name="mdi-light:delete"
@@ -97,9 +99,12 @@ export default {
         }
       } else {
         //temp[index] = unit;
-        self.units[index] = unit;
+        //self.units[index] = unit;
+        self.units.splice(index, 1, {...unit});
         if (id === 0) {
-          self.addUnit();
+          setTimeout(() => {
+            self.addUnit();
+          }, 100);
         }
       }
     },
