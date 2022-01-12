@@ -1,7 +1,9 @@
 ''' Product Dal '''
 from typing import List
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, DECIMAL, Integer
 from sqlalchemy.orm import joinedload, Session
+from sqlalchemy.sql.expression import bindparam
+from sqlalchemy.sql import text
 from src.models.product import Product
 from src.schemas.product import ProductIn as data_in
 
@@ -45,6 +47,8 @@ class ProductDal():
 
     async def product_update(self, pid: int, payload: data_in) -> Product:
         ''' update one Product by id '''
+        sql_file = open('src/dals/update_unit_price.sql', 'r')
+
         query = update(Product).where(Product.id == pid)\
             .values(category_id=payload.category_id,
                     name=payload.name,
@@ -58,8 +62,23 @@ class ProductDal():
                     is_sale=payload.is_sale,).returning(Product)
         query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
+
+        stmt = text(sql_file.read())
+        stmt = stmt.bindparams(bindparam('base_price',
+                                         value=payload.base_price,
+                                         type_=DECIMAL(12, 2)),
+                               bindparam('id',
+                                         value=pid,
+                                         type_=Integer))
+        stmt.execution_options(autocommit=False)
+        await self.session.execute(stmt)
+
         tup = res.fetchone()
         await self.session.commit()
+
+        # self.session.close()
+        sql_file.close()
+
         return tup
 
     async def product_delete(self, pid: int) -> int:

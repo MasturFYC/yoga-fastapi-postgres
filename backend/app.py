@@ -82,5 +82,5 @@ if __name__ == '__main__':
                 host=os.environ.get('SERVER_HOST'),
                 port=int(str(os.environ.get('SERVER_PORT'))),
                 reload=True,
-                workers=2,
+                workers=1,
                 debug=True)
