@@ -1,7 +1,9 @@
 ''' Unit Dal '''
 from typing import List
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, Boolean, Integer
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import bindparam
+from sqlalchemy.sql import text
 from src.models.unit import Unit
 from src.schemas.unit import UnitIn as data_in
 
@@ -41,6 +43,38 @@ class UnitDal():
 
     async def unit_update(self, pid: int, payload: data_in) -> Unit:
         ''' update one Unit by id '''
+
+        if(payload.is_default == True):
+            sql_file1 = open('src/dals/unit_clear_default.sql', 'r')
+            # sql_file2 = open('src/dals/update_unit_default.sql', 'r')
+
+            stmt = text(sql_file1.read())
+            stmt = stmt.bindparams(bindparam('val',
+                                             value=False,
+                                             type_=Boolean),
+                                   bindparam('id',
+                                             value=pid,
+                                             type_=Integer),
+                                   bindparam('product_id',
+                                             value=payload.product_id,
+                                             type_=Integer)
+                                   )
+            await self.session.execute(stmt)
+
+            sql_file1.close()
+
+            # stmt = text(sql_file2.read())
+            # stmt = stmt.bindparams(bindparam('val',
+            #                                   value=payload.is_default,
+            #                                   type_=Boolean),
+            #                         bindparam('id',
+            #                                   value=pid,
+            #                                   type_=Integer),
+            #                         )
+            # await self.session.execute(stmt)
+            
+            # sql_file2.close()
+
         query = update(Unit).where(Unit.id == pid)\
             .values(product_id=payload.product_id,
                     name=payload.name,
@@ -52,6 +86,7 @@ class UnitDal():
         query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
         tup = res.fetchone()
+
         await self.session.commit()
         return tup
 

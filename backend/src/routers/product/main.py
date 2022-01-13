@@ -31,6 +31,15 @@ async def read_products(skip: int = 0, take: int = 20, dal: cur_dal = Depends(ge
     return [row.__dict__ for row in res]
 
 
+@ROUTER.get("/search/{name}/", response_model=List[py_out], status_code=status.HTTP_200_OK)
+async def search_products(name: str, dal: cur_dal = Depends(get_current_dal)):
+    """ Search products by name """
+    res = await dal.search_name(name)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Product is empty")
+    return [row.__dict__ for row in res]
+
+
 @ROUTER.get("/{pid}/", response_model=py_out, status_code=status.HTTP_200_OK)
 async def read_product(pid: int, dal: cur_dal = Depends(get_current_dal)):
     """ Get product by id """
@@ -61,7 +70,7 @@ async def update_product(pid: int, payload: py_in, dal: cur_dal = Depends(get_cu
     if res is None:
         raise HTTPException(status_code=500, detail="Product name exist")
 
-    return res #.__dict__
+    return res  # .__dict__
 
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)

@@ -20,8 +20,11 @@
     <div class="w-[270px] px-1 py-1 border border-indigo-200 border-l-0">COMMAND</div>
   </div>
   <template v-for="unit in units" :key="unit.id">
-    <unit-form :unitProp="unit" :basePrice="$props.productPrice" @update="updateUnit"
-    @addNew="addUnit">
+    <unit-form 
+      :unitProp="{...unit}" 
+      :basePrice="$props.productPrice"      
+      @update="updateUnit"
+      @addNew="addUnit">
       <template v-slot:default>
         <button
           class="btn border-transparent rounded-sm hover:bg-gray-200"
@@ -123,6 +126,14 @@ export default {
         });
       }
     },
+    // changeDefault(id) {
+    //   // console.log(id)
+    //   for(let i=0; i<this.units.length; i++) {
+    //     if(this.units[i].id !== id) {
+    //       this.units[i].is_default = false;
+    //     }
+    //   }
+    // },
     async loadUnits() {
       const self = this;
 

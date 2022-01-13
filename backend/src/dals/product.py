@@ -1,9 +1,10 @@
 ''' Product Dal '''
 from typing import List
-from sqlalchemy import select, update, delete, DECIMAL, Integer
+from sqlalchemy import select, update, delete, DECIMAL, Integer, String
 from sqlalchemy.orm import joinedload, Session
 from sqlalchemy.sql.expression import bindparam
 from sqlalchemy.sql import text
+from sqlalchemy import func
 from src.models.product import Product
 from src.schemas.product import ProductIn as data_in
 
@@ -19,6 +20,15 @@ class ProductDal():
         query = await self.session\
             .execute(select(Product)
                      .offset(skip).limit(take).order_by(Product.name))
+        
+        return query.scalars().fetchall()
+
+    async def search_name(self, name: str) -> List[Product]:
+        ''' search products by name '''
+        query = await self.session.execute(select(Product)
+                                           .where(func.lower(Product.name).contains(name.lower()))
+                                           .order_by(Product.name))
+        print(str(query))
         return query.scalars().fetchall()
 
     async def product_get_one(self, pid: int) -> Product:

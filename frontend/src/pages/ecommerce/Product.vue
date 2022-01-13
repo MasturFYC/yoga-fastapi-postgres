@@ -2,12 +2,37 @@
   <div>
     <h1>Product</h1>
     <div class="message">
-      Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan. Dalam
-      marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar dan bisa
-      memuaskan sebuah keinginan atau kebutuhan. Dalam tingkat pengecer, produk sering
-      disebut sebagai merchandise. Dalam manufaktur, produk dibeli dalam bentuk barang
-      mentah dan dijual sebagai barang jadi. Produk yang berupa barang mentah seperti
-      metal atau hasil pertanian sering pula disebut sebagai komoditas.
+      Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan.
+      Dalam marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar
+      dan bisa memuaskan sebuah keinginan atau kebutuhan. Dalam tingkat
+      pengecer, produk sering disebut sebagai merchandise. Dalam manufaktur,
+      produk dibeli dalam bentuk barang mentah dan dijual sebagai barang jadi.
+      Produk yang berupa barang mentah seperti metal atau hasil pertanian sering
+      pula disebut sebagai komoditas.
+    </div>
+    <div class="flex flex-col justify-center items-center mt-4">
+      <input
+        type="text"
+        class="
+          flex-1
+          w-full
+          border border-indigo-600
+          py-1
+          px-4
+          text-sm
+          md:w-80
+          rounded-md
+          placeholder:italic
+          focus:outline-none
+          focus:border-indigo-500
+          focus:ring-1
+          focus:ring-indigo-500
+        "
+        placeholder="Search for product name"
+        @keydown.enter.prevent.stop="searchProduct"
+        maxlength="50"
+        v-model="searchText"
+      />
     </div>
     <div class="mt-4">
       <hr />
@@ -51,43 +76,75 @@
               >
                 +
               </a>
-              <div v-else class="product-item">
-                <div class="flex-none w-full md:w-2/5">
+              <div v-else class="product-item text-sm">
+                <div class="flex-none w-full flex-col md:w-2/5">
                   <a
                     href="#"
                     @click.prevent.stop="itemClick(index, prod.id)"
-                    class="span-link"
+                    class="span-link flex-1"
                   >
                     {{ prod.name }}
                   </a>
-                  <div class="text-sm">
-                    <div>Spek: {{ prod.spec }}</div>
+                  <div class="w-full flex flex-row">
+                    <div class="w-1/3 text-gray-400">Spek:</div>
+                    <div class="flex-1">{{ prod.spec }}</div>
                   </div>
-                  <div>
+                  <div class="flex-1">
                     <label>
                       <input
                         type="checkbox"
                         :checked="units.includes(prod.id)"
                         @change="unitChecked($event.target.checked, prod.id)"
-                      /><span class="ml-2 text-sm">Tampilkan units</span></label
+                      /><span class="ml-2">Lihat units</span></label
                     >
                   </div>
                 </div>
-                <div class="flex-1 w-full text-sm mt-0">
-                  <div>Kategori: {{ categoryName(prod.category_id) }}</div>
-                  <div>Berat: {{ formatNumber(prod.base_weight) }} kg</div>
-                  <div>{{ prod.is_active ? "Masih Aktif" : "Tidak Aktif" }}</div>
+                <div class="flex-1 flex flex-col mt-0">
+                  <div class="flex-1 flex flex-row">
+                    <div class="w-1/3 text-gray-400">Kategori:</div>
+                    <div class="flex-1">
+                      {{ categoryName(prod.category_id) }}
+                    </div>
+                  </div>
+                  <div class="flex-1 flex flex-row">
+                    <div class="w-1/3 text-gray-400">Berat:</div>
+                    <div class="flex-1">
+                      {{ formatNumber(prod.base_weight) }} kg
+                    </div>
+                  </div>
+                  <div class="flex-1 flex flex-row">
+                    <div class="w-1/3 text-gray-400">Aktif ?</div>
+                    <div class="flex-1">
+                      {{ prod.is_active ? "Ya" : "Tidak" }}
+                    </div>
+                  </div>
                 </div>
-                <div class="flex-1 w-full text-sm mt-0">
-                  <div>Harga: {{ formatNumber(prod.base_price) }}</div>
-                  <div>Unit: {{ prod.base_unit }}</div>
-                  <div>
-                    {{ prod.is_sale ? "Produk untuk dijual" : "Tidak untuk dijual" }}
+                <div class="flex-1 flex flex-col mt-0">
+                  <div class="flex-1 flex flex-row">
+                    <div class="w-1/3 text-gray-400">Harga:</div>
+                    <div class="flex-1">
+                      {{ formatNumber(prod.base_price) }}
+                    </div>
+                  </div>
+                  <div class="flex-1 flex flex-row">
+                    <div class="w-1/3 text-gray-400">Unit:</div>
+                    <div class="flex-1">{{ prod.base_unit }}</div>
+                  </div>
+                  <div class="flex-1">
+                    {{
+                      prod.is_sale
+                        ? "Produk ini untuk dijual"
+                        : "Tidak untuk dijual"
+                    }}
                   </div>
                 </div>
               </div>
               <template v-if="units.includes(prod.id)">
-                  <unit-list :productId="prod.id" :productPrice="prod.base_price" :key="prod.id"></unit-list>
+                <unit-list
+                  :productId="prod.id"
+                  :productPrice="prod.base_price"
+                  :key="prod.id"
+                ></unit-list>
               </template>
             </div>
           </template>
@@ -133,6 +190,22 @@ export default {
     "unit-list": UnitList,
   },
   methods: {
+    async searchProduct(e) {
+      const self = this;
+
+      if(self.searchText.length > 2) {
+      const options = {
+        //      accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      await axios
+        .get(`/api/products/search/${self.searchText}/`, { headers: options })
+        .then((res) => {
+          const json = res.data;
+          self.products = [...json, new_product];
+        });
+      }
+    },
     unitChecked(checked, id) {
       let i = this.units.indexOf(id);
       if (checked) {
@@ -144,7 +217,7 @@ export default {
           this.units.splice(i, 1);
         }
       }
-      console.log(this.units)
+      //console.log(this.units)
     },
     cancelForm() {
       const self = this;
@@ -251,6 +324,7 @@ export default {
       units: [],
       selectedIndex: -1,
       selectedId: -1,
+      searchText: "",
     };
   },
 };

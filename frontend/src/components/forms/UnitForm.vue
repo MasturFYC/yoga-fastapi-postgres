@@ -1,200 +1,229 @@
 <template>
   <form
-    @submit.prevent="getButtonName"
-    :id="'myform' + unit.id"
+    @submit.prevent.stop="getButtonName"
+    :id="'myform-' + unit.id"
     @keydown.down.prevent.stop="onKeyDown"
     @keydown.up.prevent.stop="onKeyDown"
-    class="
-      text-[13px]
-      w-full
-      flex flex-col
-      gap-x-0
-      md:flex-row
-      py-4
-      md:py-0
-      gap-y-1
-      md:gap-y-0
-    "
-    @keydown.esc="cancelEdit"
+    @keydown.esc.prevent.stop="cancelEdit"
   >
     <div
       class="
-        flex
+        text-[13px]
         w-full
-        md:w-[120px]
-        px-0
-        md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-t-0
-      "
-    >
-      <span class="label-title self-center">ID#:</span>
-      <span class="my-input self-center">{{ unit.id }}</span>
-    </div>
-    <label
-      class="
-        flex
-        w-full
-        md:w-[500px]
-        px-0
-        md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-      "
-      ><span class="label-title">Unit</span
-      ><input
-        class="my-input"
-        v-focus
-        type="text"
-        @keydown.enter="focusNext"
-        v-model.lazy="unit.name"
-        @focus="onBlur(0)"
-        maxlength="6"
-        @change="setDirty"
-    /></label>
-    <label
-      class="
-        flex
-        w-full
-        md:w-[120px]
-        px-0
-        md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-      "
-      ><span class="label-title">Isi</span
-      ><number
-        ref="contentEl"
-        class="my-input text-left md:text-right"
-        v-model.lazy="unit.content"
-        @keydown.enter="focusNext"
-        @focus="onBlur(1)"
-        v-bind="inputNumber"
-        @change="contentChanged($event)"
-        placeholder="0"
-    /></label>
-    <label
-      class="
-        flex
-        w-full
-        md:w-[250px]
-        px-0
-        md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-      "
-      ><span class="label-title">Harga Beli</span
-      ><number
-        class="my-input text-left text-gray-400 md:text-right"
-        @keydown.enter="focusNext"
-        v-model="buyPrice"
-        @focus="onBlur(2)"
-        v-bind="inputNumber"
-        placeholder="0"
-        readonly
-    /></label>
-    <label
-      class="
-        flex
-        w-full
-        md:w-[160px]
-        px-0
-        md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-      "
-      ><span class="label-title">Margin</span
-      ><number
-        class="my-input text-left md:text-right"
-        v-model.lazy="unit.margin"
-        @keydown.enter="focusNext"
-        @focus="onBlur(3)"
-        v-bind="inputPercent"
-        @change="marginChanged($event)"
-        placeholder="0"
-    /></label>
-    <label
-      class="
-        flex
-        w-full
-        md:w-[250px]
-        px-0
-        md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-      "
-      ><span class="label-title">Harga Jual</span
-      ><number
-        class="my-input text-left md:text-right"
-        v-model.lazy="unit.price"
-        @keydown.enter="focusNext"
-        @focus="onBlur(4)"
-        v-bind="inputNumber"
-        @change="priceChanged($event)"
-        placeholder="0"
-    /></label>
-    <label
-      class="
-        flex
-        w-full
-        md:w-[225px]
-        px-0
-        md:px-1
-        border-0
-        mt-2
-        md:mt-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-      "
-    >
-      <input
-        type="checkbox"
-        v-model.lazy="unit.is_default"
-        class="self-center"
-        @keydown.enter="focusNext"
-        @focus="onBlur(5)"
-        @change="setDirty"
-      />
-      <span class="px-1 md:hidden self-center">Default ?</span>
-    </label>
-    <div
-      class="
-        flex flex-row
-        w-[270px]
+        flex flex-col
         gap-x-0
-        py-1
-        px-0
-        mt-4
-        md:mt-0 md:px-1
-        border-0
-        md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        md:flex-row
+        py-4
+        md:py-0
+        gap-y-1
+        md:gap-y-0
       "
     >
-      <button
-        type="button"
-        @click.prevent.stop="formSubmit"
-        :disabled="!isDirty"
-        class="btn border-transparent rounded-sm hover:bg-gray-200"
-        :class="{ 'disabled hover:bg-transparent': !isDirty }"
+      <div
+        class="
+          flex
+          w-full
+          md:w-[120px]
+          px-0
+          md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-t-0
+        "
       >
-        <tw-icon
-          name="mdi:check"
-          class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
-          :class="{ 'text-green-700': isDirty }"
-        />
-      </button>
-      <button
-        type="button"
-        :disabled="!isDirty && unit.id !== 0"
-        @click.prevent.stop="cancelEdit"
-        class="btn border-transparent rounded-sm hover:bg-gray-200"
-        :class="{ 'disabled hover:bg-transparent': !isDirty }"
+        <span class="label-title self-center">ID#:</span>
+        <span class="my-input self-center text-gray-400">{{ unit.id }}</span>
+      </div>
+      <label
+        class="
+          flex
+          w-full
+          md:w-[500px]
+          px-0
+          md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
+        ><span class="label-title">Unit</span
+        ><input
+          class="my-input"
+          v-focus
+          type="text"          
+          @keydown.enter.prevent.stop="focusNext"
+          v-model.lazy="unitName"
+          @focus.prevent.stop="onFocus(0)"
+          maxlength="6"
+      /></label>
+      <label
+        class="
+          flex
+          w-full
+          md:w-[120px]
+          px-0
+          md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
+        ><span class="label-title">Isi</span
+        ><number
+          ref="contentEl"
+          class="my-input text-left md:text-right"
+          v-model.lazy="unitContent"
+          @keydown.enter.prevent.stop="focusNext"
+          @focus.prevent.stop="onFocus(1)"
+          v-bind="inputNumber"
+          placeholder="0"
+      /></label>
+      <label
+        class="
+          flex
+          w-full
+          md:w-[250px]
+          px-0
+          md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
+        ><span class="label-title">Harga Beli</span
+        ><number
+          class="my-input text-left text-gray-400 md:text-right"
+          @keydown.enter.prevent.stop="focusNext"
+          v-model="buyPrice"
+          @focus.prevent.stop="onFocus(2)"
+          v-bind="inputNumber"
+          placeholder="0"
+          readonly
+      /></label>
+      <label
+        class="
+          flex
+          w-full
+          md:w-[160px]
+          px-0
+          md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
+        ><span class="label-title">Margin</span
+        ><number
+          class="my-input text-left md:text-right"
+          v-model.lazy="unitMargin"
+          @keydown.enter.prevent.stop="focusNext"
+          @focus.prevent.stop="onFocus(3)"
+          v-bind="inputPercent"
+          placeholder="0"
+      /></label>
+      <label
+        class="
+          flex
+          w-full
+          md:w-[250px]
+          px-0
+          md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
+        ><span class="label-title">Harga Jual</span
+        ><number
+          class="my-input text-left md:text-right"
+          v-model.lazy="salePrice"
+          @keydown.enter.prevent.stop="focusNext"
+          @focus.prevent.stop="onFocus(4)"
+          v-bind="inputNumber"
+          placeholder="0"
+      /></label>
+      <label
+        class="
+          flex
+          w-full
+          md:w-[225px]
+          px-0
+          md:px-1
+          border-0
+          mt-2
+          md:mt-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
       >
-        <tw-icon
-          name="mdi-light:cancel"
-          class="icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
-          :class="{ 'text-orange-700': isDirty || unit.id === 0 }"
+        <input
+          type="checkbox"
+          v-model.lazy="unitDefault"
+          class="self-center"
+          @keydown.enter.prevent.stop="focusNext"
+          @focus.prevent.stop="onFocus(5)"
         />
-      </button>
-      <slot></slot>
+        <span class="px-1 md:hidden self-center">Default ?</span>
+      </label>
+      <div
+        class="
+          flex flex-row
+          w-[270px]
+          gap-x-0
+          py-1
+          px-0
+          mt-4
+          md:mt-0 md:px-1
+          border-0
+          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
+        "
+        :class="{ 'bg-green-100': isDirty }"
+      >
+        <button
+          type="button"
+          @click.prevent.stop="formSubmit"
+          :disabled="!isDirty"
+          class="btn border-transparent rounded-sm hover:bg-gray-200"
+          :class="{ 'disabled hover:bg-transparent': !isDirty }"
+        >
+          <tw-icon
+            name="mdi:check"
+            class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+            :class="{ 'text-green-700': isDirty }"
+          />
+        </button>
+        <button
+          type="button"
+          :disabled="!isDirty && unit.id !== 0"
+          @click.prevent.stop="cancelEdit"
+          class="btn border-transparent rounded-sm hover:bg-gray-200"
+          :class="{ 'disabled hover:bg-transparent': !isDirty }"
+        >
+          <tw-icon
+            name="mdi-light:cancel"
+            class="icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+            :class="{ 'text-orange-700': isDirty || unit.id === 0 }"
+          />
+        </button>
+        <slot></slot>
+      </div>
+    </div>
+    <div
+      v-if="isInvalidPrice"
+      class="
+        border-0
+        text-sm
+        md:border md:border-indigo-200
+        p-2
+        text-red-700
+        flex-none
+        w-full
+        md:border-t-0
+      "
+    >
+      Harga jual tidak boleh lebih kecil dari harga beli.
+    </div>
+    <div
+      v-if="isDuplicate"
+      class="
+        border-0
+        text-sm
+        md:border md:border-indigo-200
+        p-2
+        text-red-700
+        flex-none
+        w-full
+        md:border-t-0
+      "
+    >
+      Nama unit sudah digunakan.
     </div>
   </form>
 </template>
@@ -205,34 +234,25 @@ import axios from "axios";
 export default {
   name: "UnitForm",
   props: {
-    basePrice: {
-      type: Number,
-      default: 0,
-    },
-    unitProp: {
-      type: Object,
-    },
-    addNew: {
-      type: Function
-    }
+    basePrice: { type: Number, default: 0 },
+    unitProp: { type: Object },
+    addNew: { type: Function },
+    //changeDefault: { type: Function },
   },
   methods: {
-    onBlur(e) {
+    onFocus(e) {
       this.iBlur = e;
     },
     getButtonName(e) {
       this.clickedButton = e.submitter.name;
     },
     onKeyDown(e) {
-
       // if(this.isDirty) {
       //   this.formSubmit(e)
       // }
 
       const forms = Array.from(
-        e.target.parentElement.parentElement.parentElement.querySelectorAll(
-          "form"
-        )
+        e.target.form.parentElement.querySelectorAll("form")
       );
 
       const index = forms.indexOf(e.target.form);
@@ -255,58 +275,74 @@ export default {
       if (this.getBlurIndex < 5) {
         setTimeout(() => {
           el.setSelectionRange(0, el.value.length);
-        }, 50);
+        }, 0);
       }
     },
     focusNext(e) {
-      const inputs = Array.from(e.target.form.querySelectorAll("input"));
+      const inputs = Array.from(e.target.form.querySelectorAll(["input", "button"]));
       const index = inputs.indexOf(e.target);
       const length = inputs.length;
+      const max = 5;
 
-      if (index < length) {
+      if (index < max) {
         const i = index === 1 ? index + 1 : index;
-        if (index === length - 1) {
-          if(this.isDirty) {
-            this.formSubmit(e);            
-          }
-        } else {
-          const el = inputs[i + 1];
-          el.focus();
-          if (el.type === "text") {
-            setTimeout(() => {
-              el.setSelectionRange(0, el.value.length);
-            }, 50);
-          } else {
-            if(this.isDirty) {
-              this.formSubmit(e); 
-            }
-            this.$emit('addNew');
-            inputs[0].focus();
-          }
+        const el = inputs[i + 1];
+        el.focus();
+        if(el.type === 'text') {
+          setTimeout(() => {
+            el.setSelectionRange(0, el.value.length);
+          }, 0);
         }
+        return;
+      }
+
+      if (this.isInvalidPrice) {
+        return;
+      }
+
+      if (this.isDirty) {
+        this.formSubmit(e);
+      }
+
+      this.gotoNextRow(e.target.form);
+
+      //}
+    },
+    gotoNextRow(e) {
+      //console.log(e.name);
+
+      const forms = Array.from(e.parentElement.querySelectorAll("form"));
+
+      let index = forms.indexOf(e);
+      const length = forms.length - 1;
+
+      if (index === length) {
+        this.$emit("addNew");
+        index--;
+      }
+      const f = forms[index + 1];
+
+      const inputs = f.querySelectorAll("input");
+      const el = inputs[0];
+
+      el.focus();
+      if (el.value.length > 0) {
+        setTimeout(() => {
+          el.setSelectionRange(0, el.value.length);
+        }, 0);
       }
     },
     setDirty() {
       this.formChanged = true;
     },
-    contentChanged(e) {
-      const content = this.unit.content;
-      this.unit.price = this.buyPrice + this.buyPrice * this.margin;
-      this.formChanged = true;
-    },
-    marginChanged(e) {
-      // const margin = this.unit.margin;
-      this.unit.price = this.buyPrice + this.buyPrice * this.margin;
-      this.formChanged = true;
-    },
-    priceChanged(e) {
-      this.unit.margin =
-        ((this.unit.price - this.buyPrice) / this.buyPrice) * 100.0;
-      this.formChanged = true;
-    },
     async formSubmit(e) {
       const self = this;
       e.preventDefault();
+
+      if (this.isInvalidPrice) {
+        return;
+      }
+
       if (self.unit.id > 0) {
         await self.updateUnit(self.unit, self.unit.id);
       } else {
@@ -320,10 +356,11 @@ export default {
         this.unit = { ...this.oldUnit };
       }
       this.formChanged = false;
+      this.isDuplicate = false;
     },
-    async insertUnit(sales) {
+    async insertUnit(unit) {
       const self = this;
-      const data = { ...sales };
+      const data = { ...unit };
       delete data.id;
 
       await axios
@@ -337,12 +374,15 @@ export default {
           self.$emit("update", res.data, 0);
           self.oldUnit = res.data;
           self.formChanged = false;
-          self.unit = { ...this.$props.unitProp };
+          self.isDuplicate = false;
+          self.unit = res.data;
+        }).catch(error => {
+          self.isDuplicate = true;
         });
     },
-    async updateUnit(sales, id) {
+    async updateUnit(unit, id) {
       const self = this;
-      const data = { ...sales };
+      const data = { ...unit };
       delete data.id;
       await axios
         .put(`/api/units/${id}/`, JSON.stringify(data), {
@@ -355,12 +395,16 @@ export default {
           self.$emit("update", res.data, id);
           this.oldUnit = res.data;
           this.formChanged = false;
+          self.isDuplicate = false;
+        }).catch(error => {
+          this.isDuplicate = true;
         });
     },
   },
   data() {
     return {
       iBlur: 0,
+      isDuplicate: false,
       clickedButton: null,
       formChanged: false,
       oldUnit: { ...this.$props.unitProp },
@@ -368,6 +412,75 @@ export default {
     };
   },
   computed: {
+
+    salePrice: {
+      get: function() {
+        return this.unit.price;
+      },
+      set: function(value) {
+        if(value !== this.unit.price) {
+          this.formChanged = true;
+          this.unit.price = value;
+          this.unit.margin = ((this.unit.price - this.buyPrice) / this.buyPrice) * 100.0;
+        }
+      }
+    },
+
+    unitName: {
+      get: function() {
+        return this.unit.name;
+      },
+      set: function(value) {
+        if(value !== this.unit.name) {
+          this.formChanged = true;
+          this.unit.name = value;
+        }
+      }
+    },
+
+    unitContent: {
+      get: function() {
+        return this.unit.content;
+      },
+      set: function(value) {
+        if(value !== this.unit.content) {
+          this.formChanged = true;
+          this.unit.content = value;
+          this.unit.price = this.buyPrice + this.buyPrice * this.margin;
+        }
+      }
+    },
+
+    unitMargin: {
+      get: function() {
+        return this.unit.margin;
+      },
+      set: function(value) {
+        if(value !== this.unit.margin) {
+          this.formChanged = true;
+          this.unit.margin = value;
+          this.unit.price = this.buyPrice + this.buyPrice * this.margin;
+        }
+      }
+    },
+
+    unitDefault: {
+      get: function() {
+        return this.unit.is_default;
+      },
+      set: function(value) {
+        if(value !== this.unit.is_default) {
+          this.formChanged = true;
+          this.unit.is_default = value;
+          //this.$emit('changeDefault', this.unit.id);
+        }
+      }
+    },
+
+    isInvalidPrice() {
+      return this.unit.price < this.buyPrice;
+    },
+
     getBlurIndex() {
       return this.iBlur;
     },
@@ -410,7 +523,7 @@ export default {
         setTimeout(() => {
           el.focus(); // Focus the element
           // el.select();
-        }, 100);
+        }, 0);
       },
     },
   },
