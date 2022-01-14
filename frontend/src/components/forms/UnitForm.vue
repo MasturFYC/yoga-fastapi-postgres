@@ -89,7 +89,7 @@
         />
       </label>
       <label
-        class="flex w-full md:w-[225px] px-0 md:px-1 border-0 mt-2 md:mt-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+        class="flex w-full md:w-[225px] px-0 md:px-0 border-0 mt-2 md:mt-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
       >
         <input
           type="checkbox"
@@ -100,9 +100,10 @@
         <span class="px-1 md:hidden self-center text-gray-500">Default ?</span>
       </label>
       <div
-        class="flex flex-row w-[270px] gap-x-0 py-1 px-0 mt-4 md:mt-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+        class="flex flex-row w-[270px] gap-x-0 py-1 px-0 mt-4 md:mt-0 md:px-0 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
         :class="{ 'bg-green-100': isDirty }"
       >
+	<div class="mx-auto self-center">
         <button
           type="button"
           @click.prevent.stop="formSubmit"
@@ -130,6 +131,7 @@
           />
         </button>
         <slot></slot>
+	</div>
       </div>
     </div>
     <div

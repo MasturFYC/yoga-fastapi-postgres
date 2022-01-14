@@ -17,10 +17,10 @@
     <div class="w-[250px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       HARGA JUAL
     </div>
-    <div class="w-[225px] px-1 py-1 border border-indigo-200 border-l-0 text-center">
+    <div class="w-[225px] px-0 py-1 border border-indigo-200 border-l-0 text-center">
       DEFAULT
     </div>
-    <div class="w-[270px] px-1 py-1 border border-indigo-200 border-l-0">COMMAND</div>
+    <div class="w-[270px] px-0 py-1 border border-indigo-200 border-l-0 text-center">COMMAND</div>
   </div>
   <div ref="test">
     <template v-for="unit in units" :key="unit.id">

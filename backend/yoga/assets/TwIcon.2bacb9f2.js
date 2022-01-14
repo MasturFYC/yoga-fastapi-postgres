@@ -1,0 +1,1 @@
+import{f as c,x as t,o as a,c as s,y as p}from"./vendor.d21eb4bc.js";import{_ as i,I as m}from"./index.38b9c37f.js";const d={name:"TwIcon",props:{name:{type:String,required:!0}},setup(e){const n=m.renderHTML(e.name);return{icon:c(()=>t({template:n}))}}};function f(e,n,o,r,_,u){return a(),s(p(r.icon))}var y=i(d,[["render",f]]);export{y as T};

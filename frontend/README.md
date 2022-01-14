@@ -7,6 +7,7 @@ Hi, this project is still in progress. I just begin my journey with Tailwind CSS
 [View the demo 🚀](https://ngekoding.github.io/admin-panel)
 
 ## How to install
+0. unset NODE_ENV
 1. Clone or download this repository
 2. Enter to `admin-panel` directory (with Terminal/CMD)
 3. Run: `npm install`

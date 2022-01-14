@@ -1,0 +1,13 @@
+DB_HOST=103.176.78.181
+DB_HOST_PORT=5432
+DB_NAME=yoga_facturing_db
+DB_USERNAME=postgres
+DB_PASSWORD=t2z00a8y
+SSL_MODE=prefer
+APP_TITLE=RESt-API using FastAPI PostgreSQL Async EndPoints
+SECRET_KEY=please_change_my_security_please
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRES_MINUTES=800
+SERVER_PORT=8080
+SERVER_HOST=localhost
+DEF_MESSAGE=Welcome to Yoga Fastapi

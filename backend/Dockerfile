@@ -52,13 +52,14 @@ WORKDIR /home/admin
 
 COPY --from=builder /home/admin /home/admin/
 
-COPY ./src /home/admin/src && \
-	./app.py /home/admin/ && \
-	./.env /home/admin/ && \
-	./favicon /home/admin/
+COPY ./src /home/admin/src
+COPY ./app.py /home/admin/
+COPY ./.env /home/admin/
+COPY ./favicon.ico /home/admin/
+COPY ./yoga /home/admin/yoga
 
 ENV PATH="/home/admin/.local/bin:${PATH}"
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["uvicorn", "app:app", "--proxy-headers", "--host=0.0.0.0", "--port=8000", "--reload"]
+CMD ["uvicorn", "app:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8080", "--workers", "2", "--reload"]
