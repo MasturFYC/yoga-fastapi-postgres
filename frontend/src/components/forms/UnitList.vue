@@ -1,9 +1,10 @@
 <template>
   <div
-    class="mt-4 hidden text-[13px] w-full flex flex-row gap-x-0 font-medium md:flex bg-indigo-100"
+    class="mt-4 hidden text-[13px] w-full flex-row gap-x-0 font-medium md:flex bg-indigo-100"
   >
     <div class="w-[120px] px-1 py-1 border border-indigo-200">ID#</div>
-    <div class="w-[500px] px-1 py-1 border border-indigo-200 border-l-0">NAMA</div>
+    <div class="w-[200px] px-1 py-1 border border-indigo-200 border-l-0">NAMA</div>
+    <div class="w-[300px] px-1 py-1 border border-indigo-200 border-l-0">BARCODE</div>
     <div class="w-[120px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       ISI
     </div>
@@ -16,32 +17,37 @@
     <div class="w-[250px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
       HARGA JUAL
     </div>
-    <div class="w-[225px] px-1 py-1 border border-indigo-200 border-l-0">DEFAULT</div>
+    <div class="w-[225px] px-1 py-1 border border-indigo-200 border-l-0 text-center">
+      DEFAULT
+    </div>
     <div class="w-[270px] px-1 py-1 border border-indigo-200 border-l-0">COMMAND</div>
   </div>
-  <template v-for="unit in units" :key="unit.id">
-    <unit-form 
-      :unitProp="{...unit}" 
-      :basePrice="$props.productPrice"      
-      @update="updateUnit"
-      @addNew="addUnit">
-      <template v-slot:default>
-        <button
-          class="btn border-transparent rounded-sm hover:bg-gray-200"
-          type="button"
-          tabindex="-1"
-          :disabled="unit.id === 0"
-          @click.prevent.stop="removeUnit(unit.id)"
-        >
-          <tw-icon
-            name="mdi-light:delete"
-            class="icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
-            :class="{ 'text-red-700': unit.id > 0 }"
-          />
-        </button>
-      </template>
-    </unit-form>
-  </template>
+  <div ref="test">
+    <template v-for="unit in units" :key="unit.id">
+      <unit-form
+        :unitProp="{ ...unit }"
+        :basePrice="$props.productPrice"
+        @update="updateUnit"
+        @addNew="addUnit"
+      >
+        <template v-slot:default>
+          <button
+            class="btn border-transparent rounded-sm hover:bg-gray-200"
+            type="button"
+            tabindex="-1"
+            :disabled="unit.id === 0"
+            @click.prevent.stop="removeUnit(unit.id)"
+          >
+            <tw-icon
+              name="mdi-light:delete"
+              class="icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+              :class="{ 'text-red-700': unit.id > 0 }"
+            />
+          </button>
+        </template>
+      </unit-form>
+    </template>
+  </div>
   <a href="#" @click.prevent.stop="addUnit">+</a>
 </template>
 
@@ -103,11 +109,11 @@ export default {
       } else {
         //temp[index] = unit;
         //self.units[index] = unit;
-        self.units.splice(index, 1, {...unit});
+        self.units.splice(index, 1, { ...unit });
         if (id === 0) {
           setTimeout(() => {
             self.addUnit();
-          }, 100);
+          }, 0);
         }
       }
     },
@@ -117,6 +123,7 @@ export default {
         this.units.push({
           id: 0,
           name: "",
+          barcode: "",
           content: 1,
           is_default: false,
           product_id: this.$props.productId,
@@ -156,6 +163,8 @@ export default {
   },
   async mounted() {
     await this.loadUnits();
+    // this.$refs.test.querySelector("input").focus();
+    //this.$refs.test.target.querySelector("*[autofocus]").focus();
   },
   data() {
     return {

@@ -7,6 +7,7 @@ class UnitIn(CamelModel):
     """ unit Camel Model """
     product_id: int
     name: str
+    barcode: str
     content: float
     buy_price: float
     margin: float

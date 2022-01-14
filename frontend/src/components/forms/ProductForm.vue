@@ -10,7 +10,7 @@
             type="text"
             class="flex-input"
             :class="{ 'input-disable': nameValid }"
-            v-model.lazy="product.name"
+            v-model.lazy="productName"
             placeholder="e.g. Gula Pasir"
           />
         </label>
@@ -20,7 +20,7 @@
             type="text"
             maxlength="50"
             class="flex-input"
-            v-model.lazy="product.spec"
+            v-model.lazy="productSpec"
             placeholder="e.g. 1 zax @ 25kg"
           />
         </label>
@@ -33,7 +33,7 @@
             type="text"
             class="flex-input"
             :class="{ 'input-disable': base_unitValid }"
-            v-model.lazy="product.base_unit"
+            v-model.lazy="baseUnit"
             placeholder="e.g. kg"
           />
         </label>
@@ -43,7 +43,7 @@
             class="flex-input"
             v-bind="inputNumeral"
             :class="{ 'input-disable': base_weightValid }"
-            v-model.lazy="product.base_weight"
+            v-model.lazy="baseWeight"
             placeholder="e.g. 2.5"
           />
         </label>
@@ -55,7 +55,7 @@
             class="flex-input"
             v-bind="inputNumeral"
             :class="{ 'input-disable': base_priceValid }"
-            v-model.lazy="product.base_price"
+            v-model.lazy="basePrice"
             placeholder="e.g. 12,500"
           />
         </label>
@@ -66,7 +66,7 @@
             class="flex-input-readonly"
             v-bind="inputNumeral"
             placeholder="0"
-            v-model.lazy="product.first_stock"
+            v-model.lazy="firstStock"
           />
         </label>
       </div>
@@ -78,16 +78,16 @@
             readonly
             class="flex-input-readonly"
             v-bind="inputNumeral"
-            v-model.lazy="product.stock"
+            v-model.lazy="productStock"
           />
         </label>
         <label class="flex-label">
           <span class="flex-span">Kategori:</span>
-          <v-select          
+          <v-select
             class="style-chooser"
             :options="categories"
             label="name"
-            v-model.lazy="product.category_id"
+            v-model.lazy="productCategoryId"
             :class="{ 'input-disable': categoryValid }"
             :reduce="(cat) => cat.id"
           >
@@ -167,7 +167,7 @@ export default {
   },
   methods: {
     dropdownShouldOpen(VueSelect) {
-      if (this.product.category_id !== 0) {
+      if (this.productCategoryId !== 0) {
         return VueSelect.open;
       }
 
@@ -176,8 +176,8 @@ export default {
     async formSubmit(e) {
       const self = this;
       e.preventDefault();
-      if (self.product.id > 0) {
-        await self.updateProduct(self.product, self.product.id);
+      if (self.productId > 0) {
+        await self.updateProduct(self.product, self.productId);
       } else {
         await self.insertProduct(self.product);
       }
@@ -215,6 +215,89 @@ export default {
     },
   },
   computed: {
+    productId() {
+      return this.product.id;
+    },
+    productName: {
+      get() {
+        return this.product.name;
+      },
+      set(value) {
+        if (value !== this.product.name) {
+          this.product.name = value;
+        }
+      },
+    },
+    productSpec: {
+      get() {
+        return this.product.spec;
+      },
+      set(value) {
+        if (value !== this.product.spec) {
+          this.product.spec = value;
+        }
+      },
+    },
+    baseWeight: {
+      get() {
+        return this.product.base_weight;
+      },
+      set(value) {
+        if (value !== this.product.base_weight) {
+          this.product.base_weight = value;
+        }
+      },
+    },
+    basePrice: {
+      get() {
+        return this.product.base_price;
+      },
+      set(value) {
+        if (value !== this.product.base_price) {
+          this.product.base_price = value;
+        }
+      },
+    },
+    baseUnit: {
+      get() {
+        return this.product.base_unit;
+      },
+      set(value) {
+        if (value !== this.product.base_unit) {
+          this.product.base_unit = value;
+        }
+      },
+    },
+    firstStock: {
+      get() {
+        return this.product.first_stock;
+      },
+      set(value) {
+        if (value !== this.product.first_stock) {
+          this.product.first_stock = value;
+        }
+      },
+    },
+    productStock: {
+      get() {
+        return this.product.stock;
+      },
+      set(value) {
+        if (value !== this.product.stock) {
+          this.product.stock = value;
+        }
+      },
+    },
+    productCategoryId: {
+      get() {
+        return this.product.category_id;
+      },
+      set(value) {
+        if (value !== this.product.category_id) {
+          this.product.category_id = value === null ? 0 : value;
+        }
+      },
+    },
     enableSubmit() {
       return (
         this.nameValid ||
@@ -269,7 +352,7 @@ export default {
   },
   async mounted() {
     const self = this;
-    self.categoryId = self.product.category_id;
+    self.categoryId = self.productCategoryId;
   },
   data() {
     return {

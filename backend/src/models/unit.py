@@ -31,6 +31,7 @@ class Unit(declare_base):
                     data_type=Integer).next_value(),
                 primary_key=True)
     name = Column(String(6), nullable=False, index=True)
+    barcode = Column(String(25), nullable=False, unique=True)
     content = Column(DECIMAL(8, 2), nullable=False, default=0)
     buy_price = Column(DECIMAL(12, 2), nullable=False, default=0)
     margin = Column(DECIMAL(8, 4), nullable=False, default=0)
@@ -56,7 +57,7 @@ class Unit(declare_base):
                                  back_populates="unit")
 
     def __init__(self, **kwargs):
-        valid_keys = ["product_id", "name", "content",
+        valid_keys = ["product_id", "name", "barcode", "content",
                       "price", "buy_price", "margin", "is_default"]
         for key in valid_keys:
             setattr(self, key, kwargs.get(key))

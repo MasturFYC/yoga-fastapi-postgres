@@ -1,169 +1,106 @@
 <template>
-  <form
-    @submit.prevent.stop="getButtonName"
-    :id="'myform-' + unit.id"
-    @keydown.down.prevent.stop="onKeyDown"
-    @keydown.up.prevent.stop="onKeyDown"
-    @keydown.esc.prevent.stop="cancelEdit"
-  >
+  <form @submit.prevent.stop="getButtonName" :id="'myform-' + unit.id">
     <div
-      class="
-        text-[13px]
-        w-full
-        flex flex-col
-        gap-x-0
-        md:flex-row
-        py-4
-        md:py-0
-        gap-y-1
-        md:gap-y-0
-      "
+      class="text-[13px] w-full flex flex-col gap-x-0 md:flex-row py-4 md:py-0 gap-y-1 md:gap-y-0"
+      @keydown.enter.prevent.stop="focusNext"
+      @keydown.down.prevent.stop="onKeyDown"
+      @keydown.up.prevent.stop="onKeyDown"
+      @keydown.esc.prevent.stop="cancelEdit"
     >
       <div
-        class="
-          flex
-          w-full
-          md:w-[120px]
-          px-0
-          md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-t-0
-        "
+        class="flex w-full md:w-[120px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-t-0"
       >
         <span class="label-title self-center">ID#:</span>
         <span class="my-input self-center text-gray-400">{{ unit.id }}</span>
       </div>
       <label
-        class="
-          flex
-          w-full
-          md:w-[500px]
-          px-0
-          md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
-        ><span class="label-title">Unit</span
-        ><input
+        class="flex w-full md:w-[200px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+      >
+        <span class="label-title">Unit</span>
+        <input
           class="my-input"
           v-focus
-          type="text"          
-          @keydown.enter.prevent.stop="focusNext"
+          type="text"
           v-model.lazy="unitName"
           @focus.prevent.stop="onFocus(0)"
           maxlength="6"
-      /></label>
+        />
+      </label>
       <label
-        class="
-          flex
-          w-full
-          md:w-[120px]
-          px-0
-          md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
-        ><span class="label-title">Isi</span
-        ><number
+        class="flex w-full md:w-[300px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+      >
+        <span class="label-title">Barcode</span>
+        <input
+          class="my-input"
+          type="text"
+          v-model.lazy="barcode"
+          @focus.prevent.stop="onFocus(1)"
+          maxlength="25"
+        />
+      </label>
+      <label
+        class="flex w-full md:w-[120px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+      >
+        <span class="label-title">Isi</span>
+        <number
           ref="contentEl"
           class="my-input text-left md:text-right"
           v-model.lazy="unitContent"
-          @keydown.enter.prevent.stop="focusNext"
-          @focus.prevent.stop="onFocus(1)"
-          v-bind="inputNumber"
-          placeholder="0"
-      /></label>
-      <label
-        class="
-          flex
-          w-full
-          md:w-[250px]
-          px-0
-          md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
-        ><span class="label-title">Harga Beli</span
-        ><number
-          class="my-input text-left text-gray-400 md:text-right"
-          @keydown.enter.prevent.stop="focusNext"
-          v-model="buyPrice"
           @focus.prevent.stop="onFocus(2)"
           v-bind="inputNumber"
           placeholder="0"
-          readonly
-      /></label>
+        />
+      </label>
       <label
-        class="
-          flex
-          w-full
-          md:w-[160px]
-          px-0
-          md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
-        ><span class="label-title">Margin</span
-        ><number
-          class="my-input text-left md:text-right"
-          v-model.lazy="unitMargin"
-          @keydown.enter.prevent.stop="focusNext"
+        class="flex w-full md:w-[250px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+      >
+        <span class="label-title">Harga Beli</span>
+        <number
+          class="my-input text-left text-gray-400 md:text-right"
+          v-model="buyPrice"
           @focus.prevent.stop="onFocus(3)"
-          v-bind="inputPercent"
-          placeholder="0"
-      /></label>
-      <label
-        class="
-          flex
-          w-full
-          md:w-[250px]
-          px-0
-          md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
-        ><span class="label-title">Harga Jual</span
-        ><number
-          class="my-input text-left md:text-right"
-          v-model.lazy="salePrice"
-          @keydown.enter.prevent.stop="focusNext"
-          @focus.prevent.stop="onFocus(4)"
           v-bind="inputNumber"
           placeholder="0"
-      /></label>
+          readonly
+        />
+      </label>
       <label
-        class="
-          flex
-          w-full
-          md:w-[225px]
-          px-0
-          md:px-1
-          border-0
-          mt-2
-          md:mt-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
+        class="flex w-full md:w-[160px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+      >
+        <span class="label-title">Margin</span>
+        <number
+          class="my-input text-left md:text-right"
+          v-model.lazy="unitMargin"
+          @focus.prevent.stop="onFocus(4)"
+          v-bind="inputPercent"
+          placeholder="0"
+        />
+      </label>
+      <label
+        class="flex w-full md:w-[250px] px-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
+      >
+        <span class="label-title">Harga Jual</span>
+        <number
+          class="my-input text-left md:text-right"
+          v-model.lazy="salePrice"
+          @focus.prevent.stop="onFocus(5)"
+          v-bind="inputNumber"
+          placeholder="0"
+        />
+      </label>
+      <label
+        class="flex w-full md:w-[225px] px-0 md:px-1 border-0 mt-2 md:mt-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
       >
         <input
           type="checkbox"
           v-model.lazy="unitDefault"
-          class="self-center"
-          @keydown.enter.prevent.stop="focusNext"
-          @focus.prevent.stop="onFocus(5)"
+          class="mx-0 md:mx-auto self-center"
+          @focus.prevent.stop="onFocus(6)"
         />
-        <span class="px-1 md:hidden self-center">Default ?</span>
+        <span class="px-1 md:hidden self-center text-gray-500">Default ?</span>
       </label>
       <div
-        class="
-          flex flex-row
-          w-[270px]
-          gap-x-0
-          py-1
-          px-0
-          mt-4
-          md:mt-0 md:px-1
-          border-0
-          md:border md:border-indigo-200 md:border-l-0 md:border-t-0
-        "
+        class="flex flex-row w-[270px] gap-x-0 py-1 px-0 mt-4 md:mt-0 md:px-1 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
         :class="{ 'bg-green-100': isDirty }"
       >
         <button
@@ -197,33 +134,15 @@
     </div>
     <div
       v-if="isInvalidPrice"
-      class="
-        border-0
-        text-sm
-        md:border md:border-indigo-200
-        p-2
-        text-red-700
-        flex-none
-        w-full
-        md:border-t-0
-      "
+      class="border-0 text-sm md:border md:border-indigo-200 p-2 text-red-700 flex-none w-full md:border-t-0"
     >
       Harga jual tidak boleh lebih kecil dari harga beli.
     </div>
     <div
       v-if="isDuplicate"
-      class="
-        border-0
-        text-sm
-        md:border md:border-indigo-200
-        p-2
-        text-red-700
-        flex-none
-        w-full
-        md:border-t-0
-      "
+      class="border-0 text-sm md:border md:border-indigo-200 p-2 text-red-700 flex-none w-full md:border-t-0"
     >
-      Nama unit sudah digunakan.
+      Nama unit atau barcode sudah digunakan.
     </div>
   </form>
 </template>
@@ -251,9 +170,7 @@ export default {
       //   this.formSubmit(e)
       // }
 
-      const forms = Array.from(
-        e.target.form.parentElement.querySelectorAll("form")
-      );
+      const forms = Array.from(e.target.form.parentElement.querySelectorAll("form"));
 
       const index = forms.indexOf(e.target.form);
       const length = forms.length - 1;
@@ -272,7 +189,7 @@ export default {
       const el = inputs[this.getBlurIndex];
 
       el.focus();
-      if (this.getBlurIndex < 5) {
+      if (el.type === "text" && el.value.length > 0) {
         setTimeout(() => {
           el.setSelectionRange(0, el.value.length);
         }, 0);
@@ -281,14 +198,14 @@ export default {
     focusNext(e) {
       const inputs = Array.from(e.target.form.querySelectorAll(["input", "button"]));
       const index = inputs.indexOf(e.target);
-      const length = inputs.length;
-      const max = 5;
+      // const length = inputs.length;
+      const max = 6;
 
       if (index < max) {
-        const i = index === 1 ? index + 1 : index;
+        const i = index === 2 ? index + 1 : index;
         const el = inputs[i + 1];
         el.focus();
-        if(el.type === 'text') {
+        if (el.type === "text") {
           setTimeout(() => {
             el.setSelectionRange(0, el.value.length);
           }, 0);
@@ -376,7 +293,8 @@ export default {
           self.formChanged = false;
           self.isDuplicate = false;
           self.unit = res.data;
-        }).catch(error => {
+        })
+        .catch((error) => {
           self.isDuplicate = true;
         });
     },
@@ -396,7 +314,8 @@ export default {
           this.oldUnit = res.data;
           this.formChanged = false;
           self.isDuplicate = false;
-        }).catch(error => {
+        })
+        .catch((error) => {
           this.isDuplicate = true;
         });
     },
@@ -412,69 +331,78 @@ export default {
     };
   },
   computed: {
-
     salePrice: {
-      get: function() {
+      get() {
         return this.unit.price;
       },
-      set: function(value) {
-        if(value !== this.unit.price) {
+      set(value) {
+        if (value !== this.unit.price) {
           this.formChanged = true;
           this.unit.price = value;
           this.unit.margin = ((this.unit.price - this.buyPrice) / this.buyPrice) * 100.0;
         }
-      }
+      },
     },
 
     unitName: {
-      get: function() {
+      get() {
         return this.unit.name;
       },
-      set: function(value) {
-        if(value !== this.unit.name) {
+      set(value) {
+        if (value !== this.unit.name) {
           this.formChanged = true;
           this.unit.name = value;
         }
-      }
+      },
     },
-
+    barcode: {
+      get() {
+        return this.unit.barcode;
+      },
+      set(value) {
+        if (value !== this.unit.barcode) {
+          this.formChanged = true;
+          this.unit.barcode = value;
+        }
+      },
+    },
     unitContent: {
-      get: function() {
+      get() {
         return this.unit.content;
       },
-      set: function(value) {
-        if(value !== this.unit.content) {
+      set(value) {
+        if (value !== this.unit.content) {
           this.formChanged = true;
           this.unit.content = value;
           this.unit.price = this.buyPrice + this.buyPrice * this.margin;
         }
-      }
+      },
     },
 
     unitMargin: {
-      get: function() {
+      get() {
         return this.unit.margin;
       },
-      set: function(value) {
-        if(value !== this.unit.margin) {
+      set(value) {
+        if (value !== this.unit.margin) {
           this.formChanged = true;
           this.unit.margin = value;
           this.unit.price = this.buyPrice + this.buyPrice * this.margin;
         }
-      }
+      },
     },
 
     unitDefault: {
-      get: function() {
+      get() {
         return this.unit.is_default;
       },
-      set: function(value) {
-        if(value !== this.unit.is_default) {
+      set(value) {
+        if (value !== this.unit.is_default) {
           this.formChanged = true;
           this.unit.is_default = value;
           //this.$emit('changeDefault', this.unit.id);
         }
-      }
+      },
     },
 
     isInvalidPrice() {
@@ -518,10 +446,11 @@ export default {
   },
   directives: {
     focus: {
-      mounted(el) {
+      mounted: function (el) {
         // When the bound element is inserted into the DOM...
         setTimeout(() => {
           el.focus(); // Focus the element
+          //          }
           // el.select();
         }, 0);
       },
@@ -535,6 +464,6 @@ export default {
   @apply w-full outline-none border-0 md:border-0;
 }
 .label-title {
-  @apply w-[200px] md:hidden md:w-0 border-0 border-b border-b-indigo-200;
+  @apply w-[200px]  text-gray-500 md:hidden md:w-0 border-0 border-b border-b-indigo-200;
 }
 </style>

@@ -40,6 +40,15 @@ async def search_products(name: str, dal: cur_dal = Depends(get_current_dal)):
     return [row.__dict__ for row in res]
 
 
+@ROUTER.get("/category/{pid}/", response_model=List[py_out], status_code=status.HTTP_200_OK)
+async def get_by_category(pid: int = 0, dal: cur_dal = Depends(get_current_dal)):
+    """ Search products by name """
+    res = await dal.get_by_category(pid)
+    if res is None:
+        raise HTTPException(status_code=404, detail="Product is empty")
+    return [row.__dict__ for row in res]
+
+
 @ROUTER.get("/{pid}/", response_model=py_out, status_code=status.HTTP_200_OK)
 async def read_product(pid: int, dal: cur_dal = Depends(get_current_dal)):
     """ Get product by id """

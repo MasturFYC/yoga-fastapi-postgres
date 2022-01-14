@@ -1,6 +1,6 @@
 ''' Product Dal '''
 from typing import List
-from sqlalchemy import select, update, delete, DECIMAL, Integer, String
+from sqlalchemy import or_, select, update, delete, DECIMAL, Integer, String
 from sqlalchemy.orm import joinedload, Session
 from sqlalchemy.sql.expression import bindparam
 from sqlalchemy.sql import text
@@ -20,7 +20,16 @@ class ProductDal():
         query = await self.session\
             .execute(select(Product)
                      .offset(skip).limit(take).order_by(Product.name))
-        
+
+        return query.scalars().fetchall()
+
+    async def get_by_category(self, category_id: int = 0) -> List[Product]:
+        ''' load all products '''
+        query = await self.session\
+            .execute(select(Product)
+                     .where(or_(Product.category_id == category_id, category_id == 0))
+                     .order_by(Product.name))
+
         return query.scalars().fetchall()
 
     async def search_name(self, name: str) -> List[Product]:

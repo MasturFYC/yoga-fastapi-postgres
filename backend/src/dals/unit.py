@@ -32,6 +32,7 @@ class UnitDal():
         ''' insert new Unit '''
         new_product = Unit(product_id=payload.product_id,
                            name=payload.name,
+                           barcode=payload.barcode,
                            content=payload.content,
                            buy_price=payload.buy_price,
                            margin=payload.margin,
@@ -78,6 +79,7 @@ class UnitDal():
         query = update(Unit).where(Unit.id == pid)\
             .values(product_id=payload.product_id,
                     name=payload.name,
+                    barcode=payload.barcode,
                     content=payload.content,
                     buy_price=payload.buy_price,
                     margin=payload.margin,

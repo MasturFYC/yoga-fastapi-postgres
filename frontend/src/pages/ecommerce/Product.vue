@@ -2,32 +2,31 @@
   <div>
     <h1>Product</h1>
     <div class="message">
-      Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan.
-      Dalam marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar
-      dan bisa memuaskan sebuah keinginan atau kebutuhan. Dalam tingkat
-      pengecer, produk sering disebut sebagai merchandise. Dalam manufaktur,
-      produk dibeli dalam bentuk barang mentah dan dijual sebagai barang jadi.
-      Produk yang berupa barang mentah seperti metal atau hasil pertanian sering
-      pula disebut sebagai komoditas.
+      Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan. Dalam
+      marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar dan bisa
+      memuaskan sebuah keinginan atau kebutuhan. Dalam tingkat pengecer, produk sering
+      disebut sebagai merchandise. Dalam manufaktur, produk dibeli dalam bentuk barang
+      mentah dan dijual sebagai barang jadi. Produk yang berupa barang mentah seperti
+      metal atau hasil pertanian sering pula disebut sebagai komoditas.
     </div>
-    <div class="flex flex-col justify-center items-center mt-4">
+    <div class="flex flex-row justify-center items-center mt-4 gap-x-4">
+      <v-select
+        class="flex-1 w-1/2 style-chooser"
+        :options="[{ id: 0, name: 'All...' }, ...categories]"
+        label="name"
+        v-model="categoryId"
+        :reduce="(cat) => cat.id"
+      >
+        <template v-slot:selected-option="{ name }">
+          <div style="color: #555; display: flex; align-items: baseline; margin: 0px">
+            <span class="font-medium font-[13px]">{{ name }}</span>
+            <!-- em style="margin-left: 0.5rem">by {{ name }}</!-->
+          </div>
+        </template>
+      </v-select>
       <input
         type="text"
-        class="
-          flex-1
-          w-full
-          border border-indigo-600
-          py-1
-          px-4
-          text-sm
-          md:w-80
-          rounded-md
-          placeholder:italic
-          focus:outline-none
-          focus:border-indigo-500
-          focus:ring-1
-          focus:ring-indigo-500
-        "
+        class="flex-1 w-1/2 border border-indigo-600 py-1 px-4 text-sm md:w-80 rounded-md placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
         placeholder="Search for product name"
         @keydown.enter.prevent.stop="searchProduct"
         maxlength="50"
@@ -73,18 +72,16 @@
                 v-if="prod.id === 0"
                 @click.prevent.stop="itemClick(index, prod.id)"
                 class="span-link"
+                >+</a
               >
-                +
-              </a>
               <div v-else class="product-item text-sm">
                 <div class="flex-none w-full flex-col md:w-2/5">
                   <a
                     href="#"
                     @click.prevent.stop="itemClick(index, prod.id)"
                     class="span-link flex-1"
+                    >{{ prod.name }}</a
                   >
-                    {{ prod.name }}
-                  </a>
                   <div class="w-full flex flex-row">
                     <div class="w-1/3 text-gray-400">Spek:</div>
                     <div class="flex-1">{{ prod.spec }}</div>
@@ -95,47 +92,36 @@
                         type="checkbox"
                         :checked="units.includes(prod.id)"
                         @change="unitChecked($event.target.checked, prod.id)"
-                      /><span class="ml-2">Lihat units</span></label
-                    >
+                      />
+                      <span class="ml-2">Lihat units</span>
+                    </label>
                   </div>
                 </div>
                 <div class="flex-1 flex flex-col mt-0">
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Kategori:</div>
-                    <div class="flex-1">
-                      {{ categoryName(prod.category_id) }}
-                    </div>
+                    <div class="flex-1">{{ categoryName(prod.category_id) }}</div>
                   </div>
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Berat:</div>
-                    <div class="flex-1">
-                      {{ formatNumber(prod.base_weight) }} kg
-                    </div>
+                    <div class="flex-1">{{ formatNumber(prod.base_weight) }} kg</div>
                   </div>
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Aktif ?</div>
-                    <div class="flex-1">
-                      {{ prod.is_active ? "Ya" : "Tidak" }}
-                    </div>
+                    <div class="flex-1">{{ prod.is_active ? "Ya" : "Tidak" }}</div>
                   </div>
                 </div>
                 <div class="flex-1 flex flex-col mt-0">
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Harga:</div>
-                    <div class="flex-1">
-                      {{ formatNumber(prod.base_price) }}
-                    </div>
+                    <div class="flex-1">{{ formatNumber(prod.base_price) }}</div>
                   </div>
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Unit:</div>
                     <div class="flex-1">{{ prod.base_unit }}</div>
                   </div>
                   <div class="flex-1">
-                    {{
-                      prod.is_sale
-                        ? "Produk ini untuk dijual"
-                        : "Tidak untuk dijual"
-                    }}
+                    {{ prod.is_sale ? "Produk ini untuk dijual" : "Tidak untuk dijual" }}
                   </div>
                 </div>
               </div>
@@ -193,17 +179,17 @@ export default {
     async searchProduct(e) {
       const self = this;
 
-      if(self.searchText.length > 2) {
-      const options = {
-        //      accept: "application/json",
-        "Content-Type": "application/json",
-      };
-      await axios
-        .get(`/api/products/search/${self.searchText}/`, { headers: options })
-        .then((res) => {
-          const json = res.data;
-          self.products = [...json, new_product];
-        });
+      if (self.searchText.length > 2) {
+        const options = {
+          //      accept: "application/json",
+          "Content-Type": "application/json",
+        };
+        await axios
+          .get(`/api/products/search/${self.searchText}/`, { headers: options })
+          .then((res) => {
+            const json = res.data;
+            self.products = [...json, new_product];
+          });
       }
     },
     unitChecked(checked, id) {
@@ -284,6 +270,19 @@ export default {
         self.products = [...json, new_product];
       });
     },
+    async loadProductsByCategory() {
+      const self = this;
+      const options = {
+        //      accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      await axios
+        .get(`/api/products/category/${this.categoryId}/`, { headers: options })
+        .then((res) => {
+          const json = res.data;
+          self.products = [...json, new_product];
+        });
+    },
   },
   async mounted() {
     await this.loadCategories();
@@ -307,6 +306,17 @@ export default {
     formatNumber() {
       return (value) => Intl.NumberFormat("id-ID").format(value);
     },
+    categoryId: {
+      get: function () {
+        return this.catId;
+      },
+      set: function (value) {
+        if (this.catId !== value) {
+          this.catId = value === null ? 0 : value;
+          this.loadProductsByCategory();
+        }
+      },
+    },
     categoryName() {
       return (catId) => {
         const cat = this.loadedCategories.filter((c) => c.id === catId)[0];
@@ -325,12 +335,36 @@ export default {
       selectedIndex: -1,
       selectedId: -1,
       searchText: "",
+      catId: 0,
     };
   },
 };
 </script>
 
 <style scoped>
+.slide-fade-enter-active {
+  transition: all 0.1s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(50px);
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  transform: translateX(50px);
+  opacity: 0;
+}
+
 .svg-icon {
   enable-background: new 0 0 64 64;
   display: inline;
@@ -366,15 +400,7 @@ h1 {
   disabled:invisible
   focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-75;
 }
-.slide-fade-enter-active {
-  transition: all 0.1s ease;
-}
-.slide-fade-leave-active {
-  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active below version 2.1.8 */ {
-  transform: translateX(50px);
-  opacity: 0;
+.v-select.style-chooser {
+  @apply rounded-md text-sm py-0 px-0;
 }
 </style>
