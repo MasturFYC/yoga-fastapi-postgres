@@ -20,13 +20,18 @@
     <div class="w-[225px] px-0 py-1 border border-indigo-200 border-l-0 text-center">
       DEFAULT
     </div>
-    <div class="w-[270px] px-0 py-1 border border-indigo-200 border-l-0 text-center">COMMAND</div>
+    <div class="w-[270px] px-0 py-1 border border-indigo-200 border-l-0 text-center">
+      COMMAND
+    </div>
   </div>
   <div ref="test">
-    <template v-for="unit in units" :key="unit.id">
+    <template v-for="(unit, index) in units" :key="unit.id">
       <unit-form
-        :unitProp="{ ...unit }"
+        :selectedIndex="index"
+        @change="onDefaultChanged($event, unit.id)"
+        :unitProp="unit"
         :basePrice="$props.productPrice"
+        @restoreData="restoreData"
         @update="updateUnit"
         @addNew="addUnit"
       >
@@ -82,6 +87,20 @@ export default {
     "unit-form": UnitForm,
   },
   methods: {
+    restoreData(unit) {
+      const self = this;
+      const index = self.units.indexOfObject("id", unit.id);
+      if (unit.id === 0) {
+        self.units.splice(index, 1);
+      } else {
+        self.units.splice(index, 1, { ...unit });
+      }
+    },
+    onDefaultChanged(e, id) {
+      for (let c = 0; c < this.units.length; c++) {
+        this.units[c].is_default = this.units[c].id === id ? true : false;
+      }
+    },
     async removeUnit(id) {
       const self = this;
       const options = {
@@ -100,21 +119,13 @@ export default {
     },
     updateUnit(unit, id) {
       const self = this;
-      let temp = self.units;
+      //let temp = self.units;
       const index = self.units.indexOfObject("id", id);
-      if (id === -1) {
-        if (unit.id === 0) {
-          self.units.splice(index, 1);
-        }
-      } else {
-        //temp[index] = unit;
-        //self.units[index] = unit;
-        self.units.splice(index, 1, { ...unit });
-        if (id === 0) {
-          setTimeout(() => {
-            self.addUnit();
-          }, 0);
-        }
+      self.units.splice(index, 1, { ...unit });
+      if (id === 0) {
+        setTimeout(() => {
+          self.addUnit();
+        }, 0);
       }
     },
     addUnit() {
@@ -133,14 +144,6 @@ export default {
         });
       }
     },
-    // changeDefault(id) {
-    //   // console.log(id)
-    //   for(let i=0; i<this.units.length; i++) {
-    //     if(this.units[i].id !== id) {
-    //       this.units[i].is_default = false;
-    //     }
-    //   }
-    // },
     async loadUnits() {
       const self = this;
 

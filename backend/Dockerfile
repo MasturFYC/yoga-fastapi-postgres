@@ -52,11 +52,12 @@ WORKDIR /home/admin
 
 COPY --from=builder /home/admin /home/admin/
 
-COPY ./src /home/admin/src
-COPY ./app.py /home/admin/
-COPY ./.env /home/admin/
-COPY ./favicon.ico /home/admin/
-COPY ./yoga /home/admin/yoga
+# COPY ./src /home/admin/src
+# COPY ./app.py /home/admin/
+# COPY ./.env /home/admin/
+# COPY ./favicon.ico /home/admin/
+# COPY ./yoga /home/admin/yoga
+COPY . .
 
 ENV PATH="/home/admin/.local/bin:${PATH}"
 

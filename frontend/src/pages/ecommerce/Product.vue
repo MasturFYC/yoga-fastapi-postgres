@@ -172,8 +172,8 @@ export default {
   name: "Product",
   components: {
     "tw-button": shallowRef(TwButton),
-    "product-form": ProductForm,
-    "unit-list": UnitList,
+    "product-form": shallowRef(ProductForm),
+    "unit-list": shallowRef(UnitList),
   },
   methods: {
     async searchProduct(e) {

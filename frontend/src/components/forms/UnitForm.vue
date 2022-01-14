@@ -1,7 +1,13 @@
 <template>
   <form @submit.prevent.stop="getButtonName" :id="'myform-' + unit.id">
     <div
-      class="text-[13px] w-full flex flex-col gap-x-0 md:flex-row py-4 md:py-0 gap-y-1 md:gap-y-0"
+      :class="{
+        'bg-gray-50': currentIndex % 2 === 0,
+        'bg-indigo-50': hashFocus,
+      }"
+      @focusin="hashFocus = true"
+      @focusout="hashFocus = false"
+      class="text-[13px] w-full flex flex-col gap-x-0 md:flex-row py-4 md:py-0 gap-y-1 md:gap-y-0 hover:bg-indigo-50"
       @keydown.enter.prevent.stop="focusNext"
       @keydown.down.prevent.stop="onKeyDown"
       @keydown.up.prevent.stop="onKeyDown"
@@ -94,6 +100,7 @@
         <input
           type="checkbox"
           v-model.lazy="unitDefault"
+          v-bind="$attrs"
           class="mx-0 md:mx-auto self-center"
           @focus.prevent.stop="onFocus(6)"
         />
@@ -103,35 +110,35 @@
         class="flex flex-row w-[270px] gap-x-0 py-1 px-0 mt-4 md:mt-0 md:px-0 border-0 md:border md:border-indigo-200 md:border-l-0 md:border-t-0"
         :class="{ 'bg-green-100': isDirty }"
       >
-	<div class="mx-auto self-center">
-        <button
-          type="button"
-          @click.prevent.stop="formSubmit"
-          :disabled="!isDirty"
-          class="btn border-transparent rounded-sm hover:bg-gray-200"
-          :class="{ 'disabled hover:bg-transparent': !isDirty }"
-        >
-          <tw-icon
-            name="mdi:check"
-            class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
-            :class="{ 'text-green-700': isDirty }"
-          />
-        </button>
-        <button
-          type="button"
-          :disabled="!isDirty && unit.id !== 0"
-          @click.prevent.stop="cancelEdit"
-          class="btn border-transparent rounded-sm hover:bg-gray-200"
-          :class="{ 'disabled hover:bg-transparent': !isDirty }"
-        >
-          <tw-icon
-            name="mdi-light:cancel"
-            class="icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
-            :class="{ 'text-orange-700': isDirty || unit.id === 0 }"
-          />
-        </button>
-        <slot></slot>
-	</div>
+        <div class="mx-auto self-center">
+          <button
+            type="button"
+            @click.prevent.stop="formSubmit"
+            :disabled="!isDirty"
+            class="btn border-transparent rounded-sm hover:bg-gray-200"
+            :class="{ 'disabled hover:bg-transparent': !isDirty }"
+          >
+            <tw-icon
+              name="mdi:check"
+              class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+              :class="{ 'text-green-700': isDirty }"
+            />
+          </button>
+          <button
+            type="button"
+            :disabled="!isDirty && unit.id !== 0"
+            @click.prevent.stop="cancelEdit"
+            class="btn border-transparent rounded-sm hover:bg-gray-200"
+            :class="{ 'disabled hover:bg-transparent': !isDirty }"
+          >
+            <tw-icon
+              name="mdi-light:cancel"
+              class="icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+              :class="{ 'text-orange-700': isDirty || unit.id === 0 }"
+            />
+          </button>
+          <slot></slot>
+        </div>
       </div>
     </div>
     <div
@@ -153,11 +160,14 @@
 import axios from "axios";
 
 export default {
+  inheritAttrs: false,
   name: "UnitForm",
   props: {
     basePrice: { type: Number, default: 0 },
     unitProp: { type: Object },
-    addNew: { type: Function },
+    selectedIndex: { type: Number, default: -1 },
+    // restoreData: { type: Function },
+    // addNew: { type: Function },
     //changeDefault: { type: Function },
   },
   methods: {
@@ -228,8 +238,6 @@ export default {
       //}
     },
     gotoNextRow(e) {
-      //console.log(e.name);
-
       const forms = Array.from(e.parentElement.querySelectorAll("form"));
 
       let index = forms.indexOf(e);
@@ -269,17 +277,14 @@ export default {
       }
     },
     cancelEdit() {
-      if (this.unit.id === 0) {
-        this.$emit("update", this.unit, -1);
-      } else {
-        this.unit = { ...this.oldUnit };
-      }
+      this.$emit("restoreData", { ...this.oldUnit });
+      //this.propUnit = this.$props.unitProp;
       this.formChanged = false;
       this.isDuplicate = false;
     },
     async insertUnit(unit) {
       const self = this;
-      const data = { ...unit };
+      const data = { ...unit, buy_price: this.buyPrice };
       delete data.id;
 
       await axios
@@ -291,10 +296,10 @@ export default {
         })
         .then((res) => {
           self.$emit("update", res.data, 0);
-          self.oldUnit = res.data;
+          //self.oldUnit = res.data;
           self.formChanged = false;
           self.isDuplicate = false;
-          self.unit = res.data;
+          //self.unit = res.data;
         })
         .catch((error) => {
           self.isDuplicate = true;
@@ -302,7 +307,7 @@ export default {
     },
     async updateUnit(unit, id) {
       const self = this;
-      const data = { ...unit };
+      const data = { ...unit, buy_price: this.buyPrice };
       delete data.id;
       await axios
         .put(`/api/units/${id}/`, JSON.stringify(data), {
@@ -329,10 +334,21 @@ export default {
       clickedButton: null,
       formChanged: false,
       oldUnit: { ...this.$props.unitProp },
-      unit: { ...this.$props.unitProp },
+      propUnit: this.$props.unitProp,
+      isFocused: false,
     };
   },
   computed: {
+    unit: {
+      get() {
+        return this.$props.unitProp;
+      },
+      set(value) {
+        if (this.propUnit !== value) {
+          this.propUnit = value;
+        }
+      },
+    },
     salePrice: {
       get() {
         return this.unit.price;
@@ -345,7 +361,6 @@ export default {
         }
       },
     },
-
     unitName: {
       get() {
         return this.unit.name;
@@ -380,7 +395,6 @@ export default {
         }
       },
     },
-
     unitMargin: {
       get() {
         return this.unit.margin;
@@ -393,7 +407,6 @@ export default {
         }
       },
     },
-
     unitDefault: {
       get() {
         return this.unit.is_default;
@@ -440,10 +453,25 @@ export default {
       },
     },
     buyPrice() {
-      return this.unit.content * this.$props.basePrice;
+      const price =
+        this.unit.id === 0
+          ? this.$props.basePrice * this.unit.content
+          : this.unit.buy_price;
+      return price;
     },
     margin() {
       return this.unit.margin / 100.0;
+    },
+    currentIndex() {
+      return this.$props.selectedIndex;
+    },
+    hashFocus: {
+      get() {
+        return this.isFocused;
+      },
+      set(value) {
+        this.isFocused = value;
+      },
     },
   },
   directives: {
@@ -462,6 +490,9 @@ export default {
 </script>
 
 <style scoped>
+input[type="text"] {
+  background-color: transparent;
+}
 .my-input {
   @apply w-full outline-none border-0 md:border-0;
 }

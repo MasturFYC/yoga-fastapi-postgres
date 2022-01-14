@@ -1,0 +1,20 @@
+#ignoring environment
+__pycache__/
+_dll_/
+.vscode/
+env/
+.dockerignore
+.gitignore
+.pylintrc
+build.sh
+db.sql
+Dockerfile
+Pipfile
+Pipfile.lock
+Procfile
+README.md
+run-docker.sh
+.git/
+**/__pycache__/
+py.sh
+bytecode/
