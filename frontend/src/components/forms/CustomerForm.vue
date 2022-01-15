@@ -198,8 +198,8 @@ export default {
 }
 .flex-input {
   @apply rounded-[4px] py-1 px-2 flex-initial w-full self-start border 
-  border-indigo-400 text-[14px] placeholder:italic
-  focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
+  border-emerald-400 text-[14px] placeholder:italic
+  focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500;
 }
 
 .input-disable {  

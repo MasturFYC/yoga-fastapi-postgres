@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Product</h1>
+    <h1 class="text-emerald-700">Product</h1>
     <div class="message">
       Dalam bisnis, produk adalah barang atau jasa yang dapat diperjualbelikan. Dalam
       marketing, produk adalah apapun yang bisa ditawarkan ke sebuah pasar dan bisa
@@ -26,7 +26,7 @@
       </v-select>
       <input
         type="text"
-        class="flex-1 w-1/2 border border-indigo-600 py-1 px-4 text-sm md:w-80 rounded-md placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+        class="flex-1 w-1/2 border border-emerald-600 py-1 px-4 text-sm md:w-80 rounded-md placeholder:italic focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-600"
         placeholder="Search for product name"
         @keydown.enter.prevent.stop="searchProduct"
         maxlength="50"
@@ -34,7 +34,6 @@
       />
     </div>
     <div class="mt-4">
-      <hr />
       <div v-for="(prod, index) in products" v-bind:key="prod.id">
         <transition name="slide-fade">
           <template v-if="selectedIndex === index && selectedId === prod.id">
@@ -67,13 +66,17 @@
           </template>
           <template v-else>
             <div class="product-list">
-              <a
+              <button
                 href="#"
                 v-if="prod.id === 0"
                 @click.prevent.stop="itemClick(index, prod.id)"
-                class="span-link"
-                >+</a
-              >
+                class="btn-add"
+                >
+                <tw-icon
+                  name="carbon:add-alt"
+                  class="flex-1 icon w-5 h-5"
+                />
+              </button>
               <div v-else class="product-item text-sm">
                 <div class="flex-none w-full flex-col md:w-2/5">
                   <a
@@ -188,7 +191,7 @@ export default {
           .get(`/api/products/search/${self.searchText}/`, { headers: options })
           .then((res) => {
             const json = res.data;
-            self.products = [...json, new_product];
+            self.products = [new_product, ...json];
           });
       }
     },
@@ -267,7 +270,7 @@ export default {
       };
       await axios.get("/api/products/", { headers: options }).then((res) => {
         const json = res.data;
-        self.products = [...json, new_product];
+        self.products = [new_product, ...json];
       });
     },
     async loadProductsByCategory() {
@@ -280,7 +283,7 @@ export default {
         .get(`/api/products/category/${this.categoryId}/`, { headers: options })
         .then((res) => {
           const json = res.data;
-          self.products = [...json, new_product];
+          self.products = [new_product, ...json];
         });
     },
   },
@@ -372,7 +375,7 @@ export default {
   /* margin-left: 12px; */
 }
 .span-link {
-  @apply inline-block cursor-pointer font-bold text-indigo-400 hover:underline hover:text-indigo-700 hover:underline-offset-4;
+  @apply inline-block cursor-pointer font-bold text-emerald-700 hover:underline hover:text-emerald-900 hover:underline-offset-4;
 }
 h1 {
   font-weight: 700;
@@ -403,4 +406,10 @@ h1 {
 .v-select.style-chooser {
   @apply rounded-md text-sm py-0 px-0;
 }
+.btn-add {
+  @apply py-1 px-5 bg-emerald-600 text-white font-semibold rounded-full shadow-md hover:bg-emerald-700
+  focus:bg-emerald-900 focus:outline-none 
+  disabled:text-gray-600 disabled:bg-gray-200;
+}
+
 </style>

@@ -18,3 +18,5 @@ run-docker.sh
 **/__pycache__/
 py.sh
 bytecode/
+yoga/
+src/

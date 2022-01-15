@@ -1,31 +1,93 @@
 <template>
-  <div
-    class="mt-4 hidden text-[13px] w-full flex-row gap-x-0 font-medium md:flex bg-indigo-100"
-  >
-    <div class="w-[120px] px-1 py-1 border border-indigo-200">ID#</div>
-    <div class="w-[200px] px-1 py-1 border border-indigo-200 border-l-0">NAMA</div>
-    <div class="w-[300px] px-1 py-1 border border-indigo-200 border-l-0">BARCODE</div>
-    <div class="w-[120px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
-      ISI
-    </div>
-    <div class="w-[250px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
-      HARGA BELI
-    </div>
-    <div class="w-[160px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
-      MARGIN
-    </div>
-    <div class="w-[250px] px-1 py-1 border border-indigo-200 border-l-0 text-right">
-      HARGA JUAL
-    </div>
-    <div class="w-[225px] px-0 py-1 border border-indigo-200 border-l-0 text-center">
-      DEFAULT
-    </div>
-    <div class="w-[270px] px-0 py-1 border border-indigo-200 border-l-0 text-center">
-      COMMAND
-    </div>
-  </div>
   <div ref="test">
-    <template v-for="(unit, index) in units" :key="unit.id">
+    <div
+      class="
+        mt-4
+        hidden
+        text-[13px]
+        w-full
+        flex-row
+        gap-x-0
+        font-medium
+        md:flex
+        bg-emerald-100
+      "
+    >
+      <div class="w-[120px] px-1 py-1 border border-emerald-200">ID#</div>
+      <div class="w-[200px] px-1 py-1 border border-emerald-200 border-l-0">
+        NAMA
+      </div>
+      <div class="w-[300px] px-1 py-1 border border-emerald-200 border-l-0">
+        BARCODE
+      </div>
+      <div
+        class="
+          w-[120px]
+          px-1
+          py-1
+          border border-emerald-200 border-l-0
+          text-right
+        "
+      >
+        ISI
+      </div>
+      <div
+        class="
+          w-[250px]
+          px-1
+          py-1
+          border border-emerald-200 border-l-0
+          text-right
+        "
+      >
+        HARGA BELI
+      </div>
+      <div
+        class="
+          w-[160px]
+          px-1
+          py-1
+          border border-emerald-200 border-l-0
+          text-right
+        "
+      >
+        MARGIN
+      </div>
+      <div
+        class="
+          w-[250px]
+          px-1
+          py-1
+          border border-emerald-200 border-l-0
+          text-right
+        "
+      >
+        HARGA JUAL
+      </div>
+      <div
+        class="
+          w-[225px]
+          px-0
+          py-1
+          border border-emerald-200 border-l-0
+          text-center
+        "
+      >
+        DEFAULT
+      </div>
+      <div
+        class="
+          w-[270px]
+          px-0
+          py-1
+          border border-emerald-200 border-l-0
+          text-center
+        "
+      >
+        COMMAND
+      </div>
+    </div>
+    <div v-for="(unit, index) in units" v-bind:key="unit.id">
       <unit-form
         :selectedIndex="index"
         @change="onDefaultChanged($event, unit.id)"
@@ -33,7 +95,7 @@
         :basePrice="$props.productPrice"
         @restoreData="restoreData"
         @update="updateUnit"
-        @addNew="addUnit"
+        @addNew="addUnit"        
       >
         <template v-slot:default>
           <button
@@ -51,9 +113,11 @@
           </button>
         </template>
       </unit-form>
-    </template>
+    </div>
+    <a href="#" @click.prevent.stop="addUnit">
+      <tw-icon name="carbon:add-alt" class="flex-1 icon w-5 h-5 mt-2 text-emerald-700" />
+    </a>
   </div>
-  <a href="#" @click.prevent.stop="addUnit">+</a>
 </template>
 
 <script>
@@ -87,6 +151,12 @@ export default {
     "unit-form": UnitForm,
   },
   methods: {
+    changeFocus(value) {
+      if(value !== this.focusName){
+        console.log(value)
+      }
+      this.focusName = value;
+    },
     restoreData(unit) {
       const self = this;
       const index = self.units.indexOfObject("id", unit.id);
@@ -139,8 +209,8 @@ export default {
           is_default: false,
           product_id: this.$props.productId,
           buy_price: this.$props.productPrice,
-          margin: 30.0,
-          price: this.$props.productPrice + this.$props.productPrice * (30.0 / 100.0),
+          margin: 0.0,
+          price: this.$props.productPrice,
         });
       }
     },
@@ -169,9 +239,20 @@ export default {
     // this.$refs.test.querySelector("input").focus();
     //this.$refs.test.target.querySelector("*[autofocus]").focus();
   },
+  computed:{
+    focusName:{
+      get () {return this.divFocus},
+      set (value) {
+        if(value !== this.divFocus) {
+          this.divFocus = value;
+        }
+      }
+    }
+  },
   data() {
     return {
       units: [],
+      divFocus: '',
     };
   },
 };

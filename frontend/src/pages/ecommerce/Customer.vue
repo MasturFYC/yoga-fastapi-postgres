@@ -178,7 +178,7 @@ export default {
   /* margin-left: 12px; */
 }
 .span-link {
-  @apply inline-block cursor-pointer font-bold text-indigo-400 hover:underline hover:text-indigo-700 hover:underline-offset-4;
+  @apply inline-block cursor-pointer font-bold text-emerald-400 hover:underline hover:text-emerald-700 hover:underline-offset-4;
 }
 h1 {
   font-weight: 700;
@@ -186,7 +186,7 @@ h1 {
 }
 
 .customer-list {
-  @apply py-4 border-b border-indigo-200;
+  @apply py-4 border-b border-emerald-200;
 }
 .customer-item {
   @apply flex flex-col mt-1

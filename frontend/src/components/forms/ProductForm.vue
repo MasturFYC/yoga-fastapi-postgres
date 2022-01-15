@@ -382,14 +382,14 @@ export default {
 }
 .flex-select {
   @apply rounded-[4px] py-0 px-0 flex-initial w-full self-start text-[14px]
-  border-indigo-400 placeholder:italic
-  focus:border-solid focus:outline-indigo-500 focus:ring-2 focus:ring-indigo-500;
-  /*  hover:outline-none hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500;*/
+  border-emerald-400 placeholder:italic
+  focus:border-solid focus:outline-emerald-500 focus:ring-2 focus:ring-emerald-500;
+  /*  hover:outline-none hover:border-emerald-500 hover:ring-1 hover:ring-emerald-500;*/
 }
 .flex-input {
   @apply rounded-[4px] py-0.5 px-2 flex-initial w-full self-start text-gray-700
-  border border-indigo-400 text-[14px] placeholder:italic
-  focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
+  border border-emerald-400 text-[14px] placeholder:italic
+  focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500;
 }
 
 .input-disable {
