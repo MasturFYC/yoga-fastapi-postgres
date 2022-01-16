@@ -10,9 +10,9 @@ const routes = [
         component: () => import('@/pages/Home.vue'),
       },
       {
-        path: 'product',
-        name: 'Product',
-        component: () => import('@/pages/ecommerce/Product.vue'),
+        path: 'supplier',
+        name: 'Supplier',
+        component: () => import('@/pages/ecommerce/Supplier.vue'),
       },
       {
         path: 'category',
@@ -20,9 +20,14 @@ const routes = [
         component: () => import('@/pages/ecommerce/Category.vue'),
       },
       {
-        path: 'supplier',
-        name: 'Supplier',
-        component: () => import('@/pages/ecommerce/Supplier.vue'),
+        path: 'product',
+        name: 'Product',
+        component: () => import('@/pages/ecommerce/Product.vue'),
+      },
+      {
+        path: 'stock',
+        name: 'Stock',
+        component: () => import('@/pages/ecommerce/Stock.vue'),
       },
       {
         path: 'sales',

@@ -9,6 +9,15 @@
       mentah dan dijual sebagai barang jadi. Produk yang berupa barang mentah seperti
       metal atau hasil pertanian sering pula disebut sebagai komoditas.
     </div>
+    <div class="w-52">
+      <v-dropdown
+        :options="productList"
+        v-on:selected="validateSelection"
+        :disabled="false"
+        name="zipcode"
+        :maxItem="8"
+      />
+    </div>
     <div class="flex flex-row justify-center items-center mt-4 gap-x-4">
       <v-select
         class="flex-1 w-1/2 style-chooser"
@@ -71,11 +80,8 @@
                 v-if="prod.id === 0"
                 @click.prevent.stop="itemClick(index, prod.id)"
                 class="btn-add"
-                >
-                <tw-icon
-                  name="carbon:add-alt"
-                  class="flex-1 icon w-5 h-5"
-                />
+              >
+                <tw-icon name="carbon:add-alt" class="flex-1 icon w-5 h-5" />
               </button>
               <div v-else class="product-item text-sm">
                 <div class="flex-none w-full flex-col md:w-2/5">
@@ -150,6 +156,7 @@ import axios from "axios";
 import TwButton from "@/components/TwButton.vue";
 import ProductForm from "@/components/forms/ProductForm.vue";
 import UnitList from "@/components/forms/UnitList.vue";
+import Dropdown from "@/components/FycDropdown.vue";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -177,8 +184,12 @@ export default {
     "tw-button": shallowRef(TwButton),
     "product-form": shallowRef(ProductForm),
     "unit-list": shallowRef(UnitList),
+    "v-dropdown": Dropdown,
   },
   methods: {
+    validateSelection(e) {
+      console.log("--1---", e);
+    },
     async searchProduct(e) {
       const self = this;
 
@@ -303,6 +314,9 @@ export default {
     },
   },
   computed: {
+    productList() {
+      return this.products.map((o) => ({ id: o.id, name: o.name }));
+    },
     categories() {
       return this.loadedCategories;
     },
@@ -411,5 +425,4 @@ h1 {
   focus:bg-emerald-900 focus:outline-none 
   disabled:text-gray-600 disabled:bg-gray-200;
 }
-
 </style>

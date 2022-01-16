@@ -84,10 +84,12 @@
         <label class="flex-label">
           <span class="flex-span">Kategori:</span>
           <v-select
-            class="style-chooser"
+            id="myselect"
+            ref="myselect"
             :options="categories"
             label="name"
             v-model.lazy="productCategoryId"
+            class="style-chooser"
             :class="{ 'input-disable': categoryValid }"
             :reduce="(cat) => cat.id"
           >
@@ -365,9 +367,44 @@ export default {
 </script>
 
 <style scoped>
-.v-select.style-chooser {
-  @apply rounded-[4px] py-0 px-0 flex-initial w-full text-[14px];
+.style-chooser .vs__dropdown-toggle,
+.vs--searchable .vs__dropdown-toggle,
+.style-chooser {
+  @apply flex flex-1 w-full text-[13px] border-2 border-red-700;
 }
+
+div[role="combobox"] {
+  @apply flex flex-1 w-full text-[13px] border-2 border-red-700;
+}
+/* 
+.style-chooser,
+.style-chooser .vs__search::placeholder,
+.style-chooser .vs__dropdown-toggle,
+.style-chooser .vs__dropdown-menu {
+  background: #dfe5fb;
+  border: none;
+  color: #394066;
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
+
+.vs--searchable,
+.vs__dropdown-toggle,
+.style-chooser .vs__dropdown-menu .vs--searchable,
+.vs__dropdown-toggle,
+.vs--searchable .vs__dropdown-toggle,
+#vs2__combobox,
+.style-chooser .vs__dropdown-toggle,
+.vs__dropdown-toggle,
+.style-chooser .vs__dropdown-menu {
+  border: none; /* 3px solid #cfcfcf; 
+}
+
+.style-chooser .vs__clear,
+.style-chooser .vs__open-indicator {
+  fill: #394066;
+} */
+
 .flex-span {
   @apply flex-none w-[130px] text-[13px] font-medium text-gray-600 py-1 md:text-right md:mr-3;
 }

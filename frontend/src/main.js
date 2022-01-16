@@ -6,6 +6,7 @@ import router from '@/router'
 import vSelect from 'vue-select';
 //import Cleave from 'vue-cleave-component';
 import vNumber from '@coders-tm/vue-number-format'
+//import VueClickAway from 'vue3-click-away';
 
 import '@/styles/app.css'
 import '@/styles/page-example-common-style.css'
@@ -24,5 +25,6 @@ const app = createApp(App);
 // );
 app.use(router);
 app.component('v-select', vSelect);
-app.use(vNumber, {precision: 4})
+app.use(vNumber, {precision: 4});
+//app.use(VueClickAway);
 app.mount('#app')

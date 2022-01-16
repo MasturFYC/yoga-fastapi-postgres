@@ -1,35 +1,37 @@
 <template>
   <!-- Toggle sidebar button -->
-  <button 
+  <button
     class="fixed z-50 bottom-4 right-4 w-16 h-16 rounded-full bg-gray-900 lg:hidden"
-    @click="toggleSidebar">
-    <tw-icon 
-      name="heroicons-solid:menu-alt-4" 
-      class="btn-toggle w-6 h-6 text-white" 
-      :class="{'opacity-0': showSidebar}" />
-    <tw-icon 
-      name="heroicons-solid:x" 
+    @click="toggleSidebar"
+  >
+    <tw-icon
+      name="heroicons-solid:menu-alt-4"
       class="btn-toggle w-6 h-6 text-white"
-      :class="{'opacity-0': !showSidebar}" />
+      :class="{ 'opacity-0': showSidebar }"
+    />
+    <tw-icon
+      name="heroicons-solid:x"
+      class="btn-toggle w-6 h-6 text-white"
+      :class="{ 'opacity-0': !showSidebar }"
+    />
   </button>
 
   <!-- Sidebar Overlay -->
-  <div 
-    class="fixed inset-0 bg-black bg-opacity-25 z-30 lg:hidden" 
-    :class="{'hidden': !showSidebar}" 
-    @click="showSidebar = false" />
-  <div 
-    class="fixed z-40 left-0 top-0 right-24 lg:right-auto lg:w-64 h-screen border-r border-gray-200 overflow-y-auto bg-white" 
-    :class="{'hidden': allowSidebarHide && !showSidebar}">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-25 z-30 lg:hidden"
+    :class="{ hidden: !showSidebar }"
+    @click="showSidebar = false"
+  />
+  <div
+    class="fixed z-40 left-0 top-0 right-24 lg:right-auto lg:w-64 h-screen border-r border-gray-200 overflow-y-auto bg-white"
+    :class="{ hidden: allowSidebarHide && !showSidebar }"
+  >
     <!-- Header -->
     <header class="flex items-center pt-10 px-5">
-      <img 
-        src="@/assets/logo.svg" 
-        alt="Logo" 
-        class="w-10">
+      <img src="@/assets/logo.svg" alt="Logo" class="w-10" />
       <div class="ml-2 flex flex-col">
         <h1 class="text-sm text-gray-700 font-medium">Admin Panel</h1>
-        <p class="text-gray-400 text-xs">{{appTitle}}</p>
+        <p class="text-gray-400 text-xs">{{ appTitle }}</p>
       </div>
     </header>
     <!-- Menu -->
@@ -64,8 +66,8 @@
           <sub-menu-item text="Tooltip" :route="{name: 'dev-components-tooltip'}" />
           <sub-menu-item text="Modal" />
           -->
-          <!-- Form components -->
-          <!--
+      <!-- Form components -->
+      <!--
           <sub-menu-header text="Form" />
           <sub-menu-item text="Input" />
           <sub-menu-item text="Textarea" />
@@ -76,8 +78,8 @@
           <sub-menu-item text="Date Picker" />
           <sub-menu-item text="Time Picker" />
           -->
-          <!-- Notice components -->
-          <!--
+      <!-- Notice components -->
+      <!--
           <sub-menu-header text="Notice" />
           <sub-menu-item text="Alert" />
           <sub-menu-item text="Notification" />
@@ -86,13 +88,8 @@
       </menu-item>
       -->
       <!-- Menu Header -->
-      <menu-header 
-        class="mt-10" 
-        text="Menu" />
-      <menu-item 
-        icon="heroicons-outline:home" 
-        text="Home" 
-        :route="{path: '/'}" />
+      <menu-header class="mt-10" text="Menu" />
+      <menu-item icon="heroicons-outline:home" text="Home" :route="{ path: '/' }" />
       <!-- <menu-item 
         icon="heroicons-outline:view-grid" 
         text="Accounts">
@@ -101,34 +98,20 @@
           <sub-menu-item text="ShopeePay" />
         </template>
       </menu-item> -->
-      <menu-item 
-        icon="heroicons-outline:view-grid" 
-        text="E-Commerce">
+      <menu-item icon="heroicons-outline:view-grid" text="E-Commerce">
         <template #sub-menu>
-          <sub-menu-item text="Supplier"
-          :route="{path: '/supplier/'}" />
-          <sub-menu-item text="Product Category"
-          :route="{path: '/category/'}" />
-          <sub-menu-item text="Product"
-          :route="{path: '/product/'}" />
-          <sub-menu-item text="Sales"
-          :route="{path: '/sales/'}" />
-          <sub-menu-item text="Customer"
-          :route="{path: '/customer/'}" />
+          <sub-menu-item text="Supplier" :route="{ path: '/supplier/' }" />
+          <sub-menu-item text="Product Category" :route="{ path: '/category/' }" />
+          <sub-menu-item text="Product" :route="{ path: '/product/' }" />
+          <sub-menu-item text="Pembelian" :route="{ path: '/stock/' }" />
+          <sub-menu-item text="Sales" :route="{ path: '/sales/' }" />
+          <sub-menu-item text="Customer" :route="{ path: '/customer/' }" />
         </template>
       </menu-item>
-      <menu-item 
-        icon="heroicons-outline:credit-card" 
-        text="Cards" />
-      <menu-item 
-        icon="heroicons-outline:users" 
-        text="Contacts" />
-      <menu-item 
-        icon="heroicons-outline:calculator" 
-        text="Loan Calculator" />
-      <menu-item 
-        icon="heroicons-outline:cog" 
-        text="Settings">
+      <menu-item icon="heroicons-outline:credit-card" text="Cards" />
+      <menu-item icon="heroicons-outline:users" text="Contacts" />
+      <menu-item icon="heroicons-outline:calculator" text="Loan Calculator" />
+      <menu-item icon="heroicons-outline:cog" text="Settings">
         <template #sub-menu>
           <sub-menu-item text="Profile" />
           <sub-menu-item text="Security" />
@@ -136,37 +119,38 @@
       </menu-item>
 
       <!-- Menu Header -->
-      <menu-header 
-        class="mt-10" 
-        text="Scheduled Payments" />
-      <menu-item 
-        icon="heroicons-outline:check-circle" 
-        icon-class="text-blue-400" 
-        text="Monthly Rent" />
-      <menu-item 
+      <menu-header class="mt-10" text="Scheduled Payments" />
+      <menu-item
+        icon="heroicons-outline:check-circle"
+        icon-class="text-blue-400"
+        text="Monthly Rent"
+      />
+      <menu-item
         icon="heroicons-outline:check-circle"
         icon-class="text-red-400"
-        text="Food Payment" />
-      <menu-item 
+        text="Food Payment"
+      />
+      <menu-item
         icon="heroicons-outline:check-circle"
         icon-class="text-green-400"
-        text="Utility Bills" />
+        text="Utility Bills"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
-import { useWindowSize } from '@vueuse/core'
-import { useRoute } from 'vue-router'
+import { ref, computed, watch } from "vue";
+import { useWindowSize } from "@vueuse/core";
+import { useRoute } from "vue-router";
 
-import MenuHeader from './TheSidebarMenuHeader.vue'
-import MenuItem from './TheSidebarMenuItem.vue'
-import SubMenuHeader from './TheSidebarSubMenuHeader.vue'
-import SubMenuItem from './TheSidebarSubMenuItem.vue'
+import MenuHeader from "./TheSidebarMenuHeader.vue";
+import MenuItem from "./TheSidebarMenuItem.vue";
+import SubMenuHeader from "./TheSidebarSubMenuHeader.vue";
+import SubMenuItem from "./TheSidebarSubMenuItem.vue";
 
 export default {
-  name: 'TheSidebar',
+  name: "TheSidebar",
   components: {
     MenuHeader,
     MenuItem,
@@ -175,38 +159,38 @@ export default {
   },
   data() {
     return {
-      appTitle: 'Yoga Facturing'
-    }
+      appTitle: "Yoga Facturing",
+    };
   },
-  emits: ['visibility-change'],
-  setup(_, {emit}) {
-    const showSidebar = ref(false)
-    const toggleSidebar = () => showSidebar.value = !showSidebar.value
+  emits: ["visibility-change"],
+  setup(_, { emit }) {
+    const showSidebar = ref(false);
+    const toggleSidebar = () => (showSidebar.value = !showSidebar.value);
     watch(showSidebar, (val) => {
-      emit('visibility-change', val)
-    })
+      emit("visibility-change", val);
+    });
 
     // Automatically hide sidebar when route changed
-    const route = useRoute()
-    watch(route, () => showSidebar.value = false)
-    
+    const route = useRoute();
+    watch(route, () => (showSidebar.value = false));
+
     // Automatically hide sidebar when window size
     // lower than width breakpoint
-    const widthBreakpoint = 1024 // Tailwind `lg` breakpoint
-    const { width: windowWidth } = useWindowSize()
+    const widthBreakpoint = 1024; // Tailwind `lg` breakpoint
+    const { width: windowWidth } = useWindowSize();
     watch(windowWidth, (newWidth) => {
-      if (newWidth < widthBreakpoint) showSidebar.value = false
-    })
+      if (newWidth < widthBreakpoint) showSidebar.value = false;
+    });
 
-    const allowSidebarHide = computed(() => windowWidth.value < widthBreakpoint)
+    const allowSidebarHide = computed(() => windowWidth.value < widthBreakpoint);
 
     return {
       showSidebar,
       toggleSidebar,
-      allowSidebarHide
-    }
-  }
-}
+      allowSidebarHide,
+    };
+  },
+};
 </script>
 
 <style scoped>

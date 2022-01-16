@@ -1,15 +1,9 @@
 module.exports = {
-  //purge: {
-    content: [
-      './src/**/*.html',
-      './src/**/*.vue',
-      './src/**/*.js',
-    ],
-   // options: {
-   //   keyframes: true,
-   //   fontFace: true
-   // },
-  //},
+  content: [
+    './src/**/*.html',
+    './src/**/*.vue',
+    './src/**/*.js',
+  ],
   darkMode: 'media', // or 'class'
   theme: {
     extend: {},

@@ -2,7 +2,7 @@
   <form @submit.prevent.stop="getButtonName" :id="'myform-' + unit.id">
     <div
       :id="'mydiv-' + unit.id"
-      ref="divParent"
+      ref="clickOutsideMe"
       :class="{
         'bg-gray-50': currentIndex % 2 === 0,
         'bg-emerald-50': hashFocus,
@@ -181,14 +181,18 @@ export default {
     };
   },
   methods: {
-
+    // async onClickAway(e) {
+    //   if (this.isDirty) {
+    //     await this.formSubmit(e);
+    //   }
+    // },
     onFocusIn(e) {
-      //console.log(this.$refs.divParent.id);
+      //console.log(this.$refs.clickOutsideMe.id);
       this.hashFocus = true;
-      //this.$emit('changeFocus', this.$refs.divParent.id);
+      //this.$emit('changeFocus', this.$refs.clickOutsideMe.id);
     },
     onFocusOut(e) {
-      //console.log(this.$refs.divParent.id);
+      //console.log(this.$refs.clickOutsideMe.id);
       this.hashFocus = false;
       // if(this.isDirty) {
       //   this.formSubmit(e);
@@ -201,8 +205,9 @@ export default {
       this.clickedButton = e.submitter.name;
     },
     onKeyDown(e) {
-
-      const forms = Array.from(e.target.form.parentElement.parentElement.querySelectorAll("form"));
+      const forms = Array.from(
+        e.target.form.parentElement.parentElement.querySelectorAll("form")
+      );
 
       const index = forms.indexOf(e.target.form);
       const length = forms.length - 1;
@@ -483,6 +488,9 @@ export default {
       },
     },
   },
+  // mounted() {
+  //   onClickOutside(this.$refs.clickOutsideMe, (event) => console.log(event.target.id));
+  // },
   directives: {
     focus: {
       mounted: function (el) {

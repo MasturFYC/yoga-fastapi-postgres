@@ -1,7 +1,7 @@
 ''' Product Dal '''
 from typing import List
-from sqlalchemy import or_, select, update, delete, DECIMAL, Integer, String
-from sqlalchemy.orm import joinedload, Session
+from sqlalchemy import or_, select, update, delete, DECIMAL, Integer
+from sqlalchemy.orm import joinedload, Session, selectinload,  load_only
 from sqlalchemy.sql.expression import bindparam
 from sqlalchemy.sql import text
 from sqlalchemy import func
@@ -39,6 +39,23 @@ class ProductDal():
                                            .order_by(Product.name))
         print(str(query))
         return query.scalars().fetchall()
+
+    async def get_with_units(self):
+        ''' load all products '''
+        query = await self.session\
+            .execute(select(Product)
+                     .options(load_only(Product.id,
+                                        Product.name,
+                                        Product.stock,
+                                        Product.is_active,
+                                        Product.is_sale))
+                     .options(selectinload(Product.units))
+                     .where(Product.is_active == True)
+                     .order_by(Product.name))
+        rs = query.scalars().fetchall()
+        await self.session.commit()
+
+        return rs
 
     async def product_get_one(self, pid: int) -> Product:
         ''' load one Product by id '''

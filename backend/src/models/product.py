@@ -36,7 +36,7 @@ class Product(declare_base):  # pylint: disable=too-few-public-methods
         "src.models.category.Category", back_populates="products")
 
     units = relationship("src.models.unit.Unit",
-                         back_populates="product")
+                         back_populates="product", lazy='joined')
 
     first_stocks = relationship("src.models.firststock.FirstStock",
                                 back_populates="product")

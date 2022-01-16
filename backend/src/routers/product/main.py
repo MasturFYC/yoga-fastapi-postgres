@@ -5,7 +5,7 @@ from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
 from fastapi.params import Depends
 from src.models.base_model import db_session
-from src.schemas.product import ProductIn as py_in, ProductOut as py_out
+from src.schemas.product import ProductIn as py_in, ProductOut as py_out, product_with_units
 from src.dals.product import ProductDal as cur_dal
 
 
@@ -31,6 +31,14 @@ async def read_products(skip: int = 0, take: int = 20, dal: cur_dal = Depends(ge
     return [row.__dict__ for row in res]
 
 
+@ROUTER.get("/with-units/", response_model=List[product_with_units], status_code=status.HTTP_200_OK)
+async def read_product_with_units(dal: cur_dal = Depends(get_current_dal)):
+    """ Get all products """
+    res = await dal.get_with_units()
+    if res is None:
+        raise HTTPException(status_code=404, detail="Product is empty")
+    return [row.__dict__ for row in res]
+
 @ROUTER.get("/search/{name}/", response_model=List[py_out], status_code=status.HTTP_200_OK)
 async def search_products(name: str, dal: cur_dal = Depends(get_current_dal)):
     """ Search products by name """
@@ -49,7 +57,7 @@ async def get_by_category(pid: int = 0, dal: cur_dal = Depends(get_current_dal))
     return [row.__dict__ for row in res]
 
 
-@ROUTER.get("/{pid}/", response_model=py_out, status_code=status.HTTP_200_OK)
+@ROUTER.get("/{pid}/", response_model=product_with_units, status_code=status.HTTP_200_OK)
 async def read_product(pid: int, dal: cur_dal = Depends(get_current_dal)):
     """ Get product by id """
     res = await dal.product_get_one(pid)
