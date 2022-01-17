@@ -55,6 +55,9 @@ async def get_by_supplier(pid: int, dal: cur_dal = Depends(get_current_dal)):
 @ROUTER.post("/", response_model=data_out, status_code=status.HTTP_201_CREATED)
 async def create_stock(payload: data_in, dal: cur_dal = Depends(get_current_dal)):
     """ Create stock """
+
+    print('---------', payload)
+
     res = await dal.create(payload)
 
     if res is None:
@@ -71,7 +74,7 @@ async def update_stock(pid: int, payload: data_in, dal: cur_dal = Depends(get_cu
     if res is None:
         raise HTTPException(status_code=500, detail="Stock name exist")
 
-    return res.__dict__
+    return res #.__dict__
 
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)

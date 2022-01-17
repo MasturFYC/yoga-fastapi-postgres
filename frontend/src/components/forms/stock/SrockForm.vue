@@ -8,15 +8,19 @@
         </label>
         <label class="label-group">
           <span class="label-title">Tanggal</span>
-          <input class="control" type="date" v-model.lazy="createdAt" />
+          <input class="control" type="date"
+          placeholder="mm-dd-yyyy" format="MM-DD-YYYY"
+          v-model.lazy="createdAt" />
         </label>
         <label class="label-group">
           <span class="label-title">Supplier</span>
           <v-dropdown
+            v-if="suppliers.length"
             :options="suppliers"
+            :selectedId="supplierId"
             v-on:selected="validateSelection"
             :disabled="false"
-            name="zipcode"
+            name="supplier"
             :maxItem="8"
           />
         </label>
@@ -56,6 +60,12 @@
         </label>
       </div>
     </div>
+    <div class="flex flex-row gap-2 my-5">
+      <button type="submit" class="btn-primary" :disabled="!enableSubmit">Save</button>
+      <button type="button" class="btn-cancel" @click="cancelChange">Cancel</button>
+      <button type="button" class="btn-remove hidden" :class="{'flex': stockId > 0}" @click="removeData">Save</button>
+    </div>
+    <hr />    
   </form>
 </template>
 
@@ -63,6 +73,7 @@
 import { computed, toRefs, reactive, onMounted } from "vue";
 import Dropdown from "@/components/FycDropdown.vue";
 import axios from "axios";
+import dayjs from 'dayjs';
 
 export default {
   name: "StockForm",
@@ -79,36 +90,42 @@ export default {
     },
   },
 
-  setup(props) {
+  setup(props, {emit}) {
     const formSubmit = (e) => {
       e.preventDefault();
+      saveChange();
     };
 
     const loadSupplier = async () => {
-      const options = {
+      const opt = {
         accept: "application/json",
         "Content-Type": "application/json",
       };
-      await axios.get("/api/categories/", { headers: options }).then((res) => {
+      await axios.get("/api/suppliers/", { headers: opt }).then((res) => {
         const json = res.data;
-        console.log(json);
         event.supplierList = json;
       });
     };
 
     const validateSelection = (e) => {
-      console.log(e);
+      event.supplierId = e.id;
     };
 
     const event = reactive({
       stock: props.stockProp,
       supplierList: [],
+      dirty: false,
+      dateFormat: 'text',
 
       suppliers: computed(() => {
         return event.supplierList;
       }),
 
       stockId: computed(() => event.stock.id),
+      format: computed({
+        get: () => event.dateFormat,
+        set: (value) => event.dateFormat = value
+      }),
 
       invoiceNumber: computed({
         get() {
@@ -117,8 +134,14 @@ export default {
         set(value) {
           if (value !== event.stock.invoice_number) {
             event.stock.invoice_number = value;
+            event.hashDirty = true;
           }
         },
+      }),
+
+      hashDirty: computed({
+        get () { return event.dirty },
+        set (value) { event.dirty = value },
       }),
 
       total: computed({
@@ -128,6 +151,7 @@ export default {
         set(value) {
           if (value !== event.stock.total) {
             event.stock.total = value;
+            event.hashDirty = true;
           }
         },
       }),
@@ -139,6 +163,7 @@ export default {
         set(value) {
           if (value !== event.stock.cash) {
             event.stock.cash = value;
+            event.hashDirty = true;
           }
         },
       }),
@@ -150,6 +175,7 @@ export default {
         set(value) {
           if (value !== event.stock.payment) {
             event.stock.payment = value;
+            event.hashDirty = true;
           }
         },
       }),
@@ -172,17 +198,21 @@ export default {
         set(value) {
           if (value !== event.stock.supplier_id) {
             event.stock.supplier_id = value;
+            event.hashDirty = true;
+            //console.log('supplier id hashChanged', value)
           }
         },
       }),
 
       createdAt: computed({
         get() {
-          return event.stock.created_at;
+          return dayjs(event.stock.created_at).format('YYYY-MM-DD');
         },
         set(value) {
+          
           if (value !== event.stock.created_at) {
             event.stock.created_at = value;
+            event.hashDirty = true;
           }
         },
       }),
@@ -198,14 +228,35 @@ export default {
       }),
     });
 
+    const enableSubmit = computed(() => {
+      const isInvoiceValid = event.invoiceNumber.trim().length > 0;
+      const isSupplierIdValid = event.supplierId > 0;
+
+      // console.log({
+      //   'isInvoiceValid': isInvoiceValid,
+      //   'isSupplierIdValid': isSupplierIdValid, 'supid':event.supplierId
+      // })
+    const test = isInvoiceValid && isSupplierIdValid;
+    //console.log('test',test)
+      return (test);
+    });
+
     onMounted(async () => {
       await loadSupplier();
     });
 
+    const cancelChange = () => emit("cancelChange");
+    const saveChange = () => emit("saveChange", event.stock);
+    const removeData = () => emit("removeData", event.stock.id);
+
     return {
       ...toRefs(event),
       formSubmit,
+      enableSubmit,
       validateSelection,
+      cancelChange,
+      saveChange,
+      removeData
     };
   },
 };
@@ -229,6 +280,22 @@ export default {
   placeholder:italic focus:outline-none focus:ring-0;
 }
 .data-form {
-  @apply flex w-full flex-col md:flex-row gap-x-0 gap-y-2 p-2 md:p-4 mt-4 md:gap-x-4;
+  @apply flex w-full flex-col md:flex-row gap-x-0 gap-y-2 p-2 md:p-4 mt-4 md:gap-x-4 rounded-lg;
 }
+
+.btn-cancel {
+  @apply py-1 px-5 bg-orange-500 text-white font-semibold rounded-full shadow-md hover:bg-orange-700
+  focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75;
+}
+.btn-remove {
+  @apply py-1 px-5 bg-red-700 text-white font-semibold rounded-full shadow-md hover:bg-red-800
+  disabled:invisible
+  focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-75;
+}
+.btn-primary {
+  @apply py-1 px-5 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-700
+  focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75
+  disabled:text-gray-600 disabled:bg-gray-200;
+}
+
 </style>

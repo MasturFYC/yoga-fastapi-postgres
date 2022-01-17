@@ -45,6 +45,11 @@ export default {
   name: "Dropdown",
   template: "Dropdown",
   props: {
+    selectedId: {
+      type: Number,
+      default: 0,
+      required: true
+    },
     name: {
       type: String,
       required: false,
@@ -79,7 +84,7 @@ export default {
     };
   },
   created() {
-    this.$emit("selected", this.selected);
+    if(this.selectedId > 0) this.selected = this.options[this.options.indexOfObject("id", this.selectedId)] || {};
   },
   computed: {
     selectedIndex: {
@@ -93,7 +98,7 @@ export default {
       },
     },
     placeholder() {
-      return this.selected.id ? this.selected.name : "Select an option";
+      return this.selected.id ? this.selected.name : "Select one " + this.name;
     },
     filteredOptions() {
       const filtered = [];
@@ -163,8 +168,8 @@ export default {
   @apply relative inline-block min-h-[29px] w-full ml-[-2px];
 }
 .dropdown-focus {
-  @apply border rounded-t-[6px] border-b-0 outline-none mb-[-2px] drop-shadow-lg
-  ring-inset ring-1 focus:ring-emerald-500;
+  @apply border rounded-t-[6px] border-2 border-b-0 outline-none drop-shadow-xl
+  ring-inset ring-0;
 }
 .dropdown-input {
   @apply text-[14px] placeholder:italic 
@@ -172,10 +177,10 @@ export default {
 }
 
 .dropdown-lost-focus {
-  @apply border focus:outline-none focus:border-emerald-500 rounded-[6px];
+  @apply border outline-none border-emerald-500 rounded-[6px];
 }
 .dropdown-content {
-  @apply absolute bg-white w-full flex flex-col rounded-b-[6px] drop-shadow-lg
+  @apply absolute bg-white w-full flex flex-col rounded-b-[6px] drop-shadow-xl
  border-2 border-emerald-500 border-t-0 shadow overflow-auto z-[1000];
 }
 .dropdown-item {

@@ -37,8 +37,10 @@ class StockDal():
     async def create(self, payload: data_in) -> Stock:
         ''' insert new Stock '''
         new_data = Stock(supplier_id=payload.supplier_id,
-                         stock_num=payload.stock_num,
+                         invoice_number=payload.invoice_number,
                          cash=payload.cash,
+                         payment=0,
+                         remain_payment=0,
                          created_at=payload.created_at)
         self.session.add(new_data)
         await self.session.flush()
@@ -48,7 +50,7 @@ class StockDal():
         ''' update one stock by id '''
         query = update(Stock).where(Stock.id == pid)\
             .values(supplier_id=payload.supplier_id,
-                    stock_num=payload.stock_num,
+                    invoice_number=payload.invoice_number,
                     cash=payload.cash,
                     created_at=payload.created_at)
         res = await self.session.execute(query)

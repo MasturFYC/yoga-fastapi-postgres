@@ -1,6 +1,6 @@
 """ Stock Schema """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pydantic import validator
 from src.models.base_model import CamelModel
 
@@ -16,10 +16,9 @@ class StockIn(CamelModel):
 
     @classmethod
     @validator("created_at", pre=True)
-    def stock_date_validate(cls, value) -> None:
+    def parse_created_at(cls, value):
         ''' DOC STRING '''
-        return datetime.fromtimestamp(value)
-
+        return datetime.utcfromtimestamp(value, timezone.utc)
 
 class StockOut(StockIn):
     """ router parameter out """
@@ -28,6 +27,6 @@ class StockOut(StockIn):
 
     @classmethod
     @validator("updated_at", pre=True)
-    def updated_at_validate(cls, value) -> None:
+    def parse_updated_at(cls, value) -> None:
         ''' DOC STRING '''
-        return datetime.fromtimestamp(value)
+        return datetime.utcfromtimestamp(value, timezone.utc)

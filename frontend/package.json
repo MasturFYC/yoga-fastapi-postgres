@@ -16,6 +16,7 @@
     "@iconify/iconify": "^2.0.4",
     "@vueuse/core": "^7.5.3",
     "axios": "^0.21.1",
+    "dayjs": "^1.10.7",
     "highlight.js": "^11.2.0",
     "vue": "^3.2.26",
     "vue-router": "^4.0.12",
