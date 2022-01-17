@@ -16,7 +16,7 @@ class FackturerDal():
         ''' load all fackturers '''
         query = await self.session\
             .execute(select(Fackturer)
-                     .offset(skip).limit(take).order_by(Fackturer.stock_num))
+                     .offset(skip).limit(take).order_by(Fackturer.id))
         return query.scalars().fetchall()
 
     async def get_one(self, pid: int) -> Fackturer:

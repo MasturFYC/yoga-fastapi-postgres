@@ -1,10 +1,8 @@
 <template>
   <div>
-    <h1 class="text-emerald-700 text-[24px] font-bold">
-      Pembelian #{{ stock.id }}
-    </h1>
+    <h1 class="text-emerald-700 text-[18px] font-bold">Pembelian #{{ stock.id }}</h1>
     <stock-form
-      v-if="showForm"
+      v-if="stock.id > 0"
       :stockProp="stock"
       @cancelChange="cancelChange"
       @saveChange="saveChange"
@@ -14,10 +12,9 @@
 </template>
 
 <script>
-import { computed, toRefs, reactive } from "vue";
+import { computed, toRefs, reactive, onMounted } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
-
 
 import StockForm from "@/components/forms/stock/SrockForm.vue";
 export default {
@@ -48,21 +45,30 @@ export default {
       event.isEdit = false;
     }
 
+    const loadStock = async () => {
+      await axios
+        .get("/api/stocks/3/", {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          //console.log(res.data);
+          event.stock = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });      
+    }
     const insertStock = async (stock) => {
-      const time = dayjs();
-      time.add('hour', 7);
-      const date = dayjs(stock.created_at)
-      .set('hour', time.get('hour'))
-      .set('minute', time.get('minute'))
-      .set('second', time.get('second'))
 
-      console.log('time', time, 'date',date)
 
-      const data = {...stock, created_at: date};
+      const data = { ...stock};
       delete data.id;
 
       await axios
-        .post('/api/stocks/', JSON.stringify(data), {
+        .post("/api/stocks/", JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -71,16 +77,16 @@ export default {
         .then((res) => {
           console.log(res.data);
           event.stock = res.data;
-        }).catch(error => {
-          console.log(error)
+        })
+        .catch((error) => {
+          console.log(error);
         });
-    }
+    };
 
-    const updateStock = async(stock, id) => {
-      const date = dayjs(stock.created_at)
-      const data = {...stock, created_at: date};
+    const updateStock = async (stock, id) => {
+      const data = { ...stock};
       delete data.id;
-      
+
       await axios
         .put(`/api/stocks/${id}`, JSON.stringify(data), {
           headers: {
@@ -92,7 +98,7 @@ export default {
           console.log(res.data);
           event.stock = res.data;
         });
-    }
+    };
 
     async function removeData(id) {
       await axios
@@ -113,9 +119,15 @@ export default {
       if (stock.id === 0) {
         await insertStock(stock);
       } else {
-        await updateStock(stock);
+        await updateStock(stock, stock.id);
       }
     };
+
+    onMounted(async () => {
+      await loadStock();
+    });
+
+
     return { ...toRefs(event), cancelChange, saveChange, removeData };
   },
 };

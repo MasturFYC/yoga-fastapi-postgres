@@ -1,4 +1,5 @@
 ''' Stock Dal '''
+import datetime
 from typing import List
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import Session
@@ -16,7 +17,7 @@ class StockDal():
         ''' load all stocks '''
         query = await self.session\
             .execute(select(Stock)
-                     .offset(skip).limit(take).order_by(Stock.stock_num))
+                     .offset(skip).limit(take).order_by(Stock.invoice_number))
         return query.scalars().fetchall()
 
     async def get_by_supplier(self, pid: int = 0) -> List[Stock]:
@@ -26,7 +27,6 @@ class StockDal():
                      .where(Stock.supplier_id == pid)
                      .order_by(Stock.id))
         return query.scalars().fetchall()
-
 
     async def get_one(self, pid: int) -> Stock:
         ''' load one stock by id '''
@@ -52,7 +52,10 @@ class StockDal():
             .values(supplier_id=payload.supplier_id,
                     invoice_number=payload.invoice_number,
                     cash=payload.cash,
-                    created_at=payload.created_at)
+                    created_at=payload.created_at,
+                    updated_at=datetime.datetime.now(tz=None))\
+            .returning(Stock)
+        query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
         tup = res.fetchone()
         await self.session.commit()

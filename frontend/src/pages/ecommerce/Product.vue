@@ -9,15 +9,6 @@
       mentah dan dijual sebagai barang jadi. Produk yang berupa barang mentah seperti
       metal atau hasil pertanian sering pula disebut sebagai komoditas.
     </div>
-    <div class="w-52">
-      <v-dropdown
-        :options="productList"
-        v-on:selected="validateSelection"
-        :disabled="false"
-        name="zipcode"
-        :maxItem="8"
-      />
-    </div>
     <div class="flex flex-row justify-center items-center mt-4 gap-x-4">
       <v-select
         class="flex-1 w-1/2 style-chooser"
@@ -156,7 +147,6 @@ import axios from "axios";
 import TwButton from "@/components/TwButton.vue";
 import ProductForm from "@/components/forms/ProductForm.vue";
 import UnitList from "@/components/forms/UnitList.vue";
-import Dropdown from "@/components/FycDropdown.vue";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -184,7 +174,6 @@ export default {
     "tw-button": shallowRef(TwButton),
     "product-form": shallowRef(ProductForm),
     "unit-list": shallowRef(UnitList),
-    "v-dropdown": Dropdown,
   },
   methods: {
     validateSelection(e) {

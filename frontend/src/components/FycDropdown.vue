@@ -84,7 +84,10 @@ export default {
     };
   },
   created() {
-    if(this.selectedId > 0) this.selected = this.options[this.options.indexOfObject("id", this.selectedId)] || {};
+    if(this.selectedId > 0) {
+      this.selected = this.options[this.options.indexOfObject("id", this.selectedId)] || {};
+      this.searchFilter = this.selected.id ? this.selected.name : "";
+    }
   },
   computed: {
     selectedIndex: {

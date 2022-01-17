@@ -19,7 +19,8 @@ class ProductDal():
         ''' load all products '''
         query = await self.session\
             .execute(select(Product)
-                     .offset(skip).limit(take).order_by(Product.name))
+                     .offset(skip).limit(take)
+                     .order_by(Product.name))
 
         return query.scalars().fetchall()
 

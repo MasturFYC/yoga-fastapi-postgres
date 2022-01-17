@@ -65,7 +65,9 @@
       <button type="button" class="btn-cancel" @click="cancelChange">Cancel</button>
       <button type="button" class="btn-remove hidden" :class="{'flex': stockId > 0}" @click="removeData">Save</button>
     </div>
-    <hr />    
+    <hr />
+        <div>time {{ createdAt }}</div>
+
   </form>
 </template>
 
@@ -115,17 +117,12 @@ export default {
       stock: props.stockProp,
       supplierList: [],
       dirty: false,
-      dateFormat: 'text',
 
       suppliers: computed(() => {
         return event.supplierList;
       }),
 
       stockId: computed(() => event.stock.id),
-      format: computed({
-        get: () => event.dateFormat,
-        set: (value) => event.dateFormat = value
-      }),
 
       invoiceNumber: computed({
         get() {
@@ -205,13 +202,13 @@ export default {
       }),
 
       createdAt: computed({
-        get() {
+        get() {          
           return dayjs(event.stock.created_at).format('YYYY-MM-DD');
         },
         set(value) {
           
           if (value !== event.stock.created_at) {
-            event.stock.created_at = value;
+            event.stock.created_at = setDatetime(value);
             event.hashDirty = true;
           }
         },
@@ -228,6 +225,17 @@ export default {
       }),
     });
 
+    const setDatetime = (v) => {
+        const time = dayjs(); //);        
+        const date = dayjs(v)
+        .set("hour", time.get("hour"))
+        .set("minute", time.get("minute"))
+        .set("second", time.get("second"))
+        .set("millisecond", time.get("millisecond"));
+        return date;
+      };
+
+
     const enableSubmit = computed(() => {
       const isInvoiceValid = event.invoiceNumber.trim().length > 0;
       const isSupplierIdValid = event.supplierId > 0;
@@ -236,7 +244,7 @@ export default {
       //   'isInvoiceValid': isInvoiceValid,
       //   'isSupplierIdValid': isSupplierIdValid, 'supid':event.supplierId
       // })
-    const test = isInvoiceValid && isSupplierIdValid;
+      const test = isInvoiceValid && isSupplierIdValid;
     //console.log('test',test)
       return (test);
     });
@@ -256,7 +264,8 @@ export default {
       validateSelection,
       cancelChange,
       saveChange,
-      removeData
+      removeData,
+      setDatetime
     };
   },
 };
@@ -284,16 +293,16 @@ export default {
 }
 
 .btn-cancel {
-  @apply py-1 px-5 bg-orange-500 text-white font-semibold rounded-full shadow-md hover:bg-orange-700
+  @apply py-1 px-5 bg-orange-500 text-white text-sm font-semibold rounded-full shadow-md hover:bg-orange-700
   focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75;
 }
 .btn-remove {
-  @apply py-1 px-5 bg-red-700 text-white font-semibold rounded-full shadow-md hover:bg-red-800
+  @apply py-1 px-5 bg-red-700 text-white  text-sm font-semibold rounded-full shadow-md hover:bg-red-800
   disabled:invisible
   focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-75;
 }
 .btn-primary {
-  @apply py-1 px-5 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-700
+  @apply py-1 px-5 bg-blue-500 text-white text-sm font-semibold rounded-full shadow-md hover:bg-blue-700
   focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75
   disabled:text-gray-600 disabled:bg-gray-200;
 }

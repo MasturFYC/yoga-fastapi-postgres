@@ -16,7 +16,7 @@ class CustomerOrderDal():
         ''' load all customer orders '''
         query = await self.session\
             .execute(select(CustomerOrder)
-                     .offset(skip).limit(take).order_by(CustomerOrder.stock_num))
+                     .offset(skip).limit(take).order_by(CustomerOrder.id))
         return query.scalars().fetchall()
 
     async def get_one(self, pid: int) -> CustomerOrder:

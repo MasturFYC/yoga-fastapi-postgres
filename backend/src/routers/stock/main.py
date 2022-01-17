@@ -56,8 +56,6 @@ async def get_by_supplier(pid: int, dal: cur_dal = Depends(get_current_dal)):
 async def create_stock(payload: data_in, dal: cur_dal = Depends(get_current_dal)):
     """ Create stock """
 
-    print('---------', payload)
-
     res = await dal.create(payload)
 
     if res is None:
