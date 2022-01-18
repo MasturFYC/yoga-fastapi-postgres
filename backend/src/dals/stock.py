@@ -1,7 +1,7 @@
 ''' Stock Dal '''
 import datetime
 from typing import List
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, desc
 from sqlalchemy.orm import Session
 from src.models.stock import Stock
 from src.schemas.stock import StockIn as data_in
@@ -17,7 +17,7 @@ class StockDal():
         ''' load all stocks '''
         query = await self.session\
             .execute(select(Stock)
-                     .offset(skip).limit(take).order_by(Stock.invoice_number))
+                     .offset(skip).limit(take).order_by(desc(Stock.id)))
         return query.scalars().fetchall()
 
     async def get_by_supplier(self, pid: int = 0) -> List[Stock]:

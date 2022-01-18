@@ -3,7 +3,7 @@
     <!-- Dropdown Input -->
     <input
       class="dropdown-input"
-      :class="{ 'dropdown-focus': optionsShown, 'dropdown-lost-focus': !optionsShown }"
+      :class="{ 'dropdown-focus': optionsShown, 'dropdown-lost-focus': !optionsShown, 'input-required': selectedIndex === 0 }"
       autocomplete="nope"
       :name="name"
       @focus="showOptions()"
@@ -170,17 +170,22 @@ export default {
 .dropdown {
   @apply relative inline-block min-h-[29px] w-full ml-[-2px];
 }
+
+.input-required {
+  @apply border-red-500;
+}
+
 .dropdown-focus {
   @apply border rounded-t-[6px] border-2 border-b-0 outline-none drop-shadow-xl
   ring-inset ring-0;
 }
 .dropdown-input {
-  @apply text-[14px] placeholder:italic 
+  @apply text-[14px] placeholder:italic
   border-emerald-500 py-0.5 px-2 flex-initial w-full self-start text-gray-700 z-[999];
 }
 
 .dropdown-lost-focus {
-  @apply border outline-none border-emerald-500 rounded-[6px];
+  @apply border outline-none border-gray-400 rounded-[6px];
 }
 .dropdown-content {
   @apply absolute bg-white w-full flex flex-col rounded-b-[6px] drop-shadow-xl

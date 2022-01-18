@@ -4,7 +4,8 @@
       <div class="flex-1 flex flex-col gap-y-2 self-start w-full">
         <label class="label-group">
           <span class="label-title">Invoice</span>
-          <input class="control" type="text" v-model.lazy="invoiceNumber" />
+          <input ref='invoice' class="control" type="text" v-model.lazy="invoiceNumber"
+          :class="{'input-required': !isInvoiceValid}" />
         </label>
         <label class="label-group">
           <span class="label-title">Tanggal</span>
@@ -63,18 +64,16 @@
     <div class="flex flex-row gap-2 my-5">
       <button type="submit" class="btn-primary" :disabled="!enableSubmit">Save</button>
       <button type="button" class="btn-cancel" @click="cancelChange">Cancel</button>
-      <button type="button" class="btn-remove hidden" :class="{'flex': stockId > 0}" @click="removeData">Save</button>
+      <span class="flex-1"></span>
+      <button type="button" class="btn-remove" :class="{'hidden': stockId === 0}" @click="removeData">Delete</button>
     </div>
     <hr />
-        <div>time {{ createdAt }}</div>
-
   </form>
 </template>
 
 <script>
-import { computed, toRefs, reactive, onMounted } from "vue";
+import { computed, toRefs, reactive, ref, onMounted, nextTick } from "vue";
 import Dropdown from "@/components/FycDropdown.vue";
-import axios from "axios";
 import dayjs from 'dayjs';
 
 export default {
@@ -90,23 +89,17 @@ export default {
       required: true,
       default: {},
     },
+    suppliers: {
+      type: Array,
+      default: []
+    },
   },
 
   setup(props, {emit}) {
+
     const formSubmit = (e) => {
       e.preventDefault();
       saveChange();
-    };
-
-    const loadSupplier = async () => {
-      const opt = {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      };
-      await axios.get("/api/suppliers/", { headers: opt }).then((res) => {
-        const json = res.data;
-        event.supplierList = json;
-      });
     };
 
     const validateSelection = (e) => {
@@ -114,12 +107,13 @@ export default {
     };
 
     const event = reactive({
-      stock: props.stockProp,
-      supplierList: [],
+      invoice: ref(null),
+      stock: props.stockProp,      
+      //supplierList: props.suppliers,
       dirty: false,
 
       suppliers: computed(() => {
-        return event.supplierList;
+        return props.suppliers;
       }),
 
       stockId: computed(() => event.stock.id),
@@ -235,27 +229,28 @@ export default {
         return date;
       };
 
+    const isInvoiceValid = computed(()=> {
+      return event.invoiceNumber.trim().length > 0;
+    })
+
+    const isSupplierIdValid = computed(()=> {
+      return event.supplierId > 0;
+    })
 
     const enableSubmit = computed(() => {
-      const isInvoiceValid = event.invoiceNumber.trim().length > 0;
-      const isSupplierIdValid = event.supplierId > 0;
-
-      // console.log({
-      //   'isInvoiceValid': isInvoiceValid,
-      //   'isSupplierIdValid': isSupplierIdValid, 'supid':event.supplierId
-      // })
       const test = isInvoiceValid && isSupplierIdValid;
-    //console.log('test',test)
       return (test);
-    });
-
-    onMounted(async () => {
-      await loadSupplier();
     });
 
     const cancelChange = () => emit("cancelChange");
     const saveChange = () => emit("saveChange", event.stock);
     const removeData = () => emit("removeData", event.stock.id);
+
+    onMounted(() => {
+      nextTick(()=> {
+        event.invoice.focus();
+      })
+    })
 
     return {
       ...toRefs(event),
@@ -265,7 +260,8 @@ export default {
       cancelChange,
       saveChange,
       removeData,
-      setDatetime
+      isInvoiceValid,
+      isSupplierIdValid
     };
   },
 };
@@ -273,8 +269,12 @@ export default {
 <style scoped>
 .control {
   @apply rounded-[6px] py-0.5 px-2 flex-initial w-full self-start text-gray-700
-  border border-emerald-400 placeholder:italic
+  border border-gray-400 placeholder:italic
   focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500;
+}
+
+.input-required {
+  @apply border-red-400;
 }
 
 .label-title {
@@ -285,7 +285,7 @@ export default {
 }
 .control-disabled {
   @apply rounded-[6px] py-0.5 px-2 flex-initial w-full self-start
-  text-gray-400 border border-gray-400 focus:border-gray-400
+  text-gray-400 border border-gray-200 focus:border-gray-200
   placeholder:italic focus:outline-none focus:ring-0;
 }
 .data-form {
