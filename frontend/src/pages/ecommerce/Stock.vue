@@ -6,15 +6,6 @@
         <tw-icon name="carbon:add-alt" class="flex-1 icon w-5 h-5" />
       </button>
     </div>
-    <stock-form
-      v-if="showForm"
-      :stockProp="selectedStock"
-      :suppliers="suppliers"
-      @cancelChange="cancelChange"
-      @saveChange="saveChange"
-      @removeData="removeData"
-      :key="selectedStock.id"
-    ></stock-form>
     <div v-if="!showForm">
       <div class="fyc-table">
         <div class="fyc-table-row-header">
@@ -64,6 +55,18 @@
         </div>
       </div>
     </div>
+    <stock-form
+      v-if="showForm"
+      :stockProp="selectedStock"
+      :suppliers="suppliers"
+      @cancelChange="cancelChange"
+      @saveChange="saveChange"
+      @removeData="removeData"
+      :key="selectedStock.id"
+    ></stock-form>
+    <div v-if="showForm">
+      <stock-detail :stockId="selectedStock.id"> </stock-detail>
+    </div>
   </div>
 </template>
 
@@ -72,6 +75,7 @@ import { computed, toRefs, reactive, onMounted } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import StockForm from "@/components/forms/stock/StockForm.vue";
+import StockDetailList from "@/components/forms/stock/DetailList.vue";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -85,23 +89,23 @@ Array.prototype.insert = function (index, item) {
 };
 
 Array.prototype.update = function (item, id) {
-  const i = this.indexOfObject("id", id)
-  if(i >= 0) {
+  const i = this.indexOfObject("id", id);
+  if (i >= 0) {
     this.splice(i, 1, item);
   }
 };
 Array.prototype.remove = function (id) {
-  const i = this.indexOfObject("id", id)
-  if(i >= 0) {
-    this.splice(i,1);
+  const i = this.indexOfObject("id", id);
+  if (i >= 0) {
+    this.splice(i, 1);
   }
 };
-
 
 export default {
   name: "Pembelian",
   components: {
     "stock-form": StockForm,
+    "stock-detail": StockDetailList,
   },
 
   setup() {
@@ -301,14 +305,21 @@ export default {
   md:table-header-group h-9 font-medium;
 }
 .fyc-table-row-header .fyc-table-cell:first-child {
-  @apply rounded-tl-xl;
+  @apply rounded-tl-xl pl-2;
 }
 .fyc-table-row-header .fyc-table-cell:last-child {
-  @apply rounded-tr-xl;
+  @apply rounded-tr-xl pr-2;
 }
 
 .fyc-table-row-header .fyc-table-cell {
   @apply align-middle border-b;
+}
+
+.fyc-table-row-group .fyc-table-cell:first-child {
+  @apply md:pl-2;
+}
+.fyc-table-row-group .fyc-table-cell:last-child {
+  @apply md:pr-2;
 }
 
 .fyc-table-row-group {
@@ -326,7 +337,7 @@ export default {
 
 .btn-add {
   @apply py-1 px-5 bg-emerald-600 text-white font-semibold rounded-full shadow-md hover:bg-emerald-700
-  focus:bg-emerald-900 focus:outline-none 
+  focus:bg-emerald-900 focus:outline-none
   disabled:text-gray-600 disabled:bg-gray-200;
 }
 .cell-link {

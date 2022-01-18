@@ -1,21 +1,19 @@
 <template>
-  <div class="dropdown" v-if="options">
+  <div class="root-drop" v-if="options">
     <!-- Dropdown Input -->
     <input
       ref="root"
       v-bind="$attrs"
-      class="dropdown-input"
+      class="root-input"
       :class="{
-        'dropdown-focus': optionsShown,
-        'dropdown-lost-focus': !optionsShown,
-        'input-required': selectedIndex === 0,
+        'root-required': selectedIndex === 0,
       }"
       autocomplete="nope"
       :name="name"
       @focus="showOptions()"
       @blur="exit()"
       @click="showOptions()"
-      @keyup.prevent="keyMonitor"
+      @keydown.enter.prevent.self="keyMonitor"
       @keydown.down.prevent.stop="selectedIndex++"
       @keydown.up.prevent.stop="selectedIndex--"
       @keydown.esc.prevent.stop="exit()"
@@ -24,9 +22,9 @@
       :placeholder="placeholder"
     />
     <!-- Dropdown Menu -->
-    <div class="dropdown-content" v-show="optionsShown">
+    <div class="root-content" v-show="optionsShown">
       <div
-        class="dropdown-item"
+        class="root-item"
         @mousedown="selectOption(option, index)"
         v-for="(option, index) in filteredOptions"
         :key="index"
@@ -184,32 +182,28 @@ export default {
 </script>
 
 <style lscoped>
-.dropdown {
-  @apply relative inline-block min-h-[29px] w-full ml-[-2px];
+.root-drop {
+  @apply relative inline-block w-full;
 }
 
-.input-required {
+.root-required {
   @apply border-red-500;
 }
 
-.dropdown-focus {
-  @apply rounded-t-[6px] border-2 border-b-0 outline-none drop-shadow-xl
-  ring-inset ring-0;
-}
-.dropdown-input {
-  @apply text-[14px] placeholder:italic
-  border-emerald-500 py-0.5 px-2 flex-initial w-full self-start text-gray-700 z-[999];
+.root-input {
+  @apply border border-transparent text-[14px] placeholder:italic
+  px-2 flex-initial w-full self-start text-gray-700 z-[999]
+  focus:drop-shadow-xl rounded-sm
+  focus:outline-none focus:border-emerald-500;
 }
 
-.dropdown-lost-focus {
-  @apply border outline-none border-gray-400 rounded-[6px];
+.root-content {
+  @apply absolute bg-white w-full flex flex-col drop-shadow-xl
+  border rounded-sm rounded-t-none border-t-0
+  border-emerald-500 shadow overflow-auto z-[1000];
 }
-.dropdown-content {
-  @apply absolute bg-white w-full flex flex-col rounded-b-[6px] drop-shadow-xl
- border-2 border-emerald-500 border-t-0 shadow overflow-auto z-[1000];
-}
-.dropdown-item {
-  @apply text-gray-700 text-sm py-1 px-2 block cursor-pointer 
+.root-item {
+  @apply text-gray-700 text-sm py-0.5 px-2 block cursor-pointer 
   hover:bg-emerald-700 hover:text-gray-100;
 }
 </style>
