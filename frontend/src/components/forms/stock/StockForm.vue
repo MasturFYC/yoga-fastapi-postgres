@@ -67,22 +67,20 @@
       <span class="flex-1"></span>
       <button type="button" class="btn-remove" :class="{'hidden': stockId === 0}" @click="removeData">Delete</button>
     </div>
-    <hr />
   </form>
 </template>
 
 <script>
-import { computed, toRefs, reactive, ref, onMounted, nextTick } from "vue";
+import { shallowRef, computed, toRefs, reactive, ref, onMounted, nextTick } from "vue";
 import Dropdown from "@/components/FycDropdown.vue";
-import dayjs from 'dayjs';
+    
 
+import dayjs from 'dayjs';
 export default {
   name: "StockForm",
-
   components: {
-    "v-dropdown": Dropdown,
+    "v-dropdown": Dropdown
   },
-
   props: {
     stockProp: {
       type: Object,
@@ -94,30 +92,23 @@ export default {
       default: []
     },
   },
-
   setup(props, {emit}) {
-
     const formSubmit = (e) => {
       e.preventDefault();
       saveChange();
     };
-
     const validateSelection = (e) => {
       event.supplierId = e.id;
     };
-
     const event = reactive({
       invoice: ref(null),
       stock: props.stockProp,      
       //supplierList: props.suppliers,
       dirty: false,
-
       suppliers: computed(() => {
         return props.suppliers;
       }),
-
       stockId: computed(() => event.stock.id),
-
       invoiceNumber: computed({
         get() {
           return event.stock.invoice_number;
@@ -129,12 +120,10 @@ export default {
           }
         },
       }),
-
       hashDirty: computed({
         get () { return event.dirty },
         set (value) { event.dirty = value },
       }),
-
       total: computed({
         get() {
           return event.stock.total;
@@ -146,7 +135,6 @@ export default {
           }
         },
       }),
-
       cash: computed({
         get() {
           return event.stock.cash;
@@ -158,7 +146,6 @@ export default {
           }
         },
       }),
-
       payment: computed({
         get() {
           return event.stock.payment;
@@ -170,7 +157,6 @@ export default {
           }
         },
       }),
-
       remainPayment: computed({
         get() {
           return event.stock.remain_payment;
@@ -181,7 +167,6 @@ export default {
           }
         },
       }),
-
       supplierId: computed({
         get() {
           return event.stock.supplier_id;
@@ -194,7 +179,6 @@ export default {
           }
         },
       }),
-
       createdAt: computed({
         get() {          
           return dayjs(event.stock.created_at).format('YYYY-MM-DD');
@@ -207,7 +191,6 @@ export default {
           }
         },
       }),
-
       inputNumber: computed(() => {
         return {
           decimal: ",",
@@ -218,7 +201,6 @@ export default {
         };
       }),
     });
-
     const setDatetime = (v) => {
         const time = dayjs(); //);        
         const date = dayjs(v)
@@ -228,30 +210,24 @@ export default {
         .set("millisecond", time.get("millisecond"));
         return date;
       };
-
     const isInvoiceValid = computed(()=> {
       return event.invoiceNumber.trim().length > 0;
     })
-
     const isSupplierIdValid = computed(()=> {
       return event.supplierId > 0;
     })
-
     const enableSubmit = computed(() => {
       const test = isInvoiceValid && isSupplierIdValid;
       return (test);
     });
-
     const cancelChange = () => emit("cancelChange");
     const saveChange = () => emit("saveChange", event.stock);
     const removeData = () => emit("removeData", event.stock.id);
-
     onMounted(() => {
       nextTick(()=> {
         event.invoice.focus();
       })
     })
-
     return {
       ...toRefs(event),
       formSubmit,
@@ -272,11 +248,9 @@ export default {
   border border-gray-400 placeholder:italic
   focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500;
 }
-
 .input-required {
   @apply border-red-400;
 }
-
 .label-title {
   @apply font-medium text-gray-400 w-[150px] self-center text-left md:text-right;
 }
@@ -291,7 +265,6 @@ export default {
 .data-form {
   @apply flex w-full flex-col md:flex-row gap-x-0 gap-y-2 p-2 md:p-4 mt-4 md:gap-x-4 rounded-lg;
 }
-
 .btn-cancel {
   @apply py-1 px-5 bg-orange-500 text-white text-sm font-semibold rounded-full shadow-md hover:bg-orange-700
   focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-75;
@@ -306,5 +279,4 @@ export default {
   focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75
   disabled:text-gray-600 disabled:bg-gray-200;
 }
-
 </style>

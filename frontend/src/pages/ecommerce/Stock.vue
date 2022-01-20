@@ -64,7 +64,7 @@
       @removeData="removeData"
       :key="selectedStock.id"
     ></stock-form>
-    <div v-if="showForm">
+    <div v-if="showForm" :key="selectedStock.id">
       <stock-detail :stockId="selectedStock.id"> </stock-detail>
     </div>
   </div>
@@ -124,7 +124,7 @@ export default {
     const indoNumberFormatter = new Intl.NumberFormat("id-ID");
     // const indoDateFormatter = new Intl.DateTimeFormat("id-ID", dateOptions);
 
-    const event = reactive({
+    const state = reactive({
       isEdit: false,
       stock: { ...new_stock },
       stocks: [],
@@ -132,47 +132,47 @@ export default {
       selIndex: 0,
       selectedIndex: computed({
         get() {
-          return event.selIndex;
+          return state.selIndex;
         },
         set(v) {
-          event.selIndex = v;
+          state.selIndex = v;
         },
       }),
       showForm: computed({
         get: () => {
-          return event.isEdit;
+          return state.isEdit;
         },
         set: (v) => {
-          event.isEdit = v;
+          state.isEdit = v;
         },
       }),
       selectedStock: computed({
         get: () => {
-          return event.stock;
+          return state.stock;
         },
         set: (v) => {
-          event.stock = v;
+          state.stock = v;
         },
       }),
     });
 
     const addNewStock = () => {
       setTimeout(() => {
-        event.selectedStock = { ...new_stock };
+        state.selectedStock = { ...new_stock };
       }, 100);
-      event.showForm = true;
+      state.showForm = true;
     };
 
     const editStock = (item) => {
-      event.selectedStock = { ...item };
+      state.selectedStock = { ...item };
       // setTimeout(() => {
-      event.showForm = true;
+      state.showForm = true;
       // }, 2000);
     };
 
     function cancelChange() {
-      event.showForm = false;
-      event.selectedStock = { ...new_stock };
+      state.showForm = false;
+      state.selectedStock = { ...new_stock };
     }
 
     const formatDate = (date) => {
@@ -180,8 +180,8 @@ export default {
     };
 
     const getSupplierName = (id) => {
-      const i = event.suppliers.indexOfObject("id", id);
-      const test = event.suppliers[i];
+      const i = state.suppliers.indexOfObject("id", id);
+      const test = state.suppliers[i];
       return test ? test.name : "-";
     };
 
@@ -192,7 +192,7 @@ export default {
       };
       await axios.get("/api/suppliers/", { headers: opt }).then((res) => {
         const json = res.data;
-        event.suppliers = json;
+        state.suppliers = json;
       });
     };
 
@@ -205,7 +205,7 @@ export default {
           },
         })
         .then((res) => {
-          event.stocks = res.data;
+          state.stocks = res.data;
         })
         .catch((error) => {
           console.log(error);
@@ -228,10 +228,10 @@ export default {
           },
         })
         .then((res) => {
-          event.showForm = false;
-          event.stocks.insert(0, res.data);
-          event.selectedStock = { ...new_stock };
-          event.selectedIndex = 0;
+          state.showForm = false;
+          state.stocks.insert(0, res.data);
+          state.selectedStock = { ...new_stock };
+          state.selectedIndex = 0;
         })
         .catch((error) => {
           console.log(error);
@@ -243,26 +243,27 @@ export default {
       delete data.id;
 
       await axios
-        .put(`/api/stocks/${id}`, JSON.stringify(data), {
+        .put(`/api/stocks/${id}/`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
           },
         })
         .then((res) => {
-          event.showForm = false;
           const id = res.data.id;
-          const index = event.stocks.update(res.data, id);
-          event.selectedStock = { ...new_stock };
+          const index = state.stocks.update(res.data, id);
+          state.selectedStock = { ...new_stock };
+          state.selectedIndex = 0;
+          state.showForm = false;
         });
     };
 
     const removeData = async (id) => {
-      await axios.delete(`/api/stocks/${id}`).then((res) => {
+      await axios.delete(`/api/stocks/${id}/`).then((res) => {
         if (res.status === 200) {
-          event.stocks.remove(id);
-          event.selectedStock = { ...new_stock };
-          event.showForm = false;
+          state.stocks.remove(id);
+          state.selectedStock = { ...new_stock };
+          state.showForm = false;
         }
       });
     };
@@ -281,7 +282,7 @@ export default {
     });
 
     return {
-      ...toRefs(event),
+      ...toRefs(state),
       formatDate,
       getSupplierName,
       cancelChange,

@@ -4,7 +4,7 @@
     <input
       ref="root"
       v-bind="$attrs"
-      class="root-input"
+      class="root-input pb-1"
       :class="{
         'root-required': selectedIndex === 0,
       }"
@@ -39,14 +39,12 @@
 
 <script>
 import { ref } from "vue";
-
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
     if (this[i][property] === value) return i;
   }
   return -1;
 };
-
 export default {
   inheritAttrs: false,
   name: "Dropdown",
@@ -85,7 +83,6 @@ export default {
   setup() {
     const root = ref(null);
     const getRef = () => root.value;
-
     return { root, getRef };
   },
   data() {
@@ -94,7 +91,7 @@ export default {
       optionsShown: false,
       searchFilter: "",
       selIndex: 0,
-      getRef: () => root.value,
+//      getRef: () => root.value,
     };
   },
   created() {
@@ -185,22 +182,19 @@ export default {
 .root-drop {
   @apply relative inline-block w-full;
 }
-
 .root-required {
   @apply border-red-500;
 }
-
 .root-input {
-  @apply border border-transparent text-[14px] placeholder:italic
+  @apply rounded-sm bg-transparent border-[1px] border-transparent text-[14px] placeholder:italic
   px-2 flex-initial w-full self-start text-gray-700 z-[999]
   focus:drop-shadow-xl rounded-sm
-  focus:outline-none focus:border-emerald-500;
+  focus:outline-none focus:bg-white focus:border-[1px] focus:border-emerald-500;
 }
-
 .root-content {
   @apply absolute bg-white w-full flex flex-col drop-shadow-xl
-  border rounded-sm rounded-t-none border-t-0
-  border-emerald-500 shadow overflow-auto z-[1000];
+  border rounded-sm  rounded-t-none mt-[-1px]
+  border-emerald-500 border-t-0 shadow overflow-auto z-[1000];
 }
 .root-item {
   @apply text-gray-700 text-sm py-0.5 px-2 block cursor-pointer 

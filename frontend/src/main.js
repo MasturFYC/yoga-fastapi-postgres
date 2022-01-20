@@ -5,7 +5,6 @@ import router from '@/router'
 //import VueSelect from 'vue-next-select';
 import vSelect from 'vue-select';
 //import Cleave from 'vue-cleave-component';
-import vNumber from '@coders-tm/vue-number-format'
 //import VueClickAway from 'vue3-click-away';
 
 import '@/styles/app.css'
@@ -14,6 +13,7 @@ import '@/styles/page-example-common-style.css'
 import 'vue-select/dist/vue-select.css';
 
 import '@purge-icons/generated'
+import vNumber from './components/vue-number-format'
 
 
 const app = createApp(App);
