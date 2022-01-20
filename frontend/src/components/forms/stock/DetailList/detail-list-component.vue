@@ -12,13 +12,9 @@
       </div>
     </div>
     <div class="fyc-body">
-      <div
-        class="fyc-row"
-        @keydown.left.prevent.stop="gotoPrevCell"
-        @keydown.enter.prevent="gotoNextCell"
-      >
+      <div class="fyc-row" @keydown.enter.prevent="gotoNextCell">
         <div class="fyc-cell">
-          {{ 0 }}
+          {{ detailId }}
         </div>
         <div class="fyc-cell">
           <v-dropdown
@@ -27,7 +23,7 @@
               { id: 2, name: 'Minyak' },
             ]"
             :selectedId="0"
-            v-on:selected="validateSelection"
+            v-on:selected="validateName"
             :disabled="false"
             name="product"
             :maxItem="8"
@@ -44,9 +40,8 @@
             class="my-input w-16 text-left md:text-right"
             v-model.lazy="qty"
             v-bind="inputNumber"
-            :name="'qty'"
-            id="qty"
             placeholder="0"
+            name="qty"
             @focus="setCurrentCell(1)"
             :ref="
               (el) => {
@@ -58,11 +53,11 @@
         <div class="fyc-cell w-16">
           <v-dropdown
             :options="[
-              { id: 1, name: 'kg' },
-              { id: 2, name: 'cm' },
+              { id: 1, name: 'kg', price: 2500 },
+              { id: 2, name: 'cm', price: 1000 },
             ]"
             :selectedId="0"
-            v-on:selected="validateSelection"
+            v-on:selected="validateUnit"
             :disabled="false"
             name="unit"
             :maxItem="8"
@@ -74,15 +69,14 @@
             "
           />
         </div>
-        <div class="fyc-cell text-right px-2">{{ 0 }}</div>
+        <div class="fyc-cell text-right px-2">{{ price }}</div>
         <div class="fyc-cell text-right">
           <number
             class="my-input text-left md:text-right"
             v-model.lazy="discount"
             v-bind:options="inputNumber"
-            placeholder="0"
             name="discount"
-            id="discount"
+            placeholder="0"
             @focus="setCurrentCell(3)"
             :ref="
               (el) => {
@@ -91,24 +85,17 @@
             "
           />
         </div>
-        <div class="fyc-cell text-right px-2">{{ 0 }}</div>
+        <div class="fyc-cell text-right px-2">{{ subtotal }}</div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {
-  shallowRef,
-  computed,
-  onMounted,
-  reactive,
-  toRefs,
-  ref,
-  onBeforeUpdate,
-} from "vue";
+import { onMounted, toRefs, onBeforeUpdate } from "vue";
 
 import axios from "axios";
 import Dropdown from "@/components/DropdownNonBorder.vue";
+import { state as detailData } from "./directive";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -145,41 +132,8 @@ export default {
   },
 
   setup(props, { emit }) {
-    const state = reactive({
-      cell: 0,
-      qty: 10,
-      disc: 100,
-      cells: ref([]),
-      stockDetails: [],
-      dirty: false,
-      discount: computed({
-        get() {
-          return state.disc;
-        },
-        set(v) {
-          state.disc = v;
-        },
-      }),
-      details: computed({
-        get() {
-          return state.stockDetails;
-        },
-        set(v) {
-          state.stockDetails = v;
-        },
-      }),
-      inputNumber: computed({
-        get() {
-          return {
-            decimal: ",",
-            separator: ".",
-            suffix: "",
-            precision: 2,
-            masked: false,
-          };
-        },
-      }),
-    });
+    const state = detailData;
+
     const loadStockDetails = async () => {
       await axios
         .get(`/api/stockdetails/stock/${props.stockId}`, {
@@ -195,37 +149,48 @@ export default {
           console.log(error);
         });
     };
+
     onMounted(async () => {
       await loadStockDetails();
     });
+
     const gotoNextCell = () => {
       state.cell = state.cell === 3 ? 0 : state.cell + 1;
       // console.log(`index-${state.cell}`,state.cells[state.cell])
       // if(state.cell === 1) state.cells['qty'].focus();
       state.cells[state.cell].focus();
     };
-    const gotoPrevCell = () => {
-      state.cell = state.cell === 0 ? 3 : state.cell - 1;
-      //state.cells[state.cell].focus();
-    };
+
+    // const gotoPrevCell = () => {
+    //   state.cell = state.cell === 0 ? 3 : state.cell - 1;
+    //   //state.cells[state.cell].focus();
+    // };
+
     const setCurrentCell = (i) => {
       state.cell = i;
     };
-    const validateSelection = (e) => {};
+
+    const validateName = (e) => {
+      state.productId = e.id;
+      state.name = e.name;
+    };
+    const validateUnit = (e) => {
+      state.unitId = e.id;
+      state.unitName = e.name;
+      state.price = e.price;
+    };
 
     onBeforeUpdate(() => {
       state.cells.value = [];
     });
-    const gettingRef = (e, i) => {
-      console.log(e.value, i);
-    };
+
     return {
       ...toRefs(state),
       gotoNextCell,
-      gotoPrevCell,
+      //      gotoPrevCell,
       setCurrentCell,
-      validateSelection,
-      gettingRef,
+      validateName,
+      validateUnit,
     };
   },
 };

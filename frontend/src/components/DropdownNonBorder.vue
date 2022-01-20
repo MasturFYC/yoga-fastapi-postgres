@@ -91,7 +91,7 @@ export default {
       optionsShown: false,
       searchFilter: "",
       selIndex: 0,
-//      getRef: () => root.value,
+      //      getRef: () => root.value,
     };
   },
   created() {
@@ -135,7 +135,7 @@ export default {
       this.selectedIndex = index;
       this.optionsShown = false;
       this.searchFilter = this.selected.name;
-      this.$emit("selected", this.selected);
+      this.$emit("selected", option);
     },
     showOptions() {
       if (!this.disabled) {

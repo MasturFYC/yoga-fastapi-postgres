@@ -75,7 +75,7 @@ import { computed, toRefs, reactive, onMounted } from "vue";
 import dayjs from "dayjs";
 import axios from "axios";
 import StockForm from "@/components/forms/stock/StockForm.vue";
-import StockDetailList from "@/components/forms/stock/DetailList.vue";
+import StockDetailList from "@/components/forms/stock/DetailList";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {

@@ -11,7 +11,7 @@ export default {
     el[CONFIG_KEY] = { config }
     // set initial value
     core.updateValue(el, vnode, { force: config.prefill, clean: true })
-  },
+  }, 
 
   mounted: (el) => {
     el = core.getInputElement(el)
