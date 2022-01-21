@@ -5,14 +5,14 @@ from src.models.base_model import CamelModel
 
 class StockDetailIn(CamelModel):
     """ router parameter in """
-    stock_id: int
-    product_id: int
-    unit_id: int
     qty: float
     content: float
     unit_name: str
     price: float
     discount: float
+    stock_id: int
+    product_id: int
+    unit_id: int
 
 
 class StockDetailOut(StockDetailIn):

@@ -6,6 +6,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Component: typeof import('./src/components/vue-number-format/component.vue')['default']
     CustomerForm: typeof import('./src/components/forms/CustomerForm.vue')['default']
+    DetailFormComponent: typeof import('./src/components/forms/stock/detail-form/detail-form-component.vue')['default']
     DetailListComponent: typeof import('./src/components/forms/stock/DetailList/detail-list-component.vue')['default']
     DropdownNonBorder: typeof import('./src/components/DropdownNonBorder.vue')['default']
     FycDropdown: typeof import('./src/components/FycDropdown.vue')['default']

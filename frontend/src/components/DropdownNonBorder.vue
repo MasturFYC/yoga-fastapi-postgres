@@ -8,7 +8,7 @@
       :class="{
         'root-required': selectedIndex === 0,
       }"
-      autocomplete="nope"
+      autocomplete="off"
       :name="name"
       @focus="showOptions()"
       @blur="exit()"
@@ -96,8 +96,8 @@ export default {
   },
   created() {
     if (this.selectedId > 0) {
-      this.selected =
-        this.options[this.options.indexOfObject("id", this.selectedId)] || {};
+      this.selected = this.options[this.options.indexOfObject("id", this.selectedId)] || {};
+      
       this.searchFilter = this.selected.id ? this.selected.name : "";
     }
   },

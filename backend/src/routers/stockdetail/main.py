@@ -64,7 +64,7 @@ async def update_stockdetail(pid: int, payload: StockDetailIn,
     if res is None:
         raise HTTPException(status_code=500, detail="Stock Details name exist")
 
-    return res.__dict__
+    return res #.__dict__
 
 
 @ROUTER.delete("/{pid}/", status_code=status.HTTP_200_OK)

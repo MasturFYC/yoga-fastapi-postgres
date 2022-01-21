@@ -12,90 +12,38 @@
       </div>
     </div>
     <div class="fyc-body">
-      <div class="fyc-row" @keydown.enter.prevent="gotoNextCell">
-        <div class="fyc-cell">
-          {{ detailId }}
-        </div>
-        <div class="fyc-cell">
-          <v-dropdown
-            :options="[
-              { id: 1, name: 'test' },
-              { id: 2, name: 'Minyak' },
-            ]"
-            :selectedId="0"
-            v-on:selected="validateName"
-            :disabled="false"
-            name="product"
-            :maxItem="8"
-            @focus="setCurrentCell(0)"
-            :ref="
-              (el) => {
-                if (el) cells[0] = el?.getRef();
-              }
-            "
-          />
-        </div>
-        <div class="fyc-cell text-right">
-          <number
-            class="my-input w-16 text-left md:text-right"
-            v-model.lazy="qty"
-            v-bind="inputNumber"
-            placeholder="0"
-            name="qty"
-            @focus="setCurrentCell(1)"
-            :ref="
-              (el) => {
-                if (el) cells[1] = el?.getRef();
-              }
-            "
-          />
-        </div>
-        <div class="fyc-cell w-16">
-          <v-dropdown
-            :options="[
-              { id: 1, name: 'kg', price: 2500 },
-              { id: 2, name: 'cm', price: 1000 },
-            ]"
-            :selectedId="0"
-            v-on:selected="validateUnit"
-            :disabled="false"
-            name="unit"
-            :maxItem="8"
-            @focus="setCurrentCell(2)"
-            :ref="
-              (el) => {
-                if (el) cells[2] = el?.getRef();
-              }
-            "
-          />
-        </div>
-        <div class="fyc-cell text-right px-2">{{ price }}</div>
-        <div class="fyc-cell text-right">
-          <number
-            class="my-input text-left md:text-right"
-            v-model.lazy="discount"
-            v-bind:options="inputNumber"
-            name="discount"
-            placeholder="0"
-            @focus="setCurrentCell(3)"
-            :ref="
-              (el) => {
-                if (el) cells[3] = el?.getRef();
-              }
-            "
-          />
-        </div>
-        <div class="fyc-cell text-right px-2">{{ subtotal }}</div>
-      </div>
+      <detail-form
+        v-for="(item, index) in details"
+        :detail="item"
+        :key="item.id"
+        :products="products"
+        @update="updateDetail"
+        @insert="insertDetail"
+        @add="addNewDetail"
+        @next="selectNetRow"
+        :ref="
+          (el) => {
+            if (el) list[index] = el?.getRef();
+          }
+        "
+      />
     </div>
   </div>
 </template>
 <script>
-import { onMounted, toRefs, onBeforeUpdate } from "vue";
+import {
+  toRefs,
+  ref,
+  onBeforeUpdate,
+  onMounted,
+  reactive,
+  computed,
+  nextTick,
+} from "vue";
 
 import axios from "axios";
-import Dropdown from "@/components/DropdownNonBorder.vue";
-import { state as detailData } from "./directive";
+import StockDetailForm from "@/components/forms/stock/detail-form";
+import { stateData as detailData } from "../detail-form/directive";
 
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
@@ -118,6 +66,7 @@ Array.prototype.remove = function (id) {
     this.splice(i, 1);
   }
 };
+
 export default {
   name: "StockDetailList",
   props: {
@@ -127,23 +76,65 @@ export default {
       default: 0,
     },
   },
+
   components: {
-    "v-dropdown": Dropdown,
+    "detail-form": StockDetailForm,
   },
 
   setup(props, { emit }) {
-    const state = detailData;
+    const state = reactive({
+      list: ref([]),
+      stockDetails: [],
+      dataProducts: [],
+      stockId: computed({
+        get() {
+          return props.stockId;
+        },
+      }),
+      details: computed({
+        get() {
+          return state.stockDetails;
+        },
+        set(v) {
+          state.stockDetails = v;
+        },
+      }),
+      products: computed({
+        get() {
+          return state.dataProducts;
+        },
+        set(v) {
+          state.dataProducts = v;
+        },
+      }),
+    });
 
-    const loadStockDetails = async () => {
+    const loadProducts = async () => {
       await axios
-        .get(`/api/stockdetails/stock/${props.stockId}`, {
+        .get(`/api/products/with-units/`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
           },
         })
         .then((res) => {
-          state.details = res.data;
+          state.products = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    const loadStockDetails = async () => {
+      await axios
+        .get(`/api/stockdetails/stock/${state.stockId}`, {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          state.stockDetails = [...res.data, { ...detailData }];
         })
         .catch((error) => {
           console.log(error);
@@ -151,50 +142,97 @@ export default {
     };
 
     onMounted(async () => {
+      await loadProducts();
       await loadStockDetails();
     });
 
-    const gotoNextCell = () => {
-      state.cell = state.cell === 3 ? 0 : state.cell + 1;
-      // console.log(`index-${state.cell}`,state.cells[state.cell])
-      // if(state.cell === 1) state.cells['qty'].focus();
-      state.cells[state.cell].focus();
-    };
-
-    // const gotoPrevCell = () => {
-    //   state.cell = state.cell === 0 ? 3 : state.cell - 1;
-    //   //state.cells[state.cell].focus();
-    // };
-
-    const setCurrentCell = (i) => {
-      state.cell = i;
-    };
-
-    const validateName = (e) => {
-      state.productId = e.id;
-      state.name = e.name;
-    };
-    const validateUnit = (e) => {
-      state.unitId = e.id;
-      state.unitName = e.name;
-      state.price = e.price;
-    };
-
     onBeforeUpdate(() => {
-      state.cells.value = [];
+      state.list.value = [];
     });
+    const updateDetail = async (e, id) => {
+      const data = {
+        qty: e.qty,
+        content: e.content,
+        unit_name: e.unit_name,
+        price: e.price,
+        discount: e.discount,
+        stock_id: state.stockId,
+        product_id: e.product_id,
+        unit_id: e.unit_id,
+      };
+
+      await axios
+        .put(`/api/stockdetails/${id}/`, JSON.stringify(data), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          state.details.update(res.data, id);
+          const l = state.details.length - 1;
+          const i = state.details.indexOfObject("id", id) + 1;
+          nextTick(()=>{
+              state.list[i].querySelector("input").focus();
+          });
+          //self.$emit("update", res.data, 0);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
+    function selectNetRow(id) {
+      const i = state.details.indexOfObject("id", id) + 1;
+      nextTick(()=>{
+          state.list[i].querySelector("input").focus();
+      });
+    };
+
+    function addNewDetail () {
+      const l = state.details.length;
+      state.details.push({ ...detailData });
+      nextTick(()=>{
+        state.list[l].querySelector("input").focus();
+      })
+
+    };
+
+    const insertDetail = async (e) => {
+      const data = {
+        qty: e.qty,
+        content: e.content,
+        unit_name: e.unit_name,
+        price: e.price,
+        discount: e.discount,
+        stock_id: state.stockId,
+        product_id: e.product_id,
+        unit_id: e.unit_id,
+      };
+
+      await axios
+        .post(`/api/stockdetails/`, JSON.stringify(data), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          state.details.update(res.data, 0);
+        });
+    };
 
     return {
       ...toRefs(state),
-      gotoNextCell,
-      //      gotoPrevCell,
-      setCurrentCell,
-      validateName,
-      validateUnit,
+      updateDetail,
+      insertDetail,
+      addNewDetail,
+      selectNetRow
     };
   },
 };
 </script>
+
 <style scoped>
 .v-number {
   @apply w-full py-0.5 rounded-sm outline-none border border-transparent bg-transparent px-2

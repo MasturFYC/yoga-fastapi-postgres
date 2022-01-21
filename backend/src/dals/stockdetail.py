@@ -28,27 +28,44 @@ class StockDetailDal():
 
     async def create(self, payload: data_in) -> StockDetail:
         ''' insert new stock detail '''
-        new_data = StockDetail(stock_id=payload.stock_id,
-                               unit_id=payload.unit_id,
-                               qty=payload.qty,
+
+        real_qty = payload.content * payload.qty
+        subtotal = (payload.price - payload.discount) * payload.qty
+
+        new_data = StockDetail(qty=payload.qty,
                                content=payload.content,
                                unit_name=payload.unit_name,
+                               real_qty=real_qty,
                                price=payload.price,
-                               discount=payload.discount)
+                               discount=payload.discount,
+                               subtotal=subtotal,
+                               stock_id=payload.stock_id,
+                               product_id=payload.product_id,
+                               unit_id=payload.unit_id)
         self.session.add(new_data)
         await self.session.flush()
         return new_data
 
     async def modify(self, pid: int, payload: data_in) -> StockDetail:
         ''' update one stock detail by id '''
+
+        real_qty = payload.content * payload.qty
+        subtotal = (payload.price - payload.discount) * payload.qty
+
         query = update(StockDetail).where(StockDetail.id == pid)\
-            .values(stock_id=payload.stock_id,
-                    unit_id=payload.unit_id,
-                    qty=payload.qty,
+            .values(qty=payload.qty,
                     content=payload.content,
                     unit_name=payload.unit_name,
+                    real_qty=real_qty,
                     price=payload.price,
-                    discount=payload.discount)
+                    discount=payload.discount,
+                    subtotal=subtotal,
+                    stock_id=payload.stock_id,
+                    product_id=payload.product_id,
+                    unit_id=payload.unit_id)\
+            .returning(StockDetail)
+            
+        query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
         tup = res.fetchone()
         await self.session.commit()
