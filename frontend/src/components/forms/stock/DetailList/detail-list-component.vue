@@ -9,6 +9,7 @@
         <div class="fyc-cell text-right px-2">HARGA</div>
         <div class="fyc-cell w-24 text-right px-2">DISCOUNT</div>
         <div class="fyc-cell text-right px-2">SUBTOTAL</div>
+        <div class="fyc-cell text-center px-2">COMMAND</div>
       </div>
     </div>
     <div class="fyc-body">
@@ -20,6 +21,7 @@
         @update="updateDetail"
         @insert="insertDetail"
         @add="addNewDetail"
+        @remove="removeDetail"
         @next="selectNetRow"
         :ref="
           (el) => {
@@ -28,6 +30,7 @@
         "
       />
     </div>
+    <div ref="divScroll" class="mt-[250px]">-</div>
   </div>
 </template>
 <script>
@@ -82,7 +85,9 @@ export default {
   },
 
   setup(props, { emit }) {
+    const divScroll = ref(null);
     const state = reactive({
+      curId: 0,
       list: ref([]),
       stockDetails: [],
       dataProducts: [],
@@ -149,7 +154,8 @@ export default {
     onBeforeUpdate(() => {
       state.list.value = [];
     });
-    const updateDetail = async (e, id) => {
+
+    const updateDetail = async (e, id, callback) => {
       const data = {
         qty: e.qty,
         content: e.content,
@@ -170,35 +176,39 @@ export default {
         })
         .then((res) => {
           state.details.update(res.data, id);
-          const l = state.details.length - 1;
-          const i = state.details.indexOfObject("id", id) + 1;
-          nextTick(()=>{
-              state.list[i].querySelector("input").focus();
-          });
-          //self.$emit("update", res.data, 0);
+          callback(true);
         })
         .catch((error) => {
           console.log(error);
+          callback(false);
         });
     };
 
     function selectNetRow(id) {
       const i = state.details.indexOfObject("id", id) + 1;
-      nextTick(()=>{
-          state.list[i].querySelector("input").focus();
-      });
-    };
 
-    function addNewDetail () {
+      const ep = state.list[i];
+      if (ep) {
+        const el = ep.querySelectorAll("input");
+        if (el) {
+          nextTick(() => {
+            el[0].focus();
+          });
+        }
+      }
+    }
+
+    function addNewDetail() {
       const l = state.details.length;
       state.details.push({ ...detailData });
-      nextTick(()=>{
-        state.list[l].querySelector("input").focus();
-      })
+      nextTick(() => {
+        const el = state.list[l];
+        el.querySelector("input").focus();
+        el.scrollIntoView({ behavior: "smooth" });
+      });
+    }
 
-    };
-
-    const insertDetail = async (e) => {
+    const insertDetail = async (e, callback) => {
       const data = {
         qty: e.qty,
         content: e.content,
@@ -219,6 +229,26 @@ export default {
         })
         .then((res) => {
           state.details.update(res.data, 0);
+          callback(true);
+        })
+        .catch((error) => {
+          callback(false);
+        });
+    };
+
+    const removeDetail = async (e) => {
+      await axios
+        .delete(`/api/stockdetails/${e}`, {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          state.details.remove(e);
+        })
+        .catch((error) => {
+          console.log(error);
         });
     };
 
@@ -227,7 +257,8 @@ export default {
       updateDetail,
       insertDetail,
       addNewDetail,
-      selectNetRow
+      selectNetRow,
+      removeDetail,
     };
   },
 };

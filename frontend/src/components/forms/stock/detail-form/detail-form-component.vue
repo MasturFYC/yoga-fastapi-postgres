@@ -1,6 +1,10 @@
 <template>
-  <div class="fyc-row" @keydown.enter.prevent="gotoNextCell" ref="root">
-    
+  <div
+    class="fyc-row"
+    @keydown.enter.prevent="gotoNextCell"
+    ref="root"
+    :id="'id-' + detailId"
+  >
     <div class="fyc-cell">
       {{ detailId }}
     </div>
@@ -19,6 +23,7 @@
             if (el) cells[0] = el?.getRef();
           }
         "
+        :key="productId"
       />
     </div>
 
@@ -38,7 +43,7 @@
       />
     </div>
 
-    <div class="fyc-cell w-16">
+    <div class="fyc-cell w-full md:w-16">
       <v-dropdown
         :options="units"
         :selectedId="unitId"
@@ -52,16 +57,17 @@
             if (el) cells[2] = el?.getRef();
           }
         "
+        :key="unitId"
       />
     </div>
-    
+
     <div class="fyc-cell text-right px-2">{{ price }}</div>
 
     <div class="fyc-cell text-right">
       <number
         class="my-input text-left md:text-right"
         v-model.lazy="discount"
-        v-bind:options="inputNumber"
+        :options="inputNumber"
         name="discount"
         placeholder="0"
         @focus="setCurrentCell(3)"
@@ -73,8 +79,68 @@
       />
     </div>
 
-    <div class="fyc-cell text-right px-2">{{ subtotal }}</div>
-    
+    <div class="fyc-cell text-right">
+      <div
+        class="px-2"
+        tabindex="0"
+        @focus="setCurrentCell(4)"
+        :ref="
+          (el) => {
+            if (el) cells[4] = el;
+          }
+        "
+      >
+        {{ subtotal }}
+      </div>
+    </div>
+    <div class="fyc-cell text-center px-2" :class="{ 'bg-red-100 text-white': isDirty }">
+      <div class="flex flex-row self-center">
+        <button
+          type="button"
+          :disabled="!isDirty"
+          class="flex-1 flex btn border rounded-sm hover:bg-gray-200"
+          :class="{ 'disabled hover:bg-transparent': !isDirty }"
+          @click="saveDetail"
+          ref="saveButton"
+        >
+          <tw-icon
+            name="mdi:check"
+            class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+            :class="{ 'text-green-700': isDirty }"
+          />
+        </button>
+        <button
+          type="button"
+          :disabled="!isDirty && detailId !== 0"
+          class="flex-1 flex btn border rounded-sm hover:bg-gray-200"
+          :class="{
+            'disabled hover:bg-transparent': !isDirty,
+            hidden: !isDirty && detailId === 0,
+          }"
+          @click.prevent.stop="restoreData"
+        >
+          <tw-icon
+            name="mdi-light:cancel"
+            class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+            :class="{ 'text-orange-700': isDirty || detailId === 0 }"
+          />
+        </button>
+        <button
+          class="flex-1 flex btn border rounded-sm hover:bg-gray-200"
+          :class="{ hidden: detailId === 0 }"
+          type="button"
+          tabindex="-1"
+          :disabled="detailId === 0"
+          @click.prevent.stop="removeDetail"
+        >
+          <tw-icon
+            name="mdi-light:delete"
+            class="flex-1 icon w-5 h-5 text-gray-400 group-hover:text-gray-500"
+            :class="{ 'text-red-700': detailId > 0 }"
+          />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -85,7 +151,6 @@ import { toRefs, onBeforeUpdate, reactive, ref, computed } from "vue";
 import Dropdown from "@/components/DropdownNonBorder.vue";
 //import { state as detailData } from "./directive";
 
-
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
     if (this[i][property] === value) return i;
@@ -95,8 +160,7 @@ Array.prototype.indexOfObject = function (property, value) {
 
 const formatNumber = (v) => {
   return Intl.NumberFormat("id-ID").format(v);
-}
-
+};
 
 export default {
   name: "StockDetailForm",
@@ -119,10 +183,12 @@ export default {
   setup(props, { emit }) {
     // const state = detailData;
     // state.data = {...props.detail};
+    const saveButton = ref(null);
     const root = ref(null);
     const getRef = () => root.value;
-    
+
     const state = reactive({
+      oldData: { ...props.detail },
       productUnits: [],
       cell: 0,
       cells: ref([]),
@@ -144,7 +210,7 @@ export default {
           return state.data.product_id;
         },
         set(v) {
-          if(v !== state.data.product_id) {
+          if (v !== state.data.product_id) {
             state.data.product_id = v;
             state.isDirty = true;
           }
@@ -156,7 +222,7 @@ export default {
           return state.data.unit_id;
         },
         set(v) {
-          if(v !== state.data.unit_id) {
+          if (v !== state.data.unit_id) {
             state.data.unit_id = v;
             state.isDirty = true;
           }
@@ -194,7 +260,6 @@ export default {
         },
       }),
 
-
       content: computed({
         get() {
           return state.data.content;
@@ -204,7 +269,7 @@ export default {
             state.data.content = v;
           }
         },
-      }),      
+      }),
 
       price: computed({
         get() {
@@ -224,9 +289,9 @@ export default {
         },
         set(v) {
           if (state.data.discount !== v) {
+            state.isDirty = true;
             state.data.discount = v;
             state.data.subtotal = (state.data.price - v) * state.data.qty;
-            state.isDirty = true;
           }
         },
       }),
@@ -242,26 +307,30 @@ export default {
           return state.dirty;
         },
         set(v) {
-          state.dirty = v;
+          if (state.dirty !== v) {
+            state.dirty = v;
+          }
         },
       }),
 
       products: computed({
-        get() {return props.products}
+        get() {
+          return props.products;
+        },
       }),
 
       units: computed({
         get() {
-          const i = state.products.indexOfObject("id", state.productId)
-          
-          if(i >= 0) {
-            const res =  state.products[i];
-            if(res) {
-              return res.units
+          const i = state.products.indexOfObject("id", state.productId);
+
+          if (i >= 0) {
+            const res = state.products[i];
+            if (res) {
+              return res.units;
             }
           }
           return [];
-        }
+        },
       }),
 
       inputNumber: computed({
@@ -278,36 +347,52 @@ export default {
     });
 
     const gotoNextCell = () => {
-      const shouldUpdate = state.cell === 3;
+      const shouldUpdate = state.cell === 5;
       const shouldInsert = state.data.id === 0;
-      state.cell = state.cell === 3 ? 0 : state.cell + 1;
+      state.cell = state.cell === 5 ? 0 : state.cell + 1;
       // console.log(`index-${state.cell}`,state.cells[state.cell])
       // if(state.cell === 1) state.cells['qty'].focus();
 
       if (shouldUpdate) {
-        
-        if(state.isDirty) {
-
-          setTimeout(()=> {
-          if (state.data.id === 0) {        
-            emit("insert", state.data);
+        if (state.isDirty) {
+          if (state.data.id === 0) {
+            emit("insert", state.data, (x) => {
+              state.isDirty = !x;
+              if (x) {
+                state.oldData = { ...state.data };
+                setTimeout(() => {
+                  emit("add");
+                }, 1);
+              }
+            });
           } else {
-            emit("update", state.data, state.data.id);
-          }}, 1);
-
-          if(shouldInsert) {
-            emit("add");
-        };
-
-        state.isDirty = false;
+            emit("update", state.data, state.data.id, (x) => {
+              state.isDirty = !x;
+              if (x && shouldInsert) {
+                state.oldData = { ...state.data };
+                setTimeout(() => {
+                  emit("add");
+                }, 1);
+              } else {
+                emit("next", state.data.id);
+              }
+            });
+          }
+        } else emit("next", state.data.id);
+      } else {
+        if (state.cell === 5) {
+          if (state.isDirty) {
+            saveButton.value.click(); //.focus();
+          }
+          emit("next", state.data.id);
         } else {
-          emit("next",state.data.id);
+          const el = state.cells[state.cell];
+          el.focus();
+          if (el.type === "text") {
+            el.setSelectionRange(0, el.value.length);
+          }
         }
-      
-     } else {
-        state.cells[state.cell].focus();
-     }
-
+      }
     };
 
     // const gotoPrevCell = () => {
@@ -322,7 +407,13 @@ export default {
     const validateName = (e) => {
       state.productId = e.id;
       state.name = e.name;
+      const unit = state.units.filter((c) => c.is_default)[0] || state.units[0];
+      if (unit) {
+        state.unitId = unit.id;
+        state.price = unit.price;
+      }
     };
+
     const validateUnit = (e) => {
       state.unitId = e.id;
       state.content = e.content;
@@ -333,18 +424,51 @@ export default {
     onBeforeUpdate(() => {
       state.cells.value = [];
     });
-  
+
+    const removeDetail = () => {
+      emit("remove", state.detailId);
+    };
+
+    const restoreData = () => {
+      state.data = { ...state.oldData };
+      state.isDirty = false;
+    };
+
+    const saveDetail = () => {
+      if (state.data.id === 0) {
+        emit("insert", state.data, (x) => {
+          state.isDirty = !x;
+          if (x) {
+            state.oldData = { ...state.data };
+            setTimeout(() => {
+              emit("add");
+            }, 1);
+          }
+        });
+      } else {
+        emit("update", state.data, state.data.id, (x) => {
+          state.isDirty = !x;
+          if (x) {
+            state.oldData = { ...state.data };
+          }
+        });
+      }
+    };
 
     return {
       //...toRefs(state),
       ...toRefs(state),
       gotoNextCell,
       root,
+      saveButton,
       getRef,
       //      gotoPrevCell,
       setCurrentCell,
       validateName,
       validateUnit,
+      restoreData,
+      saveDetail,
+      removeDetail,
     };
   },
 };

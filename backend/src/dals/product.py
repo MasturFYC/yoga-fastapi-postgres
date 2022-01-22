@@ -1,6 +1,6 @@
 ''' Product Dal '''
 from typing import List
-from sqlalchemy import or_, select, update, delete, DECIMAL, Integer
+from sqlalchemy import and_, or_, select, update, delete, DECIMAL, Integer
 from sqlalchemy.orm import joinedload, Session, selectinload,  load_only
 from sqlalchemy.sql.expression import bindparam
 from sqlalchemy.sql import text
@@ -51,7 +51,7 @@ class ProductDal():
                                         Product.is_active,
                                         Product.is_sale))
                      .options(selectinload(Product.units))
-                     .where(Product.is_active == True)
+                     .where(and_(Product.is_active == True, Product.category_id > 1))
                      .order_by(Product.name))
         rs = query.scalars().fetchall()
         await self.session.commit()
