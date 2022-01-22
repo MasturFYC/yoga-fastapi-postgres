@@ -1,5 +1,6 @@
 <template>
-  <div>
+<div class="flex flex-row">
+  <div class="flex-1 w-full">
     <h1 class="text-emerald-700 text-[24px] font-bold">Pembelian</h1>
     <div class="my-4">
       <button href="#" class="btn-add" @click="addNewStock">
@@ -59,14 +60,22 @@
       v-if="showForm"
       :stockProp="selectedStock"
       :suppliers="suppliers"
+      :isLoaded="childLoaded"
       @cancelChange="cancelChange"
       @saveChange="saveChange"
       @removeData="removeData"
-      :key="selectedStock.id"
+      :key="counter"
     ></stock-form>
     <div v-if="showForm" :key="selectedStock.id">
-      <stock-detail :stockId="selectedStock.id"> </stock-detail>
+      <stock-detail 
+        :stockId="selectedStock.id"
+        @update="updateLocalStock"
+        />
     </div>
+  </div>
+  <div class="hidden md:block md:w-[250px] p-2">
+    <code class="text-xs whitespace-pre">{{ selectedStock.id === 0 ? stocks : selectedStock }}</code>
+  </div>
   </div>
 </template>
 
@@ -100,6 +109,10 @@ Array.prototype.remove = function (id) {
     this.splice(i, 1);
   }
 };
+Array.prototype.getItem = function (id) {
+  const i = this.indexOfObject("id", id);
+  return i === -1 ? null : this[i];
+};
 
 export default {
   name: "Pembelian",
@@ -125,6 +138,8 @@ export default {
     // const indoDateFormatter = new Intl.DateTimeFormat("id-ID", dateOptions);
 
     const state = reactive({
+      childLoaded: false,
+      counter: 0,
       isEdit: false,
       stock: { ...new_stock },
       stocks: [],
@@ -157,14 +172,17 @@ export default {
     });
 
     const addNewStock = () => {
-      setTimeout(() => {
+      //setTimeout(() => {
+      state.counter++;
+      state.childLoaded = false;
         state.selectedStock = { ...new_stock };
-      }, 100);
+      //}, 100);
       state.showForm = true;
     };
 
     const editStock = (item) => {
-      state.selectedStock = { ...item };
+      state.childLoaded = false;
+      state.selectedStock = item;
       // setTimeout(() => {
       state.showForm = true;
       // }, 2000);
@@ -230,7 +248,7 @@ export default {
         .then((res) => {
           state.showForm = false;
           state.stocks.insert(0, res.data);
-          state.selectedStock = { ...new_stock };
+          //state.selectedStock = { ...new_stock };
           state.selectedIndex = 0;
         })
         .catch((error) => {
@@ -252,7 +270,7 @@ export default {
         .then((res) => {
           const id = res.data.id;
           const index = state.stocks.update(res.data, id);
-          state.selectedStock = { ...new_stock };
+          //state.selectedStock = { ...new_stock };
           state.selectedIndex = 0;
           state.showForm = false;
         });
@@ -262,7 +280,7 @@ export default {
       await axios.delete(`/api/stocks/${id}/`).then((res) => {
         if (res.status === 200) {
           state.stocks.remove(id);
-          state.selectedStock = { ...new_stock };
+          //state.selectedStock = { ...new_stock };
           state.showForm = false;
         }
       });
@@ -275,6 +293,21 @@ export default {
         await updateStock(stock, stock.id);
       }
     };
+
+    const updateLocalStock = (method, id, total) => {
+      
+      const item = state.stocks.getItem(id);
+      if(method === 'delete') {
+        item.total -= total; 
+      } else {
+        item.total += total;
+      }
+      item.remain_payment = item.total - (item.cash + item.payment)
+      state.childLoaded = true;
+      state.stocks.update(item, id)
+      state.selectedStock = item;
+      state.counter++;
+    }
 
     onMounted(async () => {
       await loadSupplier();
@@ -291,6 +324,7 @@ export default {
       format,
       editStock,
       addNewStock,
+      updateLocalStock
     };
   },
 };
@@ -298,7 +332,7 @@ export default {
 
 <style scoped>
 .fyc-table {
-  @apply md:table w-full border rounded-t-xl;
+  @apply md:table w-full border rounded-t-md;
 }
 
 .fyc-table-row-header {
@@ -306,10 +340,10 @@ export default {
   md:table-header-group h-9 font-medium;
 }
 .fyc-table-row-header .fyc-table-cell:first-child {
-  @apply rounded-tl-xl pl-2;
+  @apply rounded-tl-md pl-2;
 }
 .fyc-table-row-header .fyc-table-cell:last-child {
-  @apply rounded-tr-xl pr-2;
+  @apply rounded-tr-md pr-2;
 }
 
 .fyc-table-row-header .fyc-table-cell {

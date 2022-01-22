@@ -2,11 +2,12 @@
   <div
     class="fyc-row"
     @keydown.enter.prevent="gotoNextCell"
+    @keydown.esc.prevent="restoreData"
     ref="root"
     :id="'id-' + detailId"
   >
     <div class="fyc-cell">
-      {{ detailId }}
+      <span class="text-gray-500">{{ detailId }}</span>
     </div>
 
     <div class="fyc-cell">
@@ -24,7 +25,11 @@
           }
         "
         :key="productId"
-      />
+      >
+      <template v-slot:default="{option: {name, spec}}">
+        <span class="block w-full py-1 px-2 text-gray-700 hover:text-gray-100">{{name}}{{spec ? ', ' + spec : ''}}</span>
+      </template>
+      </v-dropdown>
     </div>
 
     <div class="fyc-cell text-right">
@@ -43,7 +48,7 @@
       />
     </div>
 
-    <div class="fyc-cell w-full md:w-16">
+    <div class="fyc-cell w-full md:w-20">
       <v-dropdown
         :options="units"
         :selectedId="unitId"
@@ -58,10 +63,14 @@
           }
         "
         :key="unitId"
-      />
+      >
+      <template v-slot:default="{option: {name, price}}">
+        <span class="block w-full py-1 px-2 text-gray-700 hover:text-gray-100">{{name}} {{ FormatNumber(price) }}</span>
+      </template>
+      </v-dropdown>
     </div>
 
-    <div class="fyc-cell text-right px-2">{{ price }}</div>
+    <div class="fyc-cell text-right"><span class="px-1 text-gray-500">{{ price }}</span></div>
 
     <div class="fyc-cell text-right">
       <number
@@ -81,9 +90,10 @@
 
     <div class="fyc-cell text-right">
       <div
-        class="px-2"
+        class="px-1 font-bold text-gray-500"
         tabindex="0"
         @focus="setCurrentCell(4)"
+        :class="{'text-red-700':subtotal<0}"
         :ref="
           (el) => {
             if (el) cells[4] = el;
@@ -93,8 +103,8 @@
         {{ subtotal }}
       </div>
     </div>
-    <div class="fyc-cell text-center px-2" :class="{ 'bg-red-100 text-white': isDirty }">
-      <div class="flex flex-row self-center">
+    <div class="fyc-cell text-center" :class="{ 'bg-red-100 text-white': isDirty }">
+      <div class="flex flex-row gap-x-2 self-center">
         <button
           type="button"
           :disabled="!isDirty"
@@ -254,7 +264,8 @@ export default {
         set(v) {
           if (state.data.qty !== v) {
             state.data.qty = v;
-            state.data.subtotal = (state.data.price - state.data.discount) * v;
+            const {price, discount} = state.data
+            state.data.subtotal = (price - discount) * v;
             state.isDirty = true;
           }
         },
@@ -278,7 +289,8 @@ export default {
         set(v) {
           if (state.data.price !== v) {
             state.data.price = v;
-            state.data.subtotal = (v - state.data.discount) * state.data.qty;
+            const {qty, discount} = state.data
+            state.data.subtotal = (v - discount) * qty;
           }
         },
       }),
@@ -291,7 +303,8 @@ export default {
           if (state.data.discount !== v) {
             state.isDirty = true;
             state.data.discount = v;
-            state.data.subtotal = (state.data.price - v) * state.data.qty;
+            const {qty, price} = state.data
+            state.data.subtotal = (price - v) * qty;
           }
         },
       }),
@@ -405,8 +418,9 @@ export default {
     };
 
     const validateName = (e) => {
-      state.productId = e.id;
-      state.name = e.name;
+      const {id, name} = e;
+      state.productId = id;
+      state.name = name;
       const unit = state.units.filter((c) => c.is_default)[0] || state.units[0];
       if (unit) {
         state.unitId = unit.id;
@@ -415,10 +429,11 @@ export default {
     };
 
     const validateUnit = (e) => {
-      state.unitId = e.id;
-      state.content = e.content;
-      state.unitName = e.name;
-      state.price = e.price;
+      const {id, content, name, price} = e;
+      state.unitId = id;
+      state.content = content;
+      state.unitName = name;
+      state.price = price;
     };
 
     onBeforeUpdate(() => {
@@ -455,6 +470,10 @@ export default {
       }
     };
 
+    const FormatNumber = (x) => {
+      return formatNumber(x)
+    }
+
     return {
       //...toRefs(state),
       ...toRefs(state),
@@ -469,6 +488,7 @@ export default {
       restoreData,
       saveDetail,
       removeDetail,
+      FormatNumber
     };
   },
 };
@@ -476,7 +496,7 @@ export default {
 
 <style scoped>
 .v-number {
-  @apply w-full py-0.5 rounded-sm outline-none border border-transparent bg-transparent px-2
+  @apply w-full py-0.5 rounded-sm outline-none border border-transparent bg-transparent px-1
   focus:bg-white focus:outline-none focus:border-emerald-400;
 }
 
@@ -484,7 +504,7 @@ export default {
   @apply align-middle border-b;
 }
 .fyc-cell:first-child {
-  @apply md:pl-2;
+  @apply md:pl-2 border-l-0;
 }
 .fyc-cell:last-child {
   @apply md:pr-2;
@@ -496,6 +516,7 @@ export default {
   @apply hover:bg-gray-100;
 }
 .fyc-cell {
-  @apply table-cell py-0 px-4 text-base md:text-sm md:px-1 md:py-1;
+  @apply table-cell py-0 px-4 text-base md:text-sm md:px-1 md:py-1
+  border-0 md:border-l border-b border-gray-300;
 }
 </style>

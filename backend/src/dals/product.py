@@ -47,6 +47,7 @@ class ProductDal():
             .execute(select(Product)
                      .options(load_only(Product.id,
                                         Product.name,
+                                        Product.spec,
                                         Product.stock,
                                         Product.is_active,
                                         Product.is_sale))

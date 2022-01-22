@@ -30,17 +30,17 @@ class UnitDal():
 
     async def unit_insert(self, payload: data_in) -> Unit:
         ''' insert new Unit '''
-        new_product = Unit(product_id=payload.product_id,
-                           name=payload.name,
-                           barcode=payload.barcode,
-                           content=payload.content,
-                           buy_price=payload.buy_price,
-                           margin=payload.margin,
-                           price=payload.price,
-                           is_default=payload.is_default)
-        self.session.add(new_product)
+        new_unit = Unit(product_id=payload.product_id,
+                        name=payload.name,
+                        barcode=payload.barcode,
+                        content=payload.content,
+                        buy_price=payload.buy_price,
+                        margin=payload.margin,
+                        price=payload.price,
+                        is_default=payload.is_default)
+        self.session.add(new_unit)
         await self.session.flush()
-        return new_product
+        return new_unit
 
     async def unit_update(self, pid: int, payload: data_in) -> Unit:
         ''' update one Unit by id '''
@@ -73,7 +73,7 @@ class UnitDal():
             #                                   type_=Integer),
             #                         )
             # await self.session.execute(stmt)
-            
+
             # sql_file2.close()
 
         query = update(Unit).where(Unit.id == pid)\

@@ -82,6 +82,11 @@ export default {
     "v-dropdown": Dropdown
   },
   props: {
+    isLoaded: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     stockProp: {
       type: Object,
       required: true,
@@ -102,7 +107,7 @@ export default {
     };
     const event = reactive({
       invoice: ref(null),
-      stock: props.stockProp,      
+      stock: {...props.stockProp},
       //supplierList: props.suppliers,
       dirty: false,
       suppliers: computed(() => {
@@ -202,7 +207,7 @@ export default {
       }),
     });
     const setDatetime = (v) => {
-        const time = dayjs(); //);        
+        const time = dayjs()
         const date = dayjs(v)
         .set("hour", time.get("hour"))
         .set("minute", time.get("minute"))
@@ -225,7 +230,9 @@ export default {
     const removeData = () => emit("removeData", event.stock.id);
     onMounted(() => {
       nextTick(()=> {
-        event.invoice.focus();
+        if(!props.isLoaded) {
+          event.invoice.focus();
+        }
       })
     })
     return {

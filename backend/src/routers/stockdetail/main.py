@@ -23,7 +23,7 @@ ROUTER = APIRouter(
 )
 
 
-@ROUTER.get("/stock/{pid}",
+@ROUTER.get("/stock/{pid}/",
             response_model=List[StockDetailOut],
             status_code=status.HTTP_200_OK)
 async def read_stockdetails(pid: int, dal: StockDetailDal = Depends(get_current_dal)):

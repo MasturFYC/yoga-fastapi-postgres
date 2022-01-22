@@ -2,14 +2,14 @@
   <div class="fyc-table">
     <div class="fyc-header">
       <div class="fyc-row">
-        <div class="fyc-cell px-2">#ID</div>
-        <div class="fyc-cell px-2">NAMA BARANG</div>
-        <div class="fyc-cell w-16 text-right px-2">QTY</div>
-        <div class="fyc-cell w-16 px-2">UNIT</div>
-        <div class="fyc-cell text-right px-2">HARGA</div>
-        <div class="fyc-cell w-24 text-right px-2">DISCOUNT</div>
-        <div class="fyc-cell text-right px-2">SUBTOTAL</div>
-        <div class="fyc-cell text-center px-2">COMMAND</div>
+        <div class="fyc-cell"><div class="px-1">#ID</div></div>
+        <div class="fyc-cell"><div class="px-1">NAMA BARANG</div></div>
+        <div class="fyc-cell w-16 text-right"><div class="px-1">QTY</div></div>
+        <div class="fyc-cell w-20"><div class="px-1">UNIT</div></div>
+        <div class="fyc-cell"><div class="text-right px-1">HARGA</div></div>
+        <div class="fyc-cell w-24 text-right"><div class="px-1">DISCOUNT</div></div>
+        <div class="fyc-cell"><div class="text-right px-1">SUBTOTAL</div></div>
+        <div class="fyc-cell"><div class="text-center px-1">COMMAND</div></div>
       </div>
     </div>
     <div class="fyc-body">
@@ -30,7 +30,7 @@
         "
       />
     </div>
-    <div ref="divScroll" class="mt-[250px]">-</div>
+    <div ref="divScroll" class="mt-[250px]"></div>
   </div>
 </template>
 <script>
@@ -68,6 +68,11 @@ Array.prototype.remove = function (id) {
   if (i >= 0) {
     this.splice(i, 1);
   }
+};
+
+Array.prototype.getItem = function (id) {
+  const i = this.indexOfObject("id", id);
+  return i === -1 ? null : this[i];
 };
 
 export default {
@@ -132,7 +137,7 @@ export default {
 
     const loadStockDetails = async () => {
       await axios
-        .get(`/api/stockdetails/stock/${state.stockId}`, {
+        .get(`/api/stockdetails/stock/${state.stockId}/`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -156,15 +161,17 @@ export default {
     });
 
     const updateDetail = async (e, id, callback) => {
+
+      const { qty, content, unit_name, price, discount, product_id, unit_id } = e;
       const data = {
-        qty: e.qty,
-        content: e.content,
-        unit_name: e.unit_name,
-        price: e.price,
-        discount: e.discount,
-        stock_id: state.stockId,
-        product_id: e.product_id,
-        unit_id: e.unit_id,
+        'qty': qty,
+        'content': content,
+        'unit_name': unit_name,
+        'price': price,
+        'discount': discount,
+        'stock_id': state.stockId,
+        'product_id': product_id,
+        'unit_id': unit_id,
       };
 
       await axios
@@ -175,8 +182,10 @@ export default {
           },
         })
         .then((res) => {
+          const item = state.details.getItem(id);
           state.details.update(res.data, id);
           callback(true);
+          emit("update", 'delete', props.stockId, item.subtotal - res.data.subtotal);
         })
         .catch((error) => {
           console.log(error);
@@ -209,15 +218,16 @@ export default {
     }
 
     const insertDetail = async (e, callback) => {
+      const { qty, content, unit_name, price, discount, product_id, unit_id } = e;
       const data = {
-        qty: e.qty,
-        content: e.content,
-        unit_name: e.unit_name,
-        price: e.price,
-        discount: e.discount,
-        stock_id: state.stockId,
-        product_id: e.product_id,
-        unit_id: e.unit_id,
+        'qty': qty,
+        'content': content,
+        'unit_name': unit_name,
+        'price': price,
+        'discount': discount,
+        'stock_id': state.stockId,
+        'product_id': product_id,
+        'unit_id': unit_id,
       };
 
       await axios
@@ -230,6 +240,7 @@ export default {
         .then((res) => {
           state.details.update(res.data, 0);
           callback(true);
+          emit("update", 'post', props.stockId, res.data.subtotal);
         })
         .catch((error) => {
           callback(false);
@@ -238,14 +249,16 @@ export default {
 
     const removeDetail = async (e) => {
       await axios
-        .delete(`/api/stockdetails/${e}`, {
+        .delete(`/api/stockdetails/${e}/`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
           },
         })
         .then((res) => {
+          const item = state.details.getItem(e);
           state.details.remove(e);
+          emit("update", 'delete', props.stockId, item.subtotal);
         })
         .catch((error) => {
           console.log(error);
@@ -266,15 +279,15 @@ export default {
 
 <style scoped>
 .v-number {
-  @apply w-full py-0.5 rounded-sm outline-none border border-transparent bg-transparent px-2
+  @apply w-full py-0.5 rounded-sm outline-none border border-transparent bg-transparent px-1
   focus:bg-white focus:outline-none focus:border-emerald-400;
 }
 
 .fyc-table {
-  @apply md:table w-full border-0 md:border-gray-300 rounded-t-xl text-[13px];
+  @apply md:table w-full border-0 md:border-gray-300 rounded-t-md text-[13px];
 }
 .fyc-header {
-  @apply hidden border-b border-gray-400 bg-gray-200
+  @apply hidden border-b border-gray-400 bg-gray-200 text-[13px] uppercase
   md:table-header-group h-9 font-medium;
 }
 .fyc-footer {
@@ -282,31 +295,26 @@ export default {
   md:table-footer-group h-9 font-medium;
 }
 .fyc-header .fyc-cell:first-child {
-  @apply rounded-tl-xl pl-2;
+  @apply rounded-tl-md border-l-0;
 }
 .fyc-header .fyc-cell:last-child {
-  @apply rounded-tr-xl pr-2;
+  @apply rounded-tr-md;
 }
 .fyc-header .fyc-cell {
   @apply align-middle border-b;
-}
-.fyc-body .fyc-cell:first-child {
-  @apply md:pl-2;
-}
-.fyc-body .fyc-cell:last-child {
-  @apply md:pr-2;
 }
 .fyc-body {
   @apply flex flex-col md:table-header-group;
 }
 .fyc-row {
-  @apply flex flex-col mt-4 md:mt-0 md:table-row;
+  @apply flex flex-col mt-4 md:mt-0 md:table-row text-[13px];
 }
 .fyc-body .fyc-row {
   @apply hover:bg-gray-100;
 }
 .fyc-cell {
-  @apply table-cell py-0 px-4 text-base md:text-sm md:px-1 md:py-1;
+  @apply table-cell py-0 px-4 text-base md:text-sm md:px-1 md:py-1 text-[13px]
+  border-0 border-l border-gray-300;
 }
 .btn-add {
   @apply py-1 px-5 bg-emerald-600 text-white font-semibold rounded-full shadow-md hover:bg-emerald-700

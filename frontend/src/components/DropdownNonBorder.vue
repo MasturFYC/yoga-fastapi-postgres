@@ -4,7 +4,7 @@
     <input
       ref="root"
       v-bind="$attrs"
-      class="root-input pb-1"
+      class="root-input"
       :class="{
         'root-required': selectedIndex === 0,
       }"
@@ -31,7 +31,9 @@
         ref="dropItem"
         :class="{ 'bg-emerald-100': selectedIndex === index }"
       >
-        {{ option.name || option.id || "-" }}
+      <slot :option="option">
+        <div class="px-2 py-0.5">{{ option.name || option.id || "-" }}</div>
+      </slot>
       </div>
     </div>
   </div>
@@ -39,6 +41,7 @@
 
 <script>
 import { ref } from "vue";
+import { nextTick } from 'process';
 Array.prototype.indexOfObject = function (property, value) {
   for (let i = 0, len = this.length; i < len; i++) {
     if (this[i][property] === value) return i;
@@ -180,16 +183,16 @@ export default {
 
 <style lscoped>
 .root-drop {
-  @apply relative inline-block w-full;
+  @apply relative block w-full;
 }
 .root-required {
   @apply border-red-500;
 }
 .root-input {
-  @apply rounded-sm bg-transparent border-[1px] border-transparent text-[14px] placeholder:italic
-  px-2 flex-initial w-full self-start text-gray-700 z-[999]
+  @apply rounded-sm bg-transparent border-[1px] border-transparent placeholder:italic
+  py-0.5 px-1 flex-initial w-full self-start text-gray-700 z-[999]
   focus:drop-shadow-xl rounded-sm
-  focus:outline-none focus:bg-white focus:border-[1px] focus:border-emerald-500;
+  focus:outline-none focus:bg-white focus:border-emerald-500;
 }
 .root-content {
   @apply absolute bg-white w-full flex flex-col drop-shadow-xl
@@ -197,7 +200,7 @@ export default {
   border-emerald-500 border-t-0 shadow overflow-auto z-[1000];
 }
 .root-item {
-  @apply text-gray-700 text-sm py-0.5 px-2 block cursor-pointer 
+  @apply text-gray-700 block cursor-pointer 
   hover:bg-emerald-700 hover:text-gray-100;
 }
 </style>

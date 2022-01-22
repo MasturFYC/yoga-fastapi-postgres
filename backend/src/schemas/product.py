@@ -30,7 +30,7 @@ class product_with_units(CamelModel):
     id: int
     #category_id: int
     name: str
-    # spec: Optional[str] = None  # pylint: disable=unsubscriptable-object
+    spec: Optional[str] = None  # pylint: disable=unsubscriptable-object
     # base_unit: str
     # base_price: float = 0
     # base_weight: float = 0

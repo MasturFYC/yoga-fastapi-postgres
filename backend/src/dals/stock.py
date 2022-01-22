@@ -48,6 +48,7 @@ class StockDal():
 
     async def modify(self, pid: int, payload: data_in) -> Stock:
         ''' update one stock by id '''
+
         query = update(Stock).where(Stock.id == pid)\
             .values(supplier_id=payload.supplier_id,
                     invoice_number=payload.invoice_number,
@@ -55,6 +56,7 @@ class StockDal():
                     created_at=payload.created_at,
                     updated_at=datetime.datetime.now(tz=None))\
             .returning(Stock)
+
         query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
         tup = res.fetchone()
