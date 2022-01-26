@@ -3,6 +3,7 @@ Tabel Stock Details with model
 """
 
 from sqlalchemy import Sequence, Column, Integer, String
+from sqlalchemy import event
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DECIMAL

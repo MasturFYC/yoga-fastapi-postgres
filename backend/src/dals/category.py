@@ -52,3 +52,4 @@ class CategoryDal():
         tup = res.fetchone()
         await self.session.commit()
         return {'id': tup.id}
+
