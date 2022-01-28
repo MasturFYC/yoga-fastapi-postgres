@@ -31,7 +31,7 @@ declare_base = declarative_base()
 db_session = sessionmaker(engine, class_=AsyncSession,
                           expire_on_commit=False, autocommit=False)
 
-#database = databases.Database(DATABASE_URL)
+database = databases.Database(DATABASE_URL)
 
 
 def convert_datetime_to_iso_8601_with_z_suffix(dt: datetime) -> str:

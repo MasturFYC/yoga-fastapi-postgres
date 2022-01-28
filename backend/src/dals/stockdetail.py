@@ -29,16 +29,11 @@ class StockDetailDal():
     async def create(self, payload: data_in) -> StockDetail:
         ''' insert new stock detail '''
 
-        real_qty = payload.content * payload.qty
-        subtotal = (payload.price - payload.discount) * payload.qty
-
         new_data = StockDetail(qty=payload.qty,
                                content=payload.content,
                                unit_name=payload.unit_name,
-                               real_qty=real_qty,
                                price=payload.price,
                                discount=payload.discount,
-                               subtotal=subtotal,
                                stock_id=payload.stock_id,
                                product_id=payload.product_id,
                                unit_id=payload.unit_id)
@@ -48,18 +43,12 @@ class StockDetailDal():
 
     async def modify(self, pid: int, payload: data_in) -> StockDetail:
         ''' update one stock detail by id '''
-
-        real_qty = payload.content * payload.qty
-        subtotal = (payload.price - payload.discount) * payload.qty
-
         query = update(StockDetail).where(StockDetail.id == pid)\
             .values(qty=payload.qty,
                     content=payload.content,
                     unit_name=payload.unit_name,
-                    real_qty=real_qty,
                     price=payload.price,
                     discount=payload.discount,
-                    subtotal=subtotal,
                     stock_id=payload.stock_id,
                     product_id=payload.product_id,
                     unit_id=payload.unit_id)\

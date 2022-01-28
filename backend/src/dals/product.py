@@ -75,7 +75,6 @@ class ProductDal():
                               base_price=payload.base_price,
                               base_weight=payload.base_weight,
                               first_stock=payload.first_stock,
-                              stock=payload.stock,
                               is_active=payload.is_active,
                               is_sale=payload.is_sale,
                               )
@@ -95,7 +94,6 @@ class ProductDal():
                     base_price=payload.base_price,
                     base_weight=payload.base_weight,
                     first_stock=payload.first_stock,
-                    stock=payload.stock,
                     is_active=payload.is_active,
                     is_sale=payload.is_sale,).returning(Product)
         query.execution_options(synchronize_session="fetch")
