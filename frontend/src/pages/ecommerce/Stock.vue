@@ -74,7 +74,7 @@
     </div>
   </div>
   <div class="hidden md:block md:w-[250px] p-2">
-    <code class="text-xs whitespace-pre">{{ selectedStock.id === 0 ? stocks : selectedStock }}</code>
+    <code class="text-xs whitespace-pre">{{ showForm ? selectedStock : stocks }}</code>
   </div>
   </div>
 </template>
@@ -175,7 +175,7 @@ export default {
       //setTimeout(() => {
       state.counter++;
       state.childLoaded = false;
-        state.selectedStock = { ...new_stock };
+      state.selectedStock = { ...new_stock };
       //}, 100);
       state.showForm = true;
     };
@@ -302,9 +302,11 @@ export default {
       } else {
         item.total += total;
       }
+
+      console.log(method, id, total)
       item.remain_payment = item.total - (item.cash + item.payment)
       state.childLoaded = true;
-      state.stocks.update(item, id)
+      state.stocks.update({...item}, id)
       state.selectedStock = item;
       state.counter++;
     }

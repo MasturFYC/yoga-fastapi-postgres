@@ -160,39 +160,6 @@ export default {
       state.list.value = [];
     });
 
-    const updateDetail = async (e, id, callback) => {
-
-      const { qty, content, unit_name, price, discount, product_id, unit_id } = e;
-      const data = {
-        'qty': qty,
-        'content': content,
-        'unit_name': unit_name,
-        'price': price,
-        'discount': discount,
-        'stock_id': state.stockId,
-        'product_id': product_id,
-        'unit_id': unit_id,
-      };
-
-      await axios
-        .put(`/api/stockdetails/${id}/`, JSON.stringify(data), {
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          const item = state.details.getItem(id);
-          state.details.update(res.data, id);
-          callback(true);
-          emit("update", 'delete', props.stockId, item.subtotal - res.data.subtotal);
-        })
-        .catch((error) => {
-          console.log(error);
-          callback(false);
-        });
-    };
-
     function selectNetRow(id) {
       const i = state.details.indexOfObject("id", id) + 1;
 
@@ -240,12 +207,47 @@ export default {
         .then((res) => {
           state.details.update(res.data, 0);
           callback(true);
+          console.log(res.data.subtotal)
           emit("update", 'post', props.stockId, res.data.subtotal);
         })
         .catch((error) => {
           callback(false);
         });
     };
+
+    const updateDetail = async (e, id, callback) => {
+
+      const { qty, content, unit_name, price, discount, product_id, unit_id } = e;
+      const data = {
+        'qty': qty,
+        'content': content,
+        'unit_name': unit_name,
+        'price': price,
+        'discount': discount,
+        'stock_id': state.stockId,
+        'product_id': product_id,
+        'unit_id': unit_id,
+      };
+
+      await axios
+        .put(`/api/stockdetails/${id}/`, JSON.stringify(data), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          const item = state.details.getItem(id);
+          state.details.update(res.data, id);
+          callback(true);
+          emit("update", 'put', props.stockId, item.subtotal - res.data.subtotal);
+        })
+        .catch((error) => {
+          console.log(error);
+          callback(false);
+        });
+    };
+
 
     const removeDetail = async (e) => {
       await axios

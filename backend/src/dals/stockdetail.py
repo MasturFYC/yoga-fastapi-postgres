@@ -39,6 +39,8 @@ class StockDetailDal():
                                unit_id=payload.unit_id)
         self.session.add(new_data)
         await self.session.flush()
+        new_data.subtotal = payload.qty * (payload.price - payload.discount)
+        new_data.real_qty = payload.qty * payload.content
         return new_data
 
     async def modify(self, pid: int, payload: data_in) -> StockDetail:
@@ -53,7 +55,7 @@ class StockDetailDal():
                     product_id=payload.product_id,
                     unit_id=payload.unit_id)\
             .returning(StockDetail)
-            
+
         query.execution_options(synchronize_session="fetch")
         res = await self.session.execute(query)
         tup = res.fetchone()

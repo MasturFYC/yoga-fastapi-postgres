@@ -59,6 +59,17 @@
             readonly
           />
         </label>
+        <label class="label-group">
+          <span class="label-title">Sisa Bayar</span>
+          <number
+            class="control-disabled md:text-right"
+            v-model="remainPayment"
+            v-bind="inputNumber"
+            tabindex="-1"
+            placeholder="0"
+            readonly
+          />
+        </label>
       </div>
     </div>
     <div class="flex flex-row gap-2 my-5">
@@ -147,6 +158,7 @@ export default {
         set(value) {
           if (value !== event.stock.cash) {
             event.stock.cash = value;
+            event.remainPayment = event.total - (event.payment + value)
             event.hashDirty = true;
           }
         },
