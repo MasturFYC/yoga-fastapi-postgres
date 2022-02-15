@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -11,6 +12,7 @@ import Components from 'unplugin-vue-components/vite';
 export default defineConfig(({ mode }) => {
   return {
     base: mode === 'production' ? '/yoga/' : '/',
+    //base: mode === 'production' ? '/' : '/',
     plugins: [
       vue(),
       Components({
@@ -38,6 +40,11 @@ export default defineConfig(({ mode }) => {
         },
       ],
     },
+    devServer : {
+	proxy: {
+	    '/api': 'http://pixel.id:8080/api'
+	}
+    },
     server: {
       port: 8081,
       host: '0.0.0.0',
@@ -45,10 +52,10 @@ export default defineConfig(({ mode }) => {
       // strictPort: true,
       proxy: {
         '/api': {
-          target: 'http://localhost:8080/api',
+          target: 'http://pixel.id:8080/api',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-         // secure: false,
+          //rewrite: (path) => path.replace(/^\/api/, ''),
+          secure: false,
          // ws: true,
         },
       },

@@ -188,7 +188,7 @@ export default {
           "Content-Type": "application/json",
         };
         await axios
-          .get(`/api/products/search/${self.searchText}/`, { headers: options })
+          .get(`http://pixel.id:8080/api/products/search/${self.searchText}/`, { headers: options })
           .then((res) => {
             const json = res.data;
             self.products = [new_product, ...json];
@@ -219,7 +219,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/products/${self.selectedId}`, {
+        .delete(`http://pixel.id:8080/api/products/${self.selectedId}`, {
           headers: options,
         })
         .then((res) => {
@@ -253,7 +253,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .get("/api/categories/", { headers: options })
+        .get("http://pixel.id:8080/api/categories", { headers: options })
         .then((res) => {
           const json = res.data;
           self.loadedCategories = json; //[{id: 0, name: 'Pilih kategori'}, ...json];
@@ -268,7 +268,7 @@ export default {
         //      accept: "application/json",
         "Content-Type": "application/json",
       };
-      await axios.get("/api/products/", { headers: options }).then((res) => {
+      await axios.get("http://pixel.id:8080/api/products", { headers: options }).then((res) => {
         const json = res.data;
         self.products = [new_product, ...json];
       });
@@ -280,7 +280,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .get(`/api/products/category/${this.categoryId}/`, { headers: options })
+        .get(`http://pixel.id:8080/api/products/category/${this.categoryId}`, { headers: options })
         .then((res) => {
           const json = res.data;
           self.products = [new_product, ...json];
