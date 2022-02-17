@@ -148,13 +148,19 @@ export default {
   async mounted() {
     const self = this;
     const options = {
-      //      accept: "application/json",
+      accept: "application/json",
       "Content-Type": "application/json",
     };
-    await axios.get("/api/customers/", { headers: options }).then((res) => {
-      const json = res.data;
-      self.customers = [...json, new_customer];
-    });
+
+    await axios
+      .get("/api/customers", { headers: options })
+      .then((res) => {
+        const json = res.data;
+        self.customers = [...json, new_customer];
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   directives: {
     focus: {

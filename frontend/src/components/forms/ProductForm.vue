@@ -190,7 +190,7 @@ export default {
       delete data.id;
 
       await axios
-        .post(`http://pixel.id:8080/api/products`, JSON.stringify(data), {
+        .post(`/api/products`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -205,7 +205,7 @@ export default {
       const data = { ...product };
       delete data.id;
       await axios
-        .put(`http://pixel.id:8080/api/products/${id}`, JSON.stringify(data), {
+        .put(`/api/products/${id}`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",

@@ -2,17 +2,16 @@
   <div>
     <h1>Product Category</h1>
     <div class="message">
-      Kategorisasi produk adalah penempatan dan pengorganisasian produk ke dalam
-      kategori masing-masing untuk mempermudah dalam pengelompokkan produk.
-      Dalam hal ini, kedengarannya sederhana: pilih departemen yang tepat untuk
-      suatu produk. Namun, proses ini diperumit oleh banyaknya produk di banyak
-      platform e-commerce.
+      Kategorisasi produk adalah penempatan dan pengorganisasian produk ke dalam kategori
+      masing-masing untuk mempermudah dalam pengelompokkan produk. Dalam hal ini,
+      kedengarannya sederhana: pilih departemen yang tepat untuk suatu produk. Namun,
+      proses ini diperumit oleh banyaknya produk di banyak platform e-commerce.
     </div>
     <div class="message">
-      Berikut di bawah ini adalah daftar nama kategori untuk mengelompokkan
-      beberapa produk berdasarkan fungsi dan manfaatnya. Click nama kategori
-      untuk mengeditnya, untuk membuat kategori baru klik tanda <b>+</b> paling
-      bawah dari daftar nama kategori.
+      Berikut di bawah ini adalah daftar nama kategori untuk mengelompokkan beberapa
+      produk berdasarkan fungsi dan manfaatnya. Click nama kategori untuk mengeditnya,
+      untuk membuat kategori baru klik tanda <b>+</b> paling bawah dari daftar nama
+      kategori.
     </div>
     <ol start="1">
       <li v-for="(cat, index) in categories" v-bind:key="cat.id">
@@ -91,16 +90,12 @@ export default {
     async insertCategory(name, id) {
       const self = this;
       await axios
-        .post(
-          `/api/categories/`,
-          JSON.stringify({ name: name }),
-          {
-            headers: {
-              accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        .post(`/api/categories`, JSON.stringify({ name: name }), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
         .then((res) => {
           const json = res.data;
           let temp = self.categories;
@@ -114,16 +109,12 @@ export default {
     async updatCatgory(name, id) {
       const self = this;
       await axios
-        .put(
-          `/api/categories/${id}/`,
-          JSON.stringify({ name: name }),
-          {
-            headers: {
-              accept: "application/json",
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        .put(`/api/categories/${id}`, JSON.stringify({ name: name }), {
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
         .then((res) => {
           const json = res.data;
           let temp = self.categories;
@@ -140,17 +131,15 @@ export default {
       //      accept: "application/json",
       "Content-Type": "application/json",
     };
-    await axios
-      .get("/api/categories/", { headers: options })
-      .then((res) => {
-        const json = res.data;
+    await axios.get("/api/categories", { headers: options }).then((res) => {
+      const json = res.data;
 
-        self.categories = [...json, { id: 0, name: "" }];
-      });
+      self.categories = [...json, { id: 0, name: "" }];
+    });
   },
   //   async created() {
   //       const self = this;
-  //       const res = await fetch("/api/categories/");
+  //       const res = await fetch("/api/categories");
   //       const json = await res.json();
   //       self.categories = [...json, {id: 0, name: ''}];
   //   },

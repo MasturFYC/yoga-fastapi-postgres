@@ -2,18 +2,19 @@
   <div>
     <h1>Sales</h1>
     <div class="message">
-      Sales atau salesman atau salesmanship adalah orang dengan sebuah profesi dimana seseorang
-      yang kerjanya berkeliling ke rumah-rumah, sok ramah tamah dan berniat menjual produknya ke
-      konsumen dengan cara menghasut konsumen agar tertarik dan membeli produknya.
+      Sales atau salesman atau salesmanship adalah orang dengan sebuah profesi dimana
+      seseorang yang kerjanya berkeliling ke rumah-rumah, sok ramah tamah dan berniat
+      menjual produknya ke konsumen dengan cara menghasut konsumen agar tertarik dan
+      membeli produknya.
     </div>
     <div class="message">
-        Konotasinya seperti buruk banget.. tapi Satu-satunya divisi yang menghasilkan Uang,
-        dalam arti kata sebenarnya, adalah divisi sales. Divisi yang lain bisa menghemat biaya,
-        tetapi tetap tidak bisa menciptakan aliran dana masuk. Fokus pada divisi <b>SALES</b>, dapat 
-        memberikan pemasukan yang berkesinambungan bagi perusahaan Anda.
+      Konotasinya seperti buruk banget.. tapi Satu-satunya divisi yang menghasilkan Uang,
+      dalam arti kata sebenarnya, adalah divisi sales. Divisi yang lain bisa menghemat
+      biaya, tetapi tetap tidak bisa menciptakan aliran dana masuk. Fokus pada divisi
+      <b>SALES</b>, dapat memberikan pemasukan yang berkesinambungan bagi perusahaan Anda.
     </div>
     <div class="mt-4">
-    <hr />
+      <hr />
       <div v-for="(sales, index) in salesmans" v-bind:key="sales.id">
         <transition name="slide-fade">
           <div
@@ -21,15 +22,16 @@
             class="sales-list"
           >
             <sales-form :salesProp="sales" @update="updateSales">
-              <button
-                type="button"
-                class="btn-cancel rounded-md"
-                @click="cancelForm()"
-              >
+              <button type="button" class="btn-cancel rounded-md" @click="cancelForm()">
                 Cancel
               </button>
               <span class="flex-1"></span>
-              <button @click="removeSales()" type="button" class="btn-remove" :disabled="sales.id === 0">
+              <button
+                @click="removeSales()"
+                type="button"
+                class="btn-remove"
+                :disabled="sales.id === 0"
+              >
                 Delete
               </button>
             </sales-form>
@@ -72,7 +74,7 @@ Array.prototype.indexOfObject = function (property, value) {
     if (this[i][property] === value) return i;
   }
   return -1;
-}
+};
 
 const new_sales = {
   id: 0,
@@ -89,7 +91,7 @@ export default {
   name: "Sales",
   data() {
     return {
-      salesmans: [{...new_sales}],
+      salesmans: [{ ...new_sales }],
       selectedIndex: -1,
       selectedId: -1,
     };
@@ -141,14 +143,17 @@ export default {
   async mounted() {
     const self = this;
     const options = {
-      //      accept: "application/json",
+      accept: "application/json",
       "Content-Type": "application/json",
     };
     await axios
-      .get("/api/salesmans/", { headers: options })
+      .get("/api/salesmans", { headers: options })
       .then((res) => {
         const json = res.data;
         self.salesmans = [...json, new_sales];
+      })
+      .catch((err) => {
+        console.log(err);
       });
   },
   directives: {

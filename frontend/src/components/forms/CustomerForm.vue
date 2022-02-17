@@ -143,7 +143,7 @@ export default {
       delete data.id;
 
       await axios
-        .post(`/api/customers/`, JSON.stringify(data), {
+        .post(`/api/customers`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -158,7 +158,7 @@ export default {
       const data = { ...customer };
       delete data.id;
       await axios
-        .put(`/api/customers/${id}/`, JSON.stringify(data), {
+        .put(`/api/customers/${id}`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",

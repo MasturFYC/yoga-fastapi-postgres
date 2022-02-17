@@ -145,7 +145,7 @@ export default {
       "Content-Type": "application/json",
     };
     await axios
-      .get("/api/suppliers/", { headers: options })
+      .get("/api/suppliers", { headers: options })
       .then((res) => {
         const json = res.data;
         self.suppliers = [...json, new_supplier];

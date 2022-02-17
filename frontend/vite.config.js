@@ -40,21 +40,17 @@ export default defineConfig(({ mode }) => {
         },
       ],
     },
-    devServer : {
-	proxy: {
-	    '/api': 'http://pixel.id:8080/api'
-	}
-    },
     server: {
       port: 8081,
       host: '0.0.0.0',
+    
       // open: false,
       // strictPort: true,
       proxy: {
         '/api': {
-          target: 'http://pixel.id:8080/api',
+          target: 'http://localhost:8080',
           changeOrigin: true,
-          //rewrite: (path) => path.replace(/^\/api/, ''),
+          rewrite: (path) => path.replace(/^\/api/, '/'),
           secure: false,
          // ws: true,
         },

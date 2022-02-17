@@ -121,7 +121,7 @@ export default {
 
     const loadProducts = async () => {
       await axios
-        .get(`/api/products/with-units/`, {
+        .get(`/api/products/with-units`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -137,7 +137,7 @@ export default {
 
     const loadStockDetails = async () => {
       await axios
-        .get(`/api/stockdetails/stock/${state.stockId}/`, {
+        .get(`/api/stockdetails/stock/${state.stockId}`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -198,7 +198,7 @@ export default {
       };
 
       await axios
-        .post(`/api/stockdetails/`, JSON.stringify(data), {
+        .post(`/api/stockdetails`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -230,7 +230,7 @@ export default {
       };
 
       await axios
-        .put(`/api/stockdetails/${id}/`, JSON.stringify(data), {
+        .put(`/api/stockdetails/${id}`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -251,7 +251,7 @@ export default {
 
     const removeDetail = async (e) => {
       await axios
-        .delete(`/api/stockdetails/${e}/`, {
+        .delete(`/api/stockdetails/${e}`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
