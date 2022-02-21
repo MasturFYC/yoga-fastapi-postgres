@@ -100,35 +100,35 @@
                 <div class="flex-1 flex flex-col mt-0">
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Kategori:</div>
-                    <div class="flex-1">{{ categoryName(prod.category_id) }}</div>
+                    <div class="flex-1">{{ categoryName(prod.categoryId) }}</div>
                   </div>
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Berat:</div>
-                    <div class="flex-1">{{ formatNumber(prod.base_weight) }} kg</div>
+                    <div class="flex-1">{{ formatNumber(prod.baseWeight) }} kg</div>
                   </div>
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Aktif ?</div>
-                    <div class="flex-1">{{ prod.is_active ? "Ya" : "Tidak" }}</div>
+                    <div class="flex-1">{{ prod.isActive ? "Ya" : "Tidak" }}</div>
                   </div>
                 </div>
                 <div class="flex-1 flex flex-col mt-0">
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Harga:</div>
-                    <div class="flex-1">{{ formatNumber(prod.base_price) }}</div>
+                    <div class="flex-1">{{ formatNumber(prod.basePrice) }}</div>
                   </div>
                   <div class="flex-1 flex flex-row">
                     <div class="w-1/3 text-gray-400">Unit:</div>
-                    <div class="flex-1">{{ prod.base_unit }}</div>
+                    <div class="flex-1">{{ prod.baseUnit }}</div>
                   </div>
                   <div class="flex-1">
-                    {{ prod.is_sale ? "Produk ini untuk dijual" : "Tidak untuk dijual" }}
+                    {{ prod.isSale ? "Produk ini untuk dijual" : "Tidak untuk dijual" }}
                   </div>
                 </div>
               </div>
               <template v-if="units.includes(prod.id)">
                 <unit-list
                   :productId="prod.id"
-                  :productPrice="prod.base_price"
+                  :productPrice="prod.basePrice"
                   :key="prod.id"
                 ></unit-list>
               </template>
@@ -155,17 +155,17 @@ Array.prototype.indexOfObject = function (property, value) {
   return -1;
 };
 
-const new_product = {
+const newProduct = {
   id: 0,
   name: "",
   spec: "",
-  base_unit: "",
-  base_weight: 0,
-  base_price: 0,
-  first_stock: 0,
+  baseUnit: "",
+  baseWeight: 0,
+  basePrice: 0,
+  firstStock: 0,
   stock: 0,
-  is_active: true,
-  category_id: 0,
+  isActive: true,
+  categoryId: 0,
 };
 
 export default {
@@ -188,10 +188,12 @@ export default {
           "Content-Type": "application/json",
         };
         await axios
-          .get(`/api/products/search/${self.searchText}`, { headers: options })
+          .get(`/api/products/search/${self.searchText}/`, { headers: options })
           .then((res) => {
             const json = res.data;
-            self.products = [new_product, ...json];
+            self.products = [newProduct, ...json];
+          }).catch(err => {
+            console.log(err)
           });
       }
     },
@@ -219,7 +221,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/products/${self.selectedId}`, {
+        .delete(`/api/products/${self.selectedId}/`, {
           headers: options,
         })
         .then((res) => {
@@ -242,7 +244,7 @@ export default {
       temp[index] = product;
       self.products = temp;
       if (id === 0) {
-        self.products.push(new_product);
+        self.products.push(newProduct);
       }
       self.cancelForm();
     },
@@ -253,7 +255,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .get("/api/categories", { headers: options })
+        .get("/api/categories/", { headers: options })
         .then((res) => {
           const json = res.data;
           self.loadedCategories = json; //[{id: 0, name: 'Pilih kategori'}, ...json];
@@ -268,9 +270,9 @@ export default {
         //      accept: "application/json",
         "Content-Type": "application/json",
       };
-      await axios.get("/api/products", { headers: options }).then((res) => {
+      await axios.get("/api/products/", { headers: options }).then((res) => {
         const json = res.data;
-        self.products = [new_product, ...json];
+        self.products = [newProduct, ...json];
       });
     },
     async loadProductsByCategory() {
@@ -280,12 +282,12 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .get(`/api/products/category/${this.categoryId}`, {
+        .get(`/api/products/category/${this.categoryId}/`, {
           headers: options,
         })
         .then((res) => {
           const json = res.data;
-          self.products = [new_product, ...json];
+          self.products = [newProduct, ...json];
         });
     },
   },

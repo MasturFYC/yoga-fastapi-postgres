@@ -115,7 +115,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/units/${id}`, {
+        .delete(`/api/units/${id}/`, {
           headers: options,
         })
         .then((res) => {
@@ -156,7 +156,7 @@ export default {
       const self = this;
 
       await axios
-        .get(`/api/units/product/${self.$props.productId}`, {
+        .get(`/api/units/product/${self.$props.productId}/`, {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",

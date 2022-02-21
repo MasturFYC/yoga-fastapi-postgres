@@ -11,7 +11,7 @@ import Components from 'unplugin-vue-components/vite';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
-    base: mode === 'production' ? '/yoga/' : '/',
+    base: mode === 'production' ? '/' : '/',
     //base: mode === 'production' ? '/' : '/',
     plugins: [
       vue(),

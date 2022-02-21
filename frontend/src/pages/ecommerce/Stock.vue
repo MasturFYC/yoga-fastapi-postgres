@@ -208,7 +208,7 @@ export default {
         accept: "application/json",
         "Content-Type": "application/json",
       };
-      await axios.get("/api/suppliers", { headers: opt }).then((res) => {
+      await axios.get("/api/suppliers/", { headers: opt }).then((res) => {
         const json = res.data;
         state.suppliers = json;
       });
@@ -216,7 +216,7 @@ export default {
 
     const loadAllStock = async () => {
       await axios
-        .get("/api/stocks", {
+        .get("/api/stocks/", {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -239,7 +239,7 @@ export default {
       delete data.id;
 
       await axios
-        .post("/api/stocks", JSON.stringify(data), {
+        .post("/api/stocks/", JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -261,7 +261,7 @@ export default {
       delete data.id;
 
       await axios
-        .put(`/api/stocks/${id}`, JSON.stringify(data), {
+        .put(`/api/stocks/${id}/`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -277,7 +277,7 @@ export default {
     };
 
     const removeData = async (id) => {
-      await axios.delete(`/api/stocks/${id}`).then((res) => {
+      await axios.delete(`/api/stocks/${id}/`).then((res) => {
         if (res.status === 200) {
           state.stocks.remove(id);
           //state.selectedStock = { ...new_stock };

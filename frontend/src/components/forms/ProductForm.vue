@@ -32,7 +32,7 @@
             maxlength="6"
             type="text"
             class="flex-input"
-            :class="{ 'input-disable': base_unitValid }"
+            :class="{ 'input-disable': baseUnitValid }"
             v-model.lazy="baseUnit"
             placeholder="e.g. kg"
           />
@@ -42,7 +42,7 @@
           <number
             class="flex-input"
             v-bind="inputNumeral"
-            :class="{ 'input-disable': base_weightValid }"
+            :class="{ 'input-disable': baseWeightValid }"
             v-model.lazy="baseWeight"
             placeholder="e.g. 2.5"
           />
@@ -54,7 +54,7 @@
           <number
             class="flex-input"
             v-bind="inputNumeral"
-            :class="{ 'input-disable': base_priceValid }"
+            :class="{ 'input-disable': basePriceValid }"
             v-model.lazy="basePrice"
             placeholder="e.g. 12,500"
           />
@@ -121,11 +121,11 @@
       </div>
       <div class="my-4">
         <label class="py-2 flex-1 w-full mr-4">
-          <input type="checkbox" v-model.lazy="product.is_active" />
+          <input type="checkbox" v-model.lazy="product.isActive" />
           <span class="flex-span ml-2">Aktif ?</span>
         </label>
         <label class="py-2 flex-1 w-full">
-          <input type="checkbox" v-model.lazy="product.is_sale" />
+          <input type="checkbox" v-model.lazy="product.isSale" />
           <span class="flex-span ml-2">Produk untuk dijual</span>
         </label>
       </div>
@@ -157,13 +157,14 @@ export default {
         id: 0,
         name: "",
         spec: "",
-        base_unit: "",
-        base_weight: 0,
-        base_price: 0,
-        first_stock: 0,
+        baseUnit: "",
+        baseWeight: 0,
+        basePrice: 0,
+        firstStock: 0,
         stock: 0,
-        is_active: true,
-        category_id: 0,
+        isActive: true,
+        isSale: false,
+        categoryId: 0,
       },
     },
   },
@@ -190,7 +191,7 @@ export default {
       delete data.id;
 
       await axios
-        .post(`/api/products`, JSON.stringify(data), {
+        .post(`/api/products/`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -203,9 +204,9 @@ export default {
     async updateProduct(product, id) {
       const self = this;
       const data = { ...product };
-      delete data.id;
+      // delete data.id;
       await axios
-        .put(`/api/products/${id}`, JSON.stringify(data), {
+        .put(`/api/products/${id}/`, JSON.stringify(data), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -242,41 +243,41 @@ export default {
     },
     baseWeight: {
       get() {
-        return this.product.base_weight;
+        return this.product.baseWeight;
       },
       set(value) {
-        if (value !== this.product.base_weight) {
-          this.product.base_weight = value;
+        if (value !== this.product.baseWeight) {
+          this.product.baseWeight = value;
         }
       },
     },
     basePrice: {
       get() {
-        return this.product.base_price;
+        return this.product.basePrice;
       },
       set(value) {
-        if (value !== this.product.base_price) {
-          this.product.base_price = value;
+        if (value !== this.product.basePrice) {
+          this.product.basePrice = value;
         }
       },
     },
     baseUnit: {
       get() {
-        return this.product.base_unit;
+        return this.product.baseUnit;
       },
       set(value) {
-        if (value !== this.product.base_unit) {
-          this.product.base_unit = value;
+        if (value !== this.product.baseUnit) {
+          this.product.baseUnit = value;
         }
       },
     },
     firstStock: {
       get() {
-        return this.product.first_stock;
+        return this.product.firstStock;
       },
       set(value) {
-        if (value !== this.product.first_stock) {
-          this.product.first_stock = value;
+        if (value !== this.product.firstStock) {
+          this.product.firstStock = value;
         }
       },
     },
@@ -292,37 +293,37 @@ export default {
     },
     productCategoryId: {
       get() {
-        return this.product.category_id;
+        return this.product.categoryId;
       },
       set(value) {
-        if (value !== this.product.category_id) {
-          this.product.category_id = value === null ? 0 : value;
+        if (value !== this.product.categoryId) {
+          this.product.categoryId = value === null ? 0 : value;
         }
       },
     },
     enableSubmit() {
       return (
         this.nameValid ||
-        this.base_unitValid ||
-        this.base_weightValid ||
-        this.base_priceValid ||
+        this.baseUnitValid ||
+        this.baseWeightValid ||
+        this.basePriceValid ||
         this.categoryValid
       );
     },
     nameValid() {
       return this.product.name.trim().length === 0;
     },
-    base_unitValid() {
-      return this.product.base_unit.trim().length === 0;
+    baseUnitValid() {
+      return this.product.baseUnit.trim().length === 0;
     },
-    base_weightValid() {
-      return this.product.base_weight < 0;
+    baseWeightValid() {
+      return this.product.baseWeight < 0;
     },
-    base_priceValid() {
-      return this.product.base_price <= 0;
+    basePriceValid() {
+      return this.product.basePrice <= 0;
     },
     categoryValid() {
-      return this.product.category_id === 0 || this.product.category_id === null;
+      return this.product.categoryId === 0 || this.product.categoryId === null;
     },
     categories: {
       get() {
@@ -359,7 +360,7 @@ export default {
   data() {
     return {
       product: { ...this.$props.productProp },
-      categoryId: 0, //this.$props.productProp.category_id, //{id: 0, name: 'Pilih kategori', products: []},
+      categoryId: 0, //this.$props.productProp.categoryId, //{id: 0, name: 'Pilih kategori', products: []},
       searchInput: "",
     };
   },

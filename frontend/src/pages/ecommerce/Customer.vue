@@ -117,7 +117,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/customers/${self.selectedId}`, {
+        .delete(`/api/customers/${self.selectedId}/`, {
           headers: options,
         })
         .then((res) => {
@@ -153,7 +153,7 @@ export default {
     };
 
     await axios
-      .get("/api/customers", { headers: options })
+      .get("/api/customers/", { headers: options })
       .then((res) => {
         const json = res.data;
         self.customers = [...json, new_customer];

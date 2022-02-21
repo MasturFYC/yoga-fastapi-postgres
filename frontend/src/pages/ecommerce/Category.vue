@@ -90,7 +90,7 @@ export default {
     async insertCategory(name, id) {
       const self = this;
       await axios
-        .post(`/api/categories`, JSON.stringify({ name: name }), {
+        .post(`/api/categories/`, JSON.stringify({ name: name }), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export default {
     async updatCatgory(name, id) {
       const self = this;
       await axios
-        .put(`/api/categories/${id}`, JSON.stringify({ name: name }), {
+        .put(`/api/categories/${id}/`, JSON.stringify({ name: name }), {
           headers: {
             accept: "application/json",
             "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export default {
       //      accept: "application/json",
       "Content-Type": "application/json",
     };
-    await axios.get("/api/categories", { headers: options }).then((res) => {
+    await axios.get("/api/categories/", { headers: options }).then((res) => {
       const json = res.data;
 
       self.categories = [...json, { id: 0, name: "" }];

@@ -112,7 +112,7 @@ export default {
         "Content-Type": "application/json",
       };
       await axios
-        .delete(`/api/salesmans/${self.selectedId}`, {
+        .delete(`/api/sales/${self.selectedId}/`, {
           headers: options,
         })
         .then((res) => {
@@ -147,7 +147,7 @@ export default {
       "Content-Type": "application/json",
     };
     await axios
-      .get("/api/salesmans", { headers: options })
+      .get("/api/sales/", { headers: options })
       .then((res) => {
         const json = res.data;
         self.salesmans = [...json, new_sales];
